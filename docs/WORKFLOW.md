@@ -13,6 +13,7 @@ Use AI coding agents like a disciplined solo engineering team:
 7. Review before merge.
 8. Ask before merging back to the checked-out parent branch.
 9. Check child worktrees before pushing a parent branch.
+10. Run formal security review before protected-branch PRs.
 
 ## Branch Model
 
@@ -115,7 +116,8 @@ Open one agent session per worktree.
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
 | Before merge | `af-review-gate` |
-| Before release promotion | `af-reconcile-worktrees` -> `af-docs` -> `af-push-staging` |
+| Before protected-branch PR | `af-security-review` |
+| Before release promotion | `af-reconcile-worktrees` -> `af-docs` -> `af-push-staging` with `af-security-review` |
 
 ## Documentation Rules
 
@@ -151,4 +153,6 @@ Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, u
 
 Run `scripts/check-push-readiness.sh development` before pushing `development`. For feature parent branches, run the same check against the feature branch before pushing it.
 
-Use `af-push-staging` to promote `development` through the configured release path. With staging enabled, it validates, merges `development` into `staging`, pushes both branches, then offers a `staging` to `main` PR. With staging disabled, it validates and pushes `development`, then offers a `development` to `main` PR.
+Use `af-push-staging` to promote `development` through the configured release path. With staging enabled, it validates, runs formal security review for `development -> staging`, merges `development` into `staging`, pushes both branches, runs formal security review for `staging -> main`, then offers a `staging` to `main` PR. With staging disabled, it validates and pushes `development`, runs formal security review for `development -> main`, then offers a `development` to `main` PR.
+
+Run `af-security-review` as a distinct gate before creating any pull request whose base is `staging` or `main`. In the default staging-enabled path, the staging-target review happens before the protected staging promotion, and the main-target review happens before the main PR.

@@ -63,7 +63,7 @@ Reference the diagram in `docs/USER-GUIDE.md`.
 Narrative:
 
 ```text
-Start from the checked-out parent branch, classify the prompt, create a task worktree, validate, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development promotes to main, with optional staging when configured.
+Start from the checked-out parent branch, classify the prompt, create a task worktree, validate, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development promotes to main, with optional staging and a formal security review before protected-branch PRs.
 ```
 
 ### 4. Demonstrate Task Lifecycle

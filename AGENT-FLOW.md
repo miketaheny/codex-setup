@@ -12,6 +12,7 @@ Make agent-assisted solo development safe and consistent across Claude, Codex, a
 - per-commit devlog files under `devlog/`
 - maintained project documentation and useful visual assets
 - review before merge
+- formal security review before protected-branch pull requests
 - first-contact repo initialization or explicit local opt-out
 - push readiness checks before remote pushes
 - heavier multi-step workflows only when the task deserves them
@@ -147,6 +148,14 @@ Before pushing any user-controlled branch, verify all child task worktrees that 
 
 Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install `scripts/install-hooks.sh` to enforce this with a local `pre-push` hook. Direct pushes to `main` are blocked. Direct pushes to `staging` are blocked unless the explicit release promotion workflow sets `AF_ALLOW_RELEASE_PUSH=1`.
 
+## Formal Security Review
+
+Before creating a pull request whose base branch is `staging` or `main`, run a distinct formal security review. Use `af-security-review` when available. This gate is separate from `af-review-gate`: task review checks merge readiness, while security review checks the accumulated release diff before protected-branch promotion.
+
+Run the formal security review after worktree reconciliation, docs maintenance, and release validation, but before creating or offering the protected-branch pull request. If a repo updates `staging` by direct release push instead of a pull request, run the same security review before that protected release push.
+
+The review must inspect the full protected-branch diff, check security-sensitive changes such as auth, authorization, secret handling, input validation, dependencies, infrastructure, deployment, logging, privacy, and data access, and record findings with security severity. Fix SEC-P1 findings before PR creation. Fix SEC-P2 findings or get explicit user risk acceptance before PR creation.
+
 ## Review Gate
 
 Before merging a task branch back to its parent branch:
@@ -196,6 +205,7 @@ A task is done when:
 - a per-commit devlog file exists under `devlog/`
 - affected project docs and visual assets are updated
 - review has been performed for merge-ready work
+- formal security review has passed before protected-branch PRs or equivalent staging promotion when applicable
 - merge readiness has been reported and the user has been asked whether to merge, unless local config allowed an automatic merge
 - parent branch push readiness has been checked before any remote push
 - the final response includes what changed, validation, docs updated, and merge status

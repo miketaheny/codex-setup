@@ -91,6 +91,7 @@ flowchart TD
     Choose --> Docs["af-docs"]
     Choose --> Migration["af-migrate-backlog-devlog"]
     Choose --> Review["af-review-gate"]
+    Choose --> Security["af-security-review"]
     Choose --> Staging["af-push-staging"]
     Choose --> Reconcile["af-reconcile-worktrees"]
     Choose --> Compound["af-compound-mode"]
@@ -100,6 +101,7 @@ flowchart TD
     Docs --> ProjectDocs["project docs + visuals"]
     Migration --> Devlog
     Review --> MergeDecision["merge readiness"]
+    Security --> ProtectedReview["protected-branch security gate"]
     Staging --> Protected["release promotion"]
 ```
 
@@ -137,6 +139,7 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Install scripts write to local home directories and should be reviewed before running.
 - Init and bootstrap scripts write into the current Git repository and refuse to run outside a Git repo.
 - Staging promotion and cleanup skills require explicit approval before destructive actions such as branch deletion or worktree removal.
+- Pull requests to protected branches require a distinct formal security review before PR creation.
 - `main` is production and direct agent changes are blocked by workflow. `staging` is optional, but protected/reserved when present.
 - Optional local `pre-push` hooks call `check-push-readiness.sh` so parent branches are not pushed while child task worktrees are dirty or unmerged.
 - Generated docs and visuals must be grounded in source files, devlog entries, screenshots, or user-provided context.

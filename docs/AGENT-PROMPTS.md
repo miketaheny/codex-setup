@@ -30,6 +30,12 @@ This may be large. Ask whether to create a feature parent branch first. If appro
 Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
 ```
 
+## Formal security review
+
+```text
+Use af-security-review. Run the formal security gate for [head branch] against [staging or main] before creating a protected-branch pull request. Report blocking security findings and accepted risks.
+```
+
 ## Project docs
 
 ```text
@@ -81,7 +87,7 @@ Ensure this repo has the Agent-Flow .gitignore block. Preserve existing ignore r
 ## Promote development
 
 ```text
-Use af-push-staging. Reconcile worktrees, validate development, and promote through the configured release path. If staging is enabled, merge development into staging and ask before creating a staging-to-main PR. If staging is disabled, ask before creating a development-to-main PR.
+Use af-push-staging. Reconcile worktrees, validate development, run formal security review, and promote through the configured release path. If staging is enabled, review development to staging, merge development into staging, then review staging to main before asking to create a staging-to-main PR. If staging is disabled, review development to main before asking to create a development-to-main PR.
 ```
 
 ## Workflow decision

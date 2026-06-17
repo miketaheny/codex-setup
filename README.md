@@ -1,6 +1,6 @@
 # AF Agent-Flow Global Setup
 
-A clean Agent-Flow setup for solo development with Claude, Codex, and other coding agents: shared instructions, Codex-compatible skills, git worktrees, per-commit devlog files, project documentation maintenance, review gates, and optional heavier workflows.
+A clean Agent-Flow setup for solo development with Claude, Codex, and other coding agents: shared instructions, Codex-compatible skills, git worktrees, per-commit devlog files, project documentation maintenance, review gates, formal protected-branch security review, and optional heavier workflows.
 
 ## What this gives you
 
@@ -12,6 +12,7 @@ A clean Agent-Flow setup for solo development with Claude, Codex, and other codi
   - `af-small-change`
   - `af-worktree-task`
   - `af-review-gate`
+  - `af-security-review`
   - `af-devlog`
   - `af-docs`
   - `af-migrate-backlog-devlog`
@@ -71,6 +72,7 @@ Init runs the bootstrap step, then records local repo choices in `.agent-flow/co
 - that file-changing prompts require task worktrees
 - that dirty worktrees are reviewed, devlogged, and committed instead of being left loose
 - that agents ask before merging by default
+- that formal security review is required before pull requests to `staging` or `main`
 - `development` as the SDLC integration branch
 - `main` as the production branch
 - whether optional `staging` is used between `development` and `main`
@@ -144,6 +146,12 @@ Use Agent-Flow for this change. Classify the task, create the task worktree, fin
 Use af-review-gate and tell me whether this task branch is ready to merge into its recorded parent branch.
 ```
 
+### Formal security review
+
+```text
+Use af-security-review. Review development against staging, or staging/development against main, before creating a protected-branch pull request.
+```
+
 ### Detailed documentation after a change
 
 ```text
@@ -191,7 +199,7 @@ Run scripts/check-push-readiness.sh for this branch before pushing. Tell me whic
 ### Release promotion
 
 ```text
-Use af-push-staging to reconcile worktrees, validate development, and promote through the configured release path. If staging is enabled, use development -> staging -> main. If staging is disabled, offer a development-to-main PR.
+Use af-push-staging to reconcile worktrees, validate development, run formal security review, and promote through the configured release path. If staging is enabled, use development -> staging -> main. If staging is disabled, offer a development-to-main PR.
 ```
 
 ### Bigger/riskier work

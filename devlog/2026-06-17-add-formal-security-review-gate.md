@@ -1,0 +1,24 @@
+# 2026-06-17 - Add formal security review gate
+
+- Branch/worktree: `docs/formal-security-review` / `/Users/taheny/vault/teamt/codex-setup-formal-security-review`
+- Commit: `pending`
+- Goal: Add a distinct formal security review before creating pull requests to protected branches such as `staging` or `main`.
+- Files changed:
+  - `AGENT-FLOW.md` - added the canonical formal security review requirement and done-definition check.
+  - `skills/af-security-review/` - added a dedicated protected-branch security review skill and OpenAI UI metadata.
+  - `skills/af-push-staging/SKILL.md` - inserted security review checkpoints before staging promotion and main PR creation.
+  - `templates/agent-flow-config.toml` and `scripts/init-repo.sh` - added default protected release gate config keys for new repos.
+  - `README.md`, `docs/`, `templates/repo-AGENT-FLOW.md`, `commander.md`, and `CHANGELOG.md` - updated user-facing workflow guidance and skill lists.
+- Decisions:
+  - Kept the formal security review separate from `af-review-gate` so task merge review and protected release review remain distinct.
+  - Required review before PRs to `staging` or `main`, and before direct staging release pushes when staging is promoted without a PR.
+  - Used SEC-P1/SEC-P2/SEC-P3 severities so blocking security findings are not mixed with general code-review findings.
+- Validation:
+  - `bash -n scripts/init-repo.sh scripts/install.sh scripts/bootstrap-repo.sh` - passed.
+  - `python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/af-security-review` - passed.
+  - `python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/af-push-staging` - passed.
+  - `for d in skills/*; do ... quick_validate.py "$d"; done` - passed for all AF skills.
+- Review:
+  - Manual diff review completed while applying the workflow updates; no blocking findings found.
+- Follow-ups:
+  - Consider adding an executable helper later if the project wants machine-enforced security-review evidence before PR creation.
