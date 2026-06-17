@@ -62,8 +62,8 @@ Branch defaults:
 - Agents ask before merge by default.
 - Formal security review is required before protected-branch pull requests to `staging` or `main`.
 - `development` is the SDLC integration branch.
-- `main` is production and agents must not edit it directly.
-- `staging` is optional in the release path, and direct edits to a branch named `staging` are blocked.
+- `main` is the production PR target and should not be kept as a local work branch.
+- `staging` is optional in the release path. Keep a local `staging` branch only when `staging_enabled = true`; otherwise flag it for cleanup.
 - `master`, `production`, and `prod` are reserved legacy branch names.
 
 ## Daily Agent-Flow Loop
@@ -94,7 +94,7 @@ flowchart LR
 | Convert legacy Backlog task files to devlog entries | `af-migrate-backlog-devlog` |
 | Review before merge | `af-review-gate` |
 | Formal security review before protected-branch PRs | `af-security-review` |
-| Audit worktrees and branch cleanup candidates | `af-reconcile-worktrees` |
+| Audit worktrees, local protected branch policy, and cleanup candidates | `af-reconcile-worktrees` |
 | Promote `development` through release path | `af-push-staging` |
 | Decide whether a heavier workflow is needed | `af-compound-mode` |
 

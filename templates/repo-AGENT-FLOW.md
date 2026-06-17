@@ -26,9 +26,9 @@ Adjust this section to match the actual repo.
 - Base implementation work from the checked-out user-controlled parent branch.
 - Use one task worktree per implementation task.
 - Classify prompts as chat, tiny, normal, large, or risky before acting.
-- Never work directly on `main`; `main` is production.
-- Never work directly on a branch named `staging`; staging is optional in the release path, not an editable task branch.
-- Do not use `master`, `production`, or `prod` as mainline branches.
+- Never work directly on `main`; `main` is the production PR target and should not be kept as a local work branch.
+- Never work directly on a branch named `staging`; keep local `staging` only when `.agent-flow/config.toml` has `staging_enabled = true`.
+- Do not use `master`, `production`, or `prod` as mainline branches; flag local branches with those names for cleanup.
 - Merge reviewed task worktrees back to their parent branch after asking the user unless local config explicitly allows auto-merge.
 - For large or risky work from `development`, ask whether to create a feature parent branch first.
 - Use `development` as the SDLC integration branch that feeds optional `staging` and then `main`.

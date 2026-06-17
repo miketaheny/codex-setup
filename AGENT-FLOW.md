@@ -41,8 +41,8 @@ Use `scripts/start-task.sh` when available to create task worktrees and record l
 
 ## Non-Negotiable Branch Rules
 
-- `main` is the production branch. Do not modify, commit to, or push directly to `main`.
-- `staging` is optional per repo. When present or enabled, do not modify, commit to, or push directly to `staging` except through the release promotion workflow.
+- `main` is the production PR target. Do not keep it as a local work branch; if a local `main` branch appears, flag it for deletion after confirming it has no unique work. Do not modify, commit to, or push directly to `main`.
+- `staging` is optional per repo. Keep a local `staging` branch only when `staging_enabled = true`; otherwise flag it for deletion after confirming it has no unique work. When present or enabled, do not modify, commit to, or push directly to `staging` except through the release promotion workflow.
 - `master`, `production`, and `prod` are reserved legacy names. Do not use them as mainline branches.
 - Default SDLC integration branch is `development`; it feeds `staging` when enabled and then `main`.
 - The task parent branch is the branch the user has checked out for the work. It can be `development` or a user-controlled feature branch.

@@ -44,9 +44,9 @@ After the feature branch is ready, the user merges it into `development`.
 
 Protected or reserved branches:
 
-- `main` - production branch
-- `staging` - optional release branch when enabled; direct edits are blocked when a branch uses this name
-- `master`, `production`, `prod` - reserved legacy names, not mainline branches
+- `main` - production PR target; should not be kept as a local work branch
+- `staging` - optional release branch; keep locally only when `staging_enabled = true`
+- `master`, `production`, `prod` - reserved legacy names; flag local branches with these names for cleanup
 
 Release path:
 
@@ -149,7 +149,7 @@ Use `af-migrate-backlog-devlog` when a repo still has `Backlog.md`, `triage.md`,
 
 ## Release Promotion
 
-Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing task-parent metadata, and instruction conflicts.
+Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing task-parent metadata, local protected branch policy violations, and instruction conflicts.
 
 Run `scripts/check-push-readiness.sh development` before pushing `development`. For feature parent branches, run the same check against the feature branch before pushing it.
 

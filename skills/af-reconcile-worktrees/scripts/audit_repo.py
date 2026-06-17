@@ -59,6 +59,20 @@ def protected_branches(config: dict[str, Any]) -> set[str]:
     return branches
 
 
+def local_protected_branch_policy(config: dict[str, Any], branch: str) -> tuple[str, str]:
+    if branch == config["production_branch"]:
+        return "disallowed", "production branch should be a PR target, not a local work branch"
+    if branch == config["staging_branch"]:
+        if config.get("staging_enabled") is True:
+            return "allowed", "configured staging release branch"
+        if config.get("staging_enabled") is False:
+            return "disallowed", "staging is disabled for this repo"
+        return "review", "staging policy is not configured"
+    if branch in RESERVED_BRANCHES:
+        return "disallowed", "reserved legacy branch name"
+    return "normal", ""
+
+
 def run(args: list[str], cwd: Path) -> tuple[int, str, str]:
     proc = subprocess.run(args, cwd=cwd, text=True, capture_output=True)
     return proc.returncode, proc.stdout.strip(), proc.stderr.strip()
@@ -228,11 +242,22 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
     merge_target, explicit_parent = branch_parent(root, branch, config) if branch != "(detached)" else (config["integration_branch"], False)
     merged = is_ancestor(root, target, merge_target) if target else None
 
-    release_or_reserved = {config["production_branch"], config["staging_branch"], *RESERVED_BRANCHES}
+    local_policy, local_policy_reason = local_protected_branch_policy(config, branch)
     if branch == config["integration_branch"]:
         action = "keep integration worktree"
-    elif branch in release_or_reserved:
-        action = f"keep protected or reserved {branch} worktree"
+    elif local_policy == "allowed":
+        action = f"keep {local_policy_reason} worktree"
+    elif local_policy == "disallowed":
+        if status:
+            action = f"skip dirty disallowed local branch worktree; {local_policy_reason}"
+        elif merged is True:
+            action = f"eligible for worktree removal; {local_policy_reason}"
+        elif merged is False:
+            action = f"review before removing disallowed local branch worktree; commits not merged to {merge_target}"
+        else:
+            action = f"review before removing disallowed local branch worktree; cannot verify {merge_target} ancestry"
+    elif local_policy == "review":
+        action = f"review local branch policy before cleanup; {local_policy_reason}"
     elif status:
         action = "skip dirty worktree"
     elif not explicit_parent:
@@ -252,6 +277,8 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
         "merge_target": merge_target,
         "explicit_parent": explicit_parent,
         "merged_to_target": merged,
+        "local_policy": local_policy,
+        "local_policy_reason": local_policy_reason,
         "action": action,
     }
 
@@ -269,16 +296,32 @@ def build_report(path: Path) -> dict[str, Any]:
     production_name = config["production_branch"]
     integration_branch = next((branch for branch in branches if branch["name"] == integration_name), None)
     local_main = next((branch for branch in branches if branch["name"] == production_name), None)
+    staging_name = config["staging_branch"]
+    local_staging = next((branch for branch in branches if branch["name"] == staging_name), None)
     integration_worktree = next((worktree for worktree in worktrees if worktree["branch"] == integration_name), None)
     protected = protected_branches(config)
 
     branch_actions = []
     for branch in branches:
         name = branch["name"]
+        local_policy, local_policy_reason = local_protected_branch_policy(config, name)
         if name == integration_name:
             action = "keep"
+        elif local_policy == "allowed":
+            action = f"keep {local_policy_reason}"
+        elif local_policy == "disallowed":
+            if branch["current"]:
+                action = f"blocked; checked-out disallowed local branch; {local_policy_reason}"
+            elif branch["merged_to_target"] is True:
+                action = f"ask to delete disallowed local branch; {local_policy_reason}"
+            elif branch["merged_to_target"] is False:
+                action = f"review before deleting disallowed local branch; commits not merged to {branch['merge_target']}"
+            else:
+                action = f"review before deleting disallowed local branch; cannot verify {branch['merge_target']} ancestry"
+        elif local_policy == "review":
+            action = f"review local branch policy; {local_policy_reason}"
         elif name in protected:
-            action = "keep protected or reserved branch"
+            action = "review protected or reserved branch"
         elif branch["current"]:
             action = "skip checked-out branch"
         elif not branch["explicit_parent"]:
@@ -328,6 +371,8 @@ def build_report(path: Path) -> dict[str, Any]:
         "integration": integration_branch,
         "integration_worktree": integration_worktree,
         "local_main_present": local_main is not None,
+        "local_staging_present": local_staging is not None,
+        "local_staging_policy": local_protected_branch_policy(config, staging_name)[0],
         "worktrees": worktrees,
         "branches": branch_actions,
         "parent_readiness": parent_readiness,
@@ -346,6 +391,7 @@ def markdown(report: dict[str, Any]) -> str:
         f"- Production branch: `{config['production_branch']}`",
         f"- Staging enabled: {'yes' if config.get('staging_enabled') is True else 'no' if config.get('staging_enabled') is False else 'not configured'}",
         f"- Local `{config['production_branch']}` present: {'yes' if report['local_main_present'] else 'no'}",
+        f"- Local `{config['staging_branch']}` present: {'yes' if report['local_staging_present'] else 'no'}; policy: `{report['local_staging_policy']}`",
     ]
     integration = report.get("integration")
     if integration:

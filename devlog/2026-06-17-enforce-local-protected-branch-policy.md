@@ -1,0 +1,23 @@
+# 2026-06-17 - Enforce local protected branch policy
+
+- Branch/worktree: `chore/local-protected-branch-policy` / `/Users/taheny/vault/teamt/codex-setup-local-protected-branch-policy`
+- Commit: `pending`
+- Goal: Enforce that local `main` should not be kept as a work branch, and local `staging` should exist only when staging is enabled.
+- Files changed:
+  - `skills/af-reconcile-worktrees/scripts/audit_repo.py` - added local protected branch policy classification for `main`, `staging`, and reserved legacy branch names.
+  - `skills/af-reconcile-worktrees/SKILL.md` - updated cleanup guidance for local protected branch findings.
+  - `AGENT-FLOW.md` and `templates/repo-AGENT-FLOW.md` - documented `main` as a production PR target and `staging` as local only when enabled.
+  - `README.md`, `docs/`, `scripts/init-repo.sh`, and `CHANGELOG.md` - updated user-facing workflow and initialization guidance.
+- Decisions:
+  - Keep deletion safe and explicit: audit flags local protected branches, but destructive deletion still requires user approval or an explicit cleanup request.
+  - Treat local `staging` as allowed only when `.agent-flow/config.toml` sets `staging_enabled = true`.
+  - Treat `master`, `production`, and `prod` as disallowed local legacy branch names for cleanup review.
+- Validation:
+  - `python3 -m py_compile skills/af-reconcile-worktrees/scripts/audit_repo.py` - passed.
+  - `bash -n scripts/init-repo.sh scripts/check-branch-safety.sh scripts/check-push-readiness.sh` - passed.
+  - Temporary repo smoke test with `staging_enabled = false` - passed; audit flagged local `main` and `staging` for deletion.
+  - Temporary repo smoke test with `staging_enabled = true` - passed; audit flagged local `main` and kept configured local `staging`.
+- Review:
+  - Manual diff review completed; no blocking findings found.
+- Follow-ups:
+  - None.
