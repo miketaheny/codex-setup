@@ -1,0 +1,41 @@
+# 2026-06-17 - rewrite AF docs and devlog workflow
+
+- Branch/worktree: `unavailable` / `/Users/taheny/vault/teamt/codex-setup`
+- Commit: `pending`
+- Goal: Remove the old release-log workflow, replace the root engineering log with per-commit files under `devlog/`, and rewrite `af-docs` as an ongoing project documentation maintenance skill.
+- Summary:
+  - Reworked global and repo workflow guidance around per-commit devlog files.
+  - Replaced the one-time docs backfill skill with a self-contained docs maintenance workflow.
+  - Removed bootstrap/template support for the old release-log and root engineering-log files.
+  - Initialized filesystem-only Backlog tracking for this non-Git workspace and recorded TASK-1.
+- Files changed:
+  - `AGENTS.md` - updated global AF workflow rules.
+  - `README.md` - updated setup overview and prompt examples.
+  - `commander.md` - updated owner scratch workflow.
+  - `docs/WORKFLOW.md` - updated daily workflow documentation.
+  - `docs/CODEX-PROMPTS.md` - updated reusable prompt snippets.
+  - `skills/af-docs/SKILL.md` - rewrote docs maintenance guidance.
+  - `skills/af-devlog/SKILL.md` - changed to per-commit devlog files.
+  - `skills/af-small-change/SKILL.md` - changed documentation steps to `devlog/`.
+  - `skills/af-worktree-task/SKILL.md` - changed worktree documentation steps to `devlog/` and project docs.
+  - `skills/af-review-gate/SKILL.md` - updated docs review checks.
+  - `skills/af-compound-mode/SKILL.md` - updated parallel-session documentation rule.
+  - `scripts/bootstrap-repo.sh` - bootstraps `devlog/README.md` instead of root log files.
+  - `templates/devlog-README.md` - added repo devlog folder guidance.
+  - `templates/devlog-entry.md` - added per-commit entry template.
+  - `templates/DEVLOG.md` - removed root engineering-log template.
+  - `templates/CHANGELOG.md` - removed release-log template.
+  - `backlog/config.yml` and `backlog/tasks/task-1 - Rewrite-AF-docs-and-devlog-workflow.md` - added Backlog.md task tracking.
+- Decisions:
+  - Keep devlog files branch-local by default so worktrees can merge their own history without contending on one shared file.
+  - Use `af-docs` as a pre-promotion documentation gate from `development` to protected branches.
+  - Avoid direct Git branch or commit operations because this workspace is not a Git repository.
+- Validation:
+  - `bash -n scripts/bootstrap-repo.sh` - passed.
+  - `rg -n 'CHANGELOG|changelog|DEVLOG|devlog\.md|docs-curator|agent-init|docs-backfill|/docs-backfill|promote-prod|CLAUDE|branch-model' README.md AGENTS.md commander.md docs skills templates scripts` - no matches.
+  - `python3 /Users/taheny/vault/teamt/triage/scripts/check_backlog.py TASK-1` - passed.
+  - `git status --short --branch` - not available because this workspace is not a Git repository.
+- Review:
+  - Self-review completed against the requested workflow changes and stale-reference searches.
+- Risks / follow-ups:
+  - This workspace has no Git metadata, so branch, worktree, diff, commit, and merge verification cannot run here.

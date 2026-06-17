@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Reconcile Worktrees"
+  short_description: "Audit worktrees, branches, and tasks"
+  default_prompt: "Use $af-reconcile-worktrees to audit worktrees, branches, and active tasks."
