@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="${1:-development}"
-
 if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
   echo "Error: run this inside a git repository." >&2
   exit 1
 fi
 
 branch="$(git branch --show-current)"
+configured_parent=""
+if [ -n "$branch" ]; then
+  configured_parent="$(git config --get "branch.$branch.agentFlowParent" || true)"
+fi
+BASE="${1:-${configured_parent:-development}}"
+
 echo "Branch: $branch"
 echo "Base: $BASE"
 echo
@@ -27,6 +31,10 @@ git diff --cached --stat || true
 echo
 echo "== Working tree diff stat =="
 git diff --stat || true
+
+echo
+echo "== Untracked files =="
+git ls-files --others --exclude-standard || true
 
 echo
 echo "== Recent commits =="

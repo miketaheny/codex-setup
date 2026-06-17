@@ -18,8 +18,8 @@ Move fast without losing discipline.
    - current branch
    - dirty files
    - whether branch is protected
-3. If on `main`, `master`, `staging`, `production`, or `prod`, do not edit directly.
-4. Prefer a feature branch from `development` for implementation.
+3. If on `main`, `staging`, `master`, `production`, or `prod`, do not edit directly.
+4. Use a task worktree from the checked-out user-controlled parent branch.
 5. Keep the change narrow.
 6. Avoid unrelated refactors.
 7. Add a devlog file under `devlog/` for meaningful changes.
@@ -28,15 +28,27 @@ Move fast without losing discipline.
 
 ## Branch handling
 
-If already on a safe feature branch, continue there.
+If already in a safe task worktree, continue there.
 
-If on `development`, create a branch:
+If on a user-controlled parent branch such as `development` or `feat/<name>`, create a task worktree:
 
 ```bash
-git switch -c fix/<short-description>
+scripts/start-task.sh --class tiny fix <short-description>
 ```
 
-If on a protected branch, switch to `development` first or ask the user if `development` does not exist.
+If `scripts/start-task.sh` is unavailable, use `scripts/new-worktree.sh fix <short-description>` and record `agentFlowTaskClass = tiny` manually.
+
+If on a protected or reserved branch, ask the user to check out the intended parent branch first. Do not branch from `main` or `staging`.
+
+## Finish behavior
+
+At the end, run the finish helper when available:
+
+```bash
+scripts/finish-task.sh
+```
+
+If it reports `ASK_USER_MERGE`, ask whether to merge back to the parent branch. Automatic merge is allowed only when repo config sets `auto_merge = "tiny-only"` or stronger and all readiness checks pass.
 
 ## Validation preference
 

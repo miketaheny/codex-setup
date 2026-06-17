@@ -14,7 +14,7 @@ Visual: before/after comparison.
 
 ## Slide 3: The Core Loop
 
-Start from `development`, isolate work, validate, write devlog, update docs, review, merge back.
+Classify the prompt, create a task worktree, validate, write devlog, update docs, review, ask before merge, then check child worktrees before push.
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 
@@ -26,23 +26,29 @@ Visual: hub-and-spoke diagram.
 
 ## Slide 5: Skills and Scripts
 
-AF skills cover small changes, worktrees, docs, devlogs, review, reconciliation, staging, and Backlog migration.
+AF skills cover small changes, worktrees, docs, devlogs, review, reconciliation, release promotion, and Backlog migration.
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 
-## Slide 6: Documentation and Visuals
+## Slide 6: Task Lifecycle Helpers
+
+`start-task.sh`, `finish-task.sh`, and `check-push-readiness.sh` make the default flow repeatable while keeping merges explicit.
+
+Visual: task lifecycle diagram from `docs/ARCHITECTURE.md`.
+
+## Slide 7: Documentation and Visuals
 
 Agent-Flow requires devlog entries and recommends docs, diagrams, screenshots, demos, and presentation materials when they improve understanding.
 
 Visual: docs artifact matrix.
 
-## Slide 7: Demo Flow
+## Slide 8: Demo Flow
 
-Install, bootstrap a repo, inspect generated instruction files, migrate a sample task, run a review snapshot.
+Install, initialize a repo, inspect generated config and instruction files, start a task, run finish checks, inspect push readiness.
 
 Visual: terminal screenshot sequence.
 
-## Slide 8: Why It Matters
+## Slide 9: Why It Matters
 
 Agent-Flow makes agent-assisted solo development more consistent, reviewable, and easier to hand off.
 

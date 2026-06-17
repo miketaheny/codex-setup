@@ -37,13 +37,13 @@ find ~/.codex/skills -maxdepth 2 -name SKILL.md | sort
 test -f ~/.claude/CLAUDE.md && echo "Claude adapter installed"
 ```
 
-### 2. Bootstrap a Sample Repo
+### 2. Initialize a Sample Repo
 
 ```bash
 mkdir /tmp/agent-flow-demo
 cd /tmp/agent-flow-demo
 git init -b development
-~/.agent-flow/scripts/bootstrap-repo.sh
+~/.agent-flow/scripts/init-repo.sh --yes --no-staging
 ```
 
 Show:
@@ -51,6 +51,8 @@ Show:
 - `AGENT-FLOW.md`
 - `AGENTS.md`
 - `CLAUDE.md`
+- `.agent-flow/config.toml`
+- `.git/hooks/pre-push`
 - `devlog/README.md`
 - `docs/decisions/000-template.md`
 
@@ -61,10 +63,32 @@ Reference the diagram in `docs/USER-GUIDE.md`.
 Narrative:
 
 ```text
-Start from development, isolate work, validate, write devlog, update docs, run review, merge back to development.
+Start from the checked-out parent branch, classify the prompt, create a task worktree, validate, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development promotes to main, with optional staging when configured.
 ```
 
-### 4. Demonstrate Backlog Migration
+### 4. Demonstrate Task Lifecycle
+
+```bash
+~/.agent-flow/scripts/start-task.sh --class tiny docs demo-copy
+cd ../agent-flow-demo-demo-copy
+```
+
+Show that the task branch has parent metadata:
+
+```bash
+git config --get branch.docs/demo-copy.agentFlowParent
+git config --get branch.docs/demo-copy.agentFlowTaskClass
+```
+
+After a small committed change, run:
+
+```bash
+~/.agent-flow/scripts/finish-task.sh
+```
+
+Show the `ASK_USER_MERGE` output.
+
+### 5. Demonstrate Backlog Migration
 
 Create a sample legacy task:
 
@@ -82,12 +106,13 @@ python3 ~/.agent-flow/skills/af-migrate-backlog-devlog/scripts/migrate_backlog_t
 
 Show the generated devlog entry.
 
-### 5. Close With Review
+### 6. Close With Review
 
 Run:
 
 ```bash
 ~/.agent-flow/scripts/review-snapshot.sh
+~/.agent-flow/scripts/check-push-readiness.sh development
 ```
 
 Show how the snapshot supports `af-review-gate`.
@@ -96,11 +121,13 @@ Show how the snapshot supports `af-review-gate`.
 
 - install output
 - generated home directories
-- bootstrap output
+- init output
 - generated repo instruction files
+- generated `.agent-flow/config.toml`
 - migration dry-run output
 - generated devlog entry
 - review snapshot output
+- push-readiness output
 
 ## Recording Notes
 

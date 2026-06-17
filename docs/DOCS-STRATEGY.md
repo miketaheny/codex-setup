@@ -37,9 +37,9 @@ Priority audiences:
 Docs should help readers:
 
 - install the global Agent-Flow setup
-- bootstrap new repositories
+- initialize or bootstrap new repositories
 - choose the correct AF skill for a task
-- understand branch, worktree, devlog, review, and staging rules
+- understand prompt classification, branch, worktree, devlog, review, merge, push-readiness, and release promotion rules
 - migrate legacy backlog/task stores into `devlog/`
 - understand how the setup stays agent-agnostic
 - visualize architecture, skill routing, and daily workflows
@@ -55,8 +55,8 @@ Current canonical docs:
 | `README.md` | Current | Keep as the quick entrypoint, install guide, and docs map. |
 | `docs/WORKFLOW.md` | Current | Keep branch, devlog, review, migration, and promotion workflow accurate. |
 | `docs/AGENT-PROMPTS.md` | Current | Keep prompt examples aligned with current AF skills and workflow rules. |
-| `docs/ARCHITECTURE.md` | Current | Keep system, install, bootstrap, and skill-routing diagrams aligned with scripts and files. |
-| `docs/USER-GUIDE.md` | Current | Keep task-based install, bootstrap, skill, migration, and promotion guidance accurate. |
+| `docs/ARCHITECTURE.md` | Current | Keep system, install, init/bootstrap, and skill-routing diagrams aligned with scripts and files. |
+| `docs/USER-GUIDE.md` | Current | Keep task-based install, init, skill, migration, and promotion guidance accurate. |
 | `docs/VISUALS.md` | Current | Keep visual format recommendations, screenshots, demos, decks, and content plans current. |
 | `docs/DEMO.md` | Current | Keep demo and recording flow aligned with the repo's actual commands. |
 | `docs/PITCH.md` | Current | Keep stakeholder and marketing copy grounded in verified repo behavior. |
@@ -74,8 +74,8 @@ Use visual assets when they reduce explanation cost.
 
 - Mermaid is the default for source-accurate workflow, sequence, and architecture diagrams.
 - D2 is recommended when larger topology or dependency diagrams need stronger layout control.
-- Screenshots are recommended for install, bootstrap, skill discovery, and real UI or terminal flows.
-- Demo videos are recommended for install-to-bootstrap, worktree-to-devlog, review, staging promotion, backlog migration, and docs maintenance walkthroughs.
+- Screenshots are recommended for install, init/bootstrap, task lifecycle, skill discovery, and real UI or terminal flows.
+- Demo videos are recommended for install-to-init, start-task-to-finish-task, push-readiness, release promotion, backlog migration, and docs maintenance walkthroughs.
 - Generated images should be limited to conceptual, marketing, or presentation assets when real product screenshots are not available.
 
 For this repo, prefer efficient, technical, and data-driven visuals in core docs. Use polished but restrained visuals for presentations and stakeholder-facing content.
@@ -84,12 +84,12 @@ For this repo, prefer efficient, technical, and data-driven visuals in core docs
 
 Run `af-docs` when changes affect:
 
-- installation or bootstrap behavior
+- installation, init, or bootstrap behavior
 - scripts under `scripts/`
 - skills under `skills/`
 - agent adapters such as `AGENTS.md`, `CLAUDE.md`, or `AGENT-FLOW.md`
 - templates copied into target repos
-- branch, worktree, devlog, review, or staging workflows
+- prompt lifecycle, branch, worktree, devlog, review, merge, push-readiness, or release promotion workflows
 - backlog migration behavior
 - visual documentation, demo, presentation, or marketing guidance
 - README navigation or setup commands

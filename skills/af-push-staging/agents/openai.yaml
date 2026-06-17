@@ -1,4 +1,4 @@
 interface:
   display_name: "AF Push Staging"
-  short_description: "Promote development to staging safely"
-  default_prompt: "Use $af-push-staging to promote development to staging safely."
+  short_description: "Promote development safely"
+  default_prompt: "Use $af-push-staging to promote development through the configured release path safely."

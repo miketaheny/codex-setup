@@ -41,3 +41,6 @@ if [ ! -f "docs/decisions/000-template.md" ]; then
 fi
 
 echo "Repo bootstrap complete at $ROOT"
+if [ "${AF_BOOTSTRAP_SUPPRESS_INIT_HINT:-0}" != "1" ]; then
+  echo "For first-contact enforcement choices, run: $AF_HOME/scripts/init-repo.sh"
+fi

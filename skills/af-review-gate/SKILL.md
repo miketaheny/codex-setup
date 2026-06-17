@@ -1,11 +1,11 @@
 ---
 name: af-review-gate
-description: Pre-merge review gate for solo-dev Agent-Flow branches. Checks branch safety, scope, diffs, docs, tests, risk, and readiness to merge back into development.
+description: Pre-merge review gate for solo-dev Agent-Flow task branches. Checks branch safety, scope, diffs, docs, tests, risk, and readiness to merge back into the recorded parent branch.
 ---
 
 # AF Review Gate Skill
 
-Use this skill before merging any agent-created work back into `development`.
+Use this skill before merging any agent-created task branch back into its recorded parent branch.
 
 ## Goal
 
@@ -15,8 +15,8 @@ Act like a disciplined reviewer for a solo developer.
 
 ### 1. Branch safety
 
-- Current branch is not `main`, `master`, `staging`, `production`, or `prod`.
-- Merge target is `development`.
+- Current branch is not `main`, `staging`, `master`, `production`, or `prod`.
+- Merge target is the task branch's recorded parent branch, usually from `branch.<branch>.agentFlowParent`.
 - Work is isolated to a feature branch or worktree.
 
 ### 2. Scope control
@@ -32,8 +32,9 @@ Inspect:
 
 ```bash
 git status
-git diff --stat development...HEAD
-git diff development...HEAD
+git config --get branch.$(git branch --show-current).agentFlowParent
+git diff --stat <parent-branch>...HEAD
+git diff <parent-branch>...HEAD
 ```
 
 Look for:
@@ -73,12 +74,27 @@ Use severity:
 - P2: should fix or explicitly accept before merge
 - P3: minor improvement
 
+### 7. Merge policy
+
+Read `.agent-flow/config.toml` when present.
+
+- If `merge_prompt = "always"`, report ready state and ask the user before merge.
+- If `auto_merge = "tiny-only"`, auto-merge is eligible only for branches with `agentFlowTaskClass = tiny` and no findings.
+- Never approve automatic merge into `main` or `staging`.
+- Run `scripts/check-push-readiness.sh <parent-branch>` before pushing a parent branch.
+
 ## Required output
 
 End with one of:
 
 ```text
-READY TO MERGE INTO development
+READY TO MERGE INTO <parent-branch>
+```
+
+or
+
+```text
+READY BUT ASK USER BEFORE MERGE
 ```
 
 or

@@ -21,9 +21,9 @@ Run this skill when:
 - recent devlog files or commits describe work that is not reflected in docs
 - the user asks to visualize a system, workflow, architecture, value proposition, or user journey
 - the repo needs user guides, screenshots, demo videos, diagrams, presentations, or marketing content
-- `development` is about to be pushed or promoted to protected branches such as `staging`, `main`, release, or production branches
+- `development` is about to be pushed or promoted through optional `staging` or to `main`
 
-Do documentation work on `development` or a feature branch/worktree. Do not edit directly on protected branches.
+Do documentation work in a task worktree or user-controlled parent branch. Do not edit directly on `main` or `staging`.
 
 ## Documentation Model
 
@@ -171,8 +171,8 @@ If Git is unavailable, use the available filesystem state and devlog files, then
 1. Inspect branch safety and the current working tree.
 2. Identify the docs that already exist and whether they are established or placeholder-only.
 3. Identify the change range:
-   - for branch work, compare against `development` or the intended merge base
-   - for pre-promotion work, compare `development` against the protected target branch when available
+   - for branch work, compare against the task's recorded parent branch or intended merge base
+   - for pre-promotion work, compare `development` against optional `staging` or `main` when available
    - when no range is available, read recent devlog files and representative project files
 4. Decide whether this is stewardship setup, backfill, or ongoing maintenance.
 5. If stewardship setup is needed, inventory existing docs, interview the user, update docs in place, and record `docs/DOCS-STRATEGY.md`.
@@ -255,13 +255,14 @@ When creating presentations, prefer a crisp outline first unless the user explic
 
 ## Pre-Promotion Check
 
-Before pushing or promoting `development` to protected branches:
+Before pushing or promoting `development` through the release path:
 
-1. Confirm the work is on `development` or a non-protected branch.
+1. Confirm the work is on `development` or a non-protected task branch/worktree.
 2. Review devlog files and commits since the last promotion or since the target branch diverged.
 3. Check whether all user-facing, operational, architectural, setup, and security changes are reflected in docs.
-4. Resolve stale TODOs that block promotion, or record why they are acceptable to carry forward.
-5. Report whether docs are ready for promotion.
+4. Run `scripts/check-push-readiness.sh development` when available so incomplete child task worktrees do not get bypassed.
+5. Resolve stale TODOs that block promotion, or record why they are acceptable to carry forward.
+6. Report whether docs are ready for promotion.
 
 This skill does not perform the push or promotion by itself.
 
