@@ -248,7 +248,7 @@ append_local_choices() {
 - Merge behavior: ask before merge by default; auto-merge is off unless config changes.
 - Push behavior: check child task worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.
-- SDLC flow: $FLOW. \`main\` is production.
+- SDLC flow: $FLOW. \`main\` is the production PR target and should not be kept as a local work branch.
 - $STAGING_NOTE
 - Legacy branch names \`master\`, \`production\`, and \`prod\` are reserved and should not be used as mainline branches.
 <!-- agent-flow-local-end -->

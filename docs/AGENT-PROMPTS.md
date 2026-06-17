@@ -69,7 +69,7 @@ Use af-migrate-backlog-devlog. Dry-run a migration from Backlog.md, backlog/, or
 ## Reconcile worktrees
 
 ```text
-Use af-reconcile-worktrees. Audit worktrees, local branches, and agent instruction conflicts. Do not remove worktrees or delete branches without explicit approval.
+Use af-reconcile-worktrees. Audit worktrees, local branches, local protected branch policy, and agent instruction conflicts. Do not remove worktrees or delete branches without explicit approval.
 ```
 
 ## Push readiness

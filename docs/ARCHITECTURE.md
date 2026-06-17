@@ -129,6 +129,7 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Repo-level instructions and docs copied into target repositories.
 - Repo-level choices stored in `.agent-flow/config.toml`.
 - Repo-level ignore policy stored in `.gitignore`.
+- Local protected branch policy derived from `.agent-flow/config.toml`: `main` is disallowed locally, and `staging` is local only when staging is enabled.
 - Task branch parent metadata stored in Git config as `branch.<task-branch>.agentFlowParent`.
 - Task class and lifecycle state stored in Git config as `agentFlowTaskClass` and `agentFlowState`.
 - Git branches, worktrees, and commits managed by the developer.
@@ -140,6 +141,6 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Init and bootstrap scripts write into the current Git repository and refuse to run outside a Git repo.
 - Staging promotion and cleanup skills require explicit approval before destructive actions such as branch deletion or worktree removal.
 - Pull requests to protected branches require a distinct formal security review before PR creation.
-- `main` is production and direct agent changes are blocked by workflow. `staging` is optional, but protected/reserved when present.
+- `main` is a production PR target and direct local agent work is blocked by workflow. `staging` is local only when enabled and protected/reserved when present.
 - Optional local `pre-push` hooks call `check-push-readiness.sh` so parent branches are not pushed while child task worktrees are dirty or unmerged.
 - Generated docs and visuals must be grounded in source files, devlog entries, screenshots, or user-provided context.

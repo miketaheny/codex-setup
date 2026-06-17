@@ -74,9 +74,10 @@ Init runs the bootstrap step, then records local repo choices in `.agent-flow/co
 - that agents ask before merging by default
 - that formal security review is required before pull requests to `staging` or `main`
 - `development` as the SDLC integration branch
-- `main` as the production branch
+- `main` as the production PR target, not a local work branch
 - whether optional `staging` is used between `development` and `main`
-- `main` and `staging` as protected branch names for direct agent edits
+- `staging` as a local branch only when staging is enabled
+- `main`, configured `staging`, and reserved branch names as protected from direct agent edits
 - whether to install a local pre-push hook for child worktree readiness checks
 - a non-destructive `.gitignore` Agent-Flow block for local config, env files, OS/editor noise, logs, temp files, and personal IDE state
 
@@ -187,7 +188,7 @@ Use af-migrate-backlog-devlog to convert Backlog.md, backlog/, or .backlog task 
 ### Worktree reconciliation
 
 ```text
-Use af-reconcile-worktrees to audit worktrees, branches, and agent instruction conflicts before cleanup or release promotion.
+Use af-reconcile-worktrees to audit worktrees, branches, local protected branch policy, and agent instruction conflicts before cleanup or release promotion.
 ```
 
 ### Push readiness
