@@ -2,6 +2,8 @@
 
 This plan applies the `af-docs` visual interview to this Agent-Flow setup repo.
 
+`docs/DOCS-STRATEGY.md` is the source of truth for when to update visual docs, when to interview the user, and how `af-docs` should manage the docs folder over time.
+
 ## Assumptions
 
 | Question | Recommendation for this repo |

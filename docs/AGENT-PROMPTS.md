@@ -24,6 +24,18 @@ Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter file
 Use af-docs. Update project docs from devlog/ and recent commits before promoting development.
 ```
 
+## Existing docs stewardship
+
+```text
+Use af-docs. Inventory the existing docs, interview me in depth about audience, jobs, visual style, authoritative docs, and maintenance rules, then update useful docs in place and create docs/DOCS-STRATEGY.md so future docs updates can be managed from devlog/, commits, diffs, and repo evidence.
+```
+
+## Ongoing docs maintenance
+
+```text
+Use af-docs. Follow docs/DOCS-STRATEGY.md, then update docs/ from the latest devlog entries, commits, changed scripts, skills, templates, screenshots, and config. Do not repeat the full stewardship interview unless the strategy needs to change.
+```
+
 ## Visual docs
 
 ```text

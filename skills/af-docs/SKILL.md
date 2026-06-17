@@ -1,6 +1,6 @@
 ---
 name: af-docs
-description: Maintain project documentation and visual communication assets for Agent-Flow, including first-time backfill, ongoing updates from devlog/ and commits, diagrams, user guides, presentations, screenshots, demos, and marketing content. Use when docs need to explain, visualize, teach, sell, or operationalize a repo.
+description: Fully manage a repo's docs/ folder and visual communication assets for Agent-Flow, including one-time in-depth documentation stewardship setup, ongoing updates from devlog/ and commits, existing-doc updates, diagrams, user guides, presentations, screenshots, demos, and marketing content. Use when docs need to explain, visualize, teach, sell, operationalize, or stay current with code changes.
 ---
 
 # AF Docs Skill
@@ -9,13 +9,14 @@ Use this skill to keep project documentation accurate, visual, and useful as the
 
 ## Purpose
 
-Project docs should explain the current system, not just the latest code diff. This skill handles first-time documentation setup, ongoing maintenance, and visual assets that help users, maintainers, operators, and buyers understand the project.
+Project docs should explain the current system, not just the latest code diff. This skill owns the docs folder as a living product surface: first-time setup, existing-doc improvement, ongoing maintenance, and visual assets that help users, maintainers, operators, and buyers understand the project.
 
 ## When to Run
 
 Run this skill when:
 
 - a repo has missing, empty, or placeholder project docs
+- a repo has existing docs that need a one-time in-depth stewardship pass
 - meaningful work changed behavior, setup, architecture, security, deployment, or operations
 - recent devlog files or commits describe work that is not reflected in docs
 - the user asks to visualize a system, workflow, architecture, value proposition, or user journey
@@ -37,14 +38,76 @@ Recommended baseline:
 - `docs/SECURITY.md` - authentication, authorization, secret handling, trust boundaries, and reporting
 - `docs/USER-GUIDE.md` - task-based user instructions and walkthroughs
 - `docs/VISUALS.md` - visual asset plan, diagram inventory, screenshots, demos, and presentation recommendations
+- `docs/DOCS-STRATEGY.md` - one-time documentation stewardship decisions, audiences, doc map, visual style, and ongoing maintenance rules
 - `docs/decisions/` - durable architecture or workflow decisions
 - `docs/solutions/` - reusable fixes, patterns, and lessons worth finding later
 
 Only create files that are useful for the repo. Avoid boilerplate that cannot be grounded in code, configuration, or devlog history.
 
+## Existing Docs Stewardship Setup
+
+Use this mode once when adopting or overhauling a repo that already has docs. The goal is to make the existing docs accurate and manageable, not to archive them away.
+
+Do not repeat the full interview on future routine changes after `docs/DOCS-STRATEGY.md` exists, unless the user asks to revisit the docs strategy or the repo changes audience, product direction, platform, or documentation structure.
+
+### 1. Inventory before interviewing
+
+Read the current docs and classify each file:
+
+- Current and useful
+- Current but incomplete
+- Stale but recoverable
+- Duplicative or overlapping
+- Unknown accuracy
+- Candidate for removal or archive only with user approval
+
+Also inspect README, devlog entries, recent commits, scripts, templates, routes, APIs, tests, and configuration so interview questions are grounded in evidence.
+
+### 2. Interview in depth
+
+Ask targeted questions that affect doc structure, content, or visuals. Prefer 5-8 high-value questions in one pass instead of a long interrogation.
+
+Cover:
+
+- Audiences: maintainers, users, operators, contributors, buyers, support, executives, or agents?
+- Jobs: onboard, operate, troubleshoot, sell, train, audit, implement, or review?
+- Existing-doc policy: which docs are authoritative, which are confusing, which must be preserved?
+- Update style: terse reference, tutorial, runbook, conceptual guide, visual guide, stakeholder narrative?
+- Visual expectations: Mermaid, D2, screenshots, generated imagery, demo videos, slide outlines, PPTX, or no visuals?
+- Information architecture: preferred docs map, naming conventions, directories, and files to avoid.
+- Source of truth: code, product notes, devlog, tickets, screenshots, analytics, users, or domain experts?
+- Maintenance rules: what changes require docs, who reviews, and what validation is expected?
+
+If the user is unavailable and progress is expected, proceed with explicit assumptions and record them in `docs/DOCS-STRATEGY.md`.
+
+### 3. Update, do not just archive
+
+For existing docs:
+
+- Update useful docs in place.
+- Merge duplicated docs when one canonical file is clearer.
+- Split overloaded docs when separate guides reduce confusion.
+- Preserve important historical context in decisions, solutions, or devlog references.
+- Add redirects or "superseded by" notes when moving content.
+- Archive only when a doc is obsolete, actively misleading, and the user approves.
+
+### 4. Record the strategy
+
+Create or update `docs/DOCS-STRATEGY.md` with:
+
+- audiences and priorities
+- docs map and ownership model
+- visual style and diagram format decisions
+- existing docs inventory and decisions
+- ongoing maintenance triggers
+- validation expectations
+- open questions
+
+Future `af-docs` runs should use this file to manage `docs/` without repeating the full interview.
+
 ## Visual Interview
 
-When the user wants visualization or the audience is unclear, briefly interview them before producing major visual assets. Ask only the questions that materially change the result:
+When the user wants visualization or the audience is unclear, interview them before producing major visual assets. Ask only the questions that materially change the result:
 
 - Audience: internal operators, engineers, executives, customers, prospects, support, or new users?
 - Goal: explain how it works, teach usage, sell value, debug operations, onboard contributors, or support a launch?
@@ -91,6 +154,7 @@ Default to source-accurate Mermaid diagrams for technical docs. Use D2 when layo
 
 Read enough evidence to make factual updates:
 
+- `docs/DOCS-STRATEGY.md` when present
 - `devlog/*.md` files changed on the branch or created since the target branch diverged
 - recent commits, using `git log`, `git diff`, and `git show` when Git is available
 - README and existing `docs/`
@@ -110,14 +174,16 @@ If Git is unavailable, use the available filesystem state and devlog files, then
    - for branch work, compare against `development` or the intended merge base
    - for pre-promotion work, compare `development` against the protected target branch when available
    - when no range is available, read recent devlog files and representative project files
-4. Decide whether this is a backfill or maintenance pass.
-5. Update only the docs needed to make the repository accurate.
-6. Decide whether visual assets are needed using the Visual Artifact Recommendations table.
-7. Create or update diagrams, screenshots plans, user guides, presentations, or marketing content only when they improve understanding.
-8. Preserve human-written sections unless they are stale or contradicted by current evidence.
-9. Mark uncertain claims with HTML TODO comments instead of guessing.
-10. Run the lightest validation that fits the change, usually docs rendering, link checks, diagram rendering, screenshot verification, markdown linting, or targeted inspection.
-11. Summarize docs changed, visuals created or recommended, evidence used, validation, and remaining TODOs.
+4. Decide whether this is stewardship setup, backfill, or ongoing maintenance.
+5. If stewardship setup is needed, inventory existing docs, interview the user, update docs in place, and record `docs/DOCS-STRATEGY.md`.
+6. If `docs/DOCS-STRATEGY.md` exists and this is a routine change, skip the full interview and manage docs based on commits, devlog, diffs, and the recorded strategy.
+7. Update only the docs needed to make the repository accurate.
+8. Decide whether visual assets are needed using the Visual Artifact Recommendations table.
+9. Create or update diagrams, screenshots plans, user guides, presentations, or marketing content only when they improve understanding.
+10. Preserve human-written sections unless they are stale or contradicted by current evidence.
+11. Mark uncertain claims with HTML TODO comments instead of guessing.
+12. Run the lightest validation that fits the change, usually docs rendering, link checks, diagram rendering, screenshot verification, markdown linting, or targeted inspection.
+13. Summarize docs changed, visuals created or recommended, evidence used, validation, and remaining TODOs.
 
 ## Backfill Mode
 
@@ -144,7 +210,7 @@ For visual backfills, usually create:
 
 Use maintenance mode when docs already contain useful project-specific content.
 
-Start with the newest relevant devlog files and commits. For each change, decide whether docs need updates:
+Start with `docs/DOCS-STRATEGY.md` when present, then read the newest relevant devlog files and commits. For each change, decide whether docs need updates:
 
 - Behavior changed: update requirements, README usage, API docs, or user workflow docs.
 - Components changed: update architecture diagrams, component tables, data flow, or integration notes.
@@ -157,6 +223,14 @@ Start with the newest relevant devlog files and commits. For each change, decide
 - Product positioning changed: update marketing copy, pitch outline, screenshots, and presentation recommendations.
 
 Do not rewrite established docs wholesale when a narrow patch is enough.
+
+After stewardship setup, `af-docs` should fully manage `docs/` through ongoing maintenance:
+
+- Update docs from changed code, devlog entries, commits, screenshots, scripts, and config.
+- Keep diagrams, guides, runbooks, pitch material, and demo plans aligned with current behavior.
+- Ask concise clarification questions only when a change violates or exceeds the recorded docs strategy.
+- Avoid another full interview unless the user requests it or the repo's audience/product direction changes.
+- Do not treat archiving as maintenance. Prefer updating, merging, splitting, or superseding docs in place.
 
 ## Presentation and Marketing Mode
 

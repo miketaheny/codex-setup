@@ -71,6 +71,10 @@ Use one Markdown file per commit, or one file for the planned squash commit when
 
 Update project docs when behavior, setup, architecture, security, deployment, or operations change.
 
+Use `af-docs` for initial documentation stewardship and ongoing docs maintenance. For repos with existing docs, the first stewardship pass should inventory current docs, interview the user about audiences and visual style, update useful docs in place, and record the maintenance contract in `docs/DOCS-STRATEGY.md`.
+
+After `docs/DOCS-STRATEGY.md` exists, `af-docs` should fully manage `docs/` from devlog files, commits, diffs, scripts, templates, skills, screenshots, and config changes. Do not repeat the full interview for routine changes unless the user asks or the repo's audience, product direction, or documentation structure changes.
+
 Use `af-docs` to decide which visual assets are worth creating: Mermaid or D2 diagrams, screenshots, demo videos, user guides, presentation outlines, product one-pagers, or marketing content.
 
 Run `af-docs` before pushing or promoting `development` to protected branches such as `staging`, `main`, release, or production branches.

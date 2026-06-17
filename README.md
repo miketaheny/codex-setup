@@ -80,6 +80,8 @@ It will not overwrite existing files.
 
 ## Documentation Map
 
+- [Changelog](CHANGELOG.md) - user-facing workflow, docs, skill, and setup changes.
+- [Documentation Strategy](docs/DOCS-STRATEGY.md) - how `af-docs` owns ongoing docs maintenance, interview setup, visuals, and validation.
 - [Workflow](docs/WORKFLOW.md) - branch model, daily loop, migration, and staging promotion.
 - [Architecture](docs/ARCHITECTURE.md) - system map, install flow, bootstrap flow, and skill routing diagrams.
 - [User Guide](docs/USER-GUIDE.md) - install, bootstrap, skill selection, migration, visual docs, and staging usage.
@@ -118,6 +120,12 @@ Use af-devlog to add a per-commit devlog entry under devlog/.
 
 ```text
 Use af-docs to update project docs from the latest devlog entries and commits before promoting development.
+```
+
+### Existing docs stewardship
+
+```text
+Use af-docs to run a one-time in-depth interview for this repo's existing docs, update useful docs in place, and write docs/DOCS-STRATEGY.md so future changes can be maintained from evidence without repeating the full interview.
 ```
 
 ### Visual docs and content
