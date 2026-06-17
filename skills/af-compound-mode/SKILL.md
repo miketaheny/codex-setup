@@ -22,6 +22,8 @@ Get the benefit of deeper planning and review without making every small fix slo
 | Risky/broad feature | heavier planning/review workflow |
 | Multi-agent exploration | heavier multi-agent workflow |
 | Reusable lesson | project docs or solution note |
+| Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
+| Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
 | Before merge | `af-review-gate` |
 | Before staging promotion | `af-reconcile-worktrees -> af-docs -> af-push-staging` |

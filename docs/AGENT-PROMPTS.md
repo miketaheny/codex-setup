@@ -24,6 +24,18 @@ Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter file
 Use af-docs. Update project docs from devlog/ and recent commits before promoting development.
 ```
 
+## Visual docs
+
+```text
+Use af-docs. Interview me about the audience, style, and format, then recommend and create useful diagrams, guides, screenshots, demo plans, presentations, and marketing content.
+```
+
+## Backlog migration
+
+```text
+Use af-migrate-backlog-devlog. Dry-run a migration from Backlog.md, backlog/, or .backlog task files to devlog entries, show me the plan, then write entries after approval.
+```
+
 ## Reconcile worktrees
 
 ```text

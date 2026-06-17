@@ -8,9 +8,10 @@ Recommended flow:
 2. Create a branch or worktree.
 3. Use the lightest safe skill.
 4. Add a per-commit devlog entry under `devlog/`.
-5. Update project docs when behavior, setup, architecture, security, deployment, or operations change.
+5. Update project docs and useful visual assets when behavior, setup, architecture, security, deployment, operations, onboarding, demos, or marketing needs change.
 6. Run docs maintenance before promoting `development` to protected branches.
-7. Run `af-review-gate`.
-8. Merge into `development`.
-9. Run `af-reconcile-worktrees` before cleanup or staging promotion.
-10. Run `af-push-staging` when ready to promote `development` to `staging`.
+7. Use `af-migrate-backlog-devlog` before removing legacy Backlog task files.
+8. Run `af-review-gate`.
+9. Merge into `development`.
+10. Run `af-reconcile-worktrees` before cleanup or staging promotion.
+11. Run `af-push-staging` when ready to promote `development` to `staging`.

@@ -17,7 +17,7 @@ fi
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-mkdir -p docs/decisions docs/solutions docs/plans devlog
+mkdir -p docs/decisions docs/solutions docs/plans docs/diagrams docs/assets docs/presentations devlog
 
 copy_if_missing() {
   local src="$1"

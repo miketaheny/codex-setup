@@ -57,6 +57,8 @@ Open one agent session per worktree.
 | Normal feature | plan -> work -> `af-review-gate` |
 | Risky/broad feature | heavier planning/review workflow |
 | Reusable lesson | project docs update or `af-devlog` |
+| Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
+| Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
 | Before merge | `af-review-gate` |
 | Before staging promotion | `af-reconcile-worktrees` -> `af-docs` -> `af-push-staging` |
@@ -69,7 +71,13 @@ Use one Markdown file per commit, or one file for the planned squash commit when
 
 Update project docs when behavior, setup, architecture, security, deployment, or operations change.
 
+Use `af-docs` to decide which visual assets are worth creating: Mermaid or D2 diagrams, screenshots, demo videos, user guides, presentation outlines, product one-pagers, or marketing content.
+
 Run `af-docs` before pushing or promoting `development` to protected branches such as `staging`, `main`, release, or production branches.
+
+## Backlog Migration
+
+Use `af-migrate-backlog-devlog` when a repo still has `Backlog.md`, `triage.md`, `backlog/`, or `.backlog/` files. Run its dry-run first, review the generated devlog plan, then write entries before deleting any legacy task store.
 
 ## Staging Promotion
 

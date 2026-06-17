@@ -1,0 +1,56 @@
+# Agent-Flow Overview Presentation
+
+## Slide 1: Agent-Flow
+
+Shared workflow rules for Claude, Codex, and other coding agents.
+
+Visual: simple flow from developer to agents to protected Git workflow.
+
+## Slide 2: The Problem
+
+Unstructured agent sessions can drift across branches, skip docs, overwrite parallel work, and leave weak handoff records.
+
+Visual: before/after comparison.
+
+## Slide 3: The Core Loop
+
+Start from `development`, isolate work, validate, write devlog, update docs, review, merge back.
+
+Visual: Mermaid loop from `docs/USER-GUIDE.md`.
+
+## Slide 4: Agent-Agnostic Instructions
+
+`AGENT-FLOW.md` is canonical. `AGENTS.md` and `CLAUDE.md` are adapters.
+
+Visual: hub-and-spoke diagram.
+
+## Slide 5: Skills and Scripts
+
+AF skills cover small changes, worktrees, docs, devlogs, review, reconciliation, staging, and Backlog migration.
+
+Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
+
+## Slide 6: Documentation and Visuals
+
+Agent-Flow requires devlog entries and recommends docs, diagrams, screenshots, demos, and presentation materials when they improve understanding.
+
+Visual: docs artifact matrix.
+
+## Slide 7: Demo Flow
+
+Install, bootstrap a repo, inspect generated instruction files, migrate a sample task, run a review snapshot.
+
+Visual: terminal screenshot sequence.
+
+## Slide 8: Why It Matters
+
+Agent-Flow makes agent-assisted solo development more consistent, reviewable, and easier to hand off.
+
+Visual: concise outcome list.
+
+## Production Notes
+
+- Start with this Markdown outline.
+- Convert to PPTX only after the audience and visual style are confirmed.
+- Use real terminal screenshots for credibility.
+- Add generated imagery only for a marketing version, not for the technical overview.

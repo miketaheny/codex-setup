@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Migrate Backlog Devlog"
+  short_description: "Convert Backlog files into devlog entries"
+  default_prompt: "Use $af-migrate-backlog-devlog to convert Backlog.md, backlog/, or .backlog task files into devlog entries."

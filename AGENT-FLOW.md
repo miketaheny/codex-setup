@@ -10,7 +10,7 @@ Make agent-assisted solo development safe and consistent across Claude, Codex, a
 - no direct work on protected branches
 - merge-back to `development` only
 - per-commit devlog files under `devlog/`
-- maintained project documentation
+- maintained project documentation and useful visual assets
 - review before merge
 - heavier multi-step workflows only when the task deserves them
 
@@ -84,7 +84,7 @@ Each devlog file should include:
 - review result
 - follow-ups or known risks
 
-Update project docs when the change affects:
+Update project docs and useful visual assets when the change affects:
 
 - UI or user-facing behavior
 - public API behavior
@@ -93,6 +93,7 @@ Update project docs when the change affects:
 - database/schema behavior
 - security/privacy/compliance behavior
 - operational workflows
+- onboarding, demos, presentations, screenshots, or marketing communication
 
 Run project docs maintenance before pushing or promoting `development` to protected branches such as `staging`, `main`, release, or production branches.
 
@@ -139,6 +140,6 @@ A task is done when:
 - changes are implemented in a feature branch/worktree when Git is already initialized
 - validation has been run or documented as unavailable
 - a per-commit devlog file exists under `devlog/`
-- affected project docs are updated
+- affected project docs and visual assets are updated
 - review has been performed for merge-ready work
 - the final response includes what changed, validation, docs updated, and merge status

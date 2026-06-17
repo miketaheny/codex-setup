@@ -14,6 +14,7 @@ A clean Agent-Flow setup for solo development with Claude, Codex, and other codi
   - `af-review-gate`
   - `af-devlog`
   - `af-docs`
+  - `af-migrate-backlog-devlog`
   - `af-reconcile-worktrees`
   - `af-push-staging`
   - `af-compound-mode`
@@ -71,8 +72,21 @@ This creates missing repo files:
 - `docs/decisions/`
 - `docs/solutions/`
 - `docs/plans/`
+- `docs/diagrams/`
+- `docs/assets/`
+- `docs/presentations/`
 
 It will not overwrite existing files.
+
+## Documentation Map
+
+- [Workflow](docs/WORKFLOW.md) - branch model, daily loop, migration, and staging promotion.
+- [Architecture](docs/ARCHITECTURE.md) - system map, install flow, bootstrap flow, and skill routing diagrams.
+- [User Guide](docs/USER-GUIDE.md) - install, bootstrap, skill selection, migration, visual docs, and staging usage.
+- [Visual Plan](docs/VISUALS.md) - diagram inventory, screenshot checklist, demo video plan, and content recommendations.
+- [Demo Plan](docs/DEMO.md) - live demo and recording script.
+- [Pitch](docs/PITCH.md) - positioning, value props, objections, and marketing recommendations.
+- [Prompt Examples](docs/AGENT-PROMPTS.md) - reusable prompts for Agent-Flow work.
 
 ## Recommended Daily Usage
 
@@ -104,6 +118,18 @@ Use af-devlog to add a per-commit devlog entry under devlog/.
 
 ```text
 Use af-docs to update project docs from the latest devlog entries and commits before promoting development.
+```
+
+### Visual docs and content
+
+```text
+Use af-docs to recommend and create diagrams, user guides, demo plans, presentations, screenshots, and marketing content for this project.
+```
+
+### Backlog migration
+
+```text
+Use af-migrate-backlog-devlog to convert Backlog.md, backlog/, or .backlog task files into devlog entries before removing old task stores.
 ```
 
 ### Worktree reconciliation

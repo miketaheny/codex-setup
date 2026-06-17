@@ -21,6 +21,14 @@ echo "== Diff stat against $BASE =="
 git diff --stat "$BASE"...HEAD || true
 
 echo
+echo "== Staged diff stat =="
+git diff --cached --stat || true
+
+echo
+echo "== Working tree diff stat =="
+git diff --stat || true
+
+echo
 echo "== Recent commits =="
 git log --oneline --decorate --max-count=10 "$BASE"..HEAD || true
 
