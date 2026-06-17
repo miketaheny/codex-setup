@@ -1,0 +1,28 @@
+# 2026-06-17 - add gitignore init policy
+
+- Branch/worktree: `chore/gitignore-init-policy` / `/Users/taheny/vault/teamt/codex-setup-gitignore-init-policy`
+- Commit: `pending`
+- Goal: Ensure Agent-Flow init gives every repo a valid, non-destructive `.gitignore` policy and documents when IDE-specific config should be committed.
+- Summary:
+  - Added a reusable Agent-Flow `.gitignore` block template.
+  - Updated `init-repo.sh` to create or append the block without overwriting existing rules.
+  - Documented IDE policy: commit shared project tooling settings only, not personal preferences.
+- Files changed:
+  - `templates/repo-gitignore-block` - shared ignore block for init.
+  - `scripts/init-repo.sh` - appends or creates `.gitignore` policy.
+  - `.gitignore` - applies the Agent-Flow block to this repo.
+  - `AGENT-FLOW.md`, `templates/repo-AGENT-FLOW.md`, `README.md`, `docs/` - document gitignore and IDE rules.
+  - `CHANGELOG.md` - records the workflow change.
+- Decisions:
+  - Use marker comments so init is idempotent and does not duplicate the block.
+  - Ignore IDE folders by default while allowlisting curated VS Code project files.
+  - Treat personal editor preferences as local state, not project history.
+- Validation:
+  - `bash -n scripts/*.sh` - passed.
+  - `git diff --check` - passed.
+  - `init-repo.sh --yes --no-staging --no-hooks` in a temporary repo without `.gitignore` - passed; created `.gitignore` with one Agent-Flow block and remained idempotent after `--force`.
+  - `init-repo.sh --yes --no-staging --no-hooks` in a temporary repo with existing `node_modules/` ignore - passed; preserved existing rule and appended the Agent-Flow block.
+- Review:
+  - No P1/P2 issues found in the script and docs diff.
+- Risks / follow-ups:
+  - Stack-specific ignore rules are intentionally out of scope for the generic Agent-Flow block.

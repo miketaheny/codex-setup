@@ -45,9 +45,15 @@ Init creates missing bootstrap files, then records local choices in `.agent-flow
 - `docs/assets/`
 - `docs/presentations/`
 
-The script asks whether to disable Agent-Flow enforcement for this repo, whether the repo uses optional `staging`, and whether to install a local pre-push hook. If staging is disabled, the local agent adapters note that agents should not assume a staging branch.
+The script asks whether to disable Agent-Flow enforcement for this repo, whether the repo uses optional `staging`, and whether to install a local pre-push hook. It also creates or appends a non-destructive Agent-Flow `.gitignore` block. If staging is disabled, the local agent adapters note that agents should not assume a staging branch.
 
 Use `bootstrap-repo.sh` only when you want to copy missing files without recording first-contact repo choices.
+
+Gitignore and IDE defaults:
+
+- `.gitignore` should ignore local Agent-Flow overrides, env files, OS/editor noise, logs, temp files, and personal IDE state.
+- `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, and `.vscode/settings.json` may be committed only when they encode shared project tooling.
+- Personal IDE preferences such as themes, window titles, UI layout, local paths, or machine-specific interpreters should stay untracked.
 
 Branch defaults:
 

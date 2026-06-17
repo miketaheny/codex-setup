@@ -64,7 +64,7 @@ Capture these after the next local install test:
 - `~/.agent-flow` tree view
 - `~/.codex/skills` showing AF skills
 - `~/.agent-flow/scripts/init-repo.sh` output in a sample repo
-- generated `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `devlog/README.md`
+- generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `devlog/README.md`
 - generated `.git/hooks/pre-push`
 - `start-task.sh` output showing parent branch and task class
 - `finish-task.sh` output showing `ASK_USER_MERGE`
