@@ -28,3 +28,7 @@ protected_branches = ["main", "staging"]
 # Documentation gates.
 devlog = "required-for-changes"
 docs = "required-when-impacted"
+
+# Protected release gates.
+formal_security_review = "required-before-protected-pr"
+security_review_pr_bases = ["staging", "main"]

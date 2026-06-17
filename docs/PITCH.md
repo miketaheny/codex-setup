@@ -2,7 +2,7 @@
 
 ## Positioning
 
-Agent-Flow is a lightweight workflow kit for solo developers using AI coding agents. It standardizes branch safety, worktree isolation, devlog history, documentation maintenance, and review gates across Claude, Codex, and other agents.
+Agent-Flow is a lightweight workflow kit for solo developers using AI coding agents. It standardizes branch safety, worktree isolation, devlog history, documentation maintenance, review gates, and formal protected-branch security review across Claude, Codex, and other agents.
 
 ## Audience
 
@@ -30,17 +30,17 @@ Agent-Flow provides:
 
 - Agent-neutral canonical instructions exist in `AGENT-FLOW.md`.
 - Codex and Claude adapters point to the same rules.
-- Skills cover small changes, worktrees, docs, devlogs, review, reconciliation, release promotion, and Backlog migration.
+- Skills cover small changes, worktrees, docs, devlogs, review, security review, reconciliation, release promotion, and Backlog migration.
 - Bootstrap scripts create consistent repo instruction and documentation scaffolding.
 - Visual docs now include architecture diagrams, a user guide, demo plan, and presentation outline.
 
 ## Short Pitch
 
-Agent-Flow gives every AI coding agent the same operating system for solo development: safe branches, isolated work, devlog history, documentation updates, review before merge, and push checks before branch promotion.
+Agent-Flow gives every AI coding agent the same operating system for solo development: safe branches, isolated work, devlog history, documentation updates, review before merge, formal security review before protected-branch PRs, and push checks before branch promotion.
 
 ## Longer Pitch
 
-Agent-Flow is a portable setup for developers who use multiple AI coding agents across multiple repos. It defines one canonical workflow, installs adapters for agent-specific instruction files, adds reusable AF skills, and provides scripts that make safe branch and worktree habits repeatable. The result is a lower-friction development loop where every task leaves a readable history and every merge gets a review gate.
+Agent-Flow is a portable setup for developers who use multiple AI coding agents across multiple repos. It defines one canonical workflow, installs adapters for agent-specific instruction files, adds reusable AF skills, and provides scripts that make safe branch and worktree habits repeatable. The result is a lower-friction development loop where every task leaves a readable history, every merge gets a review gate, and protected-branch PRs get a distinct security gate.
 
 ## Objections and Responses
 

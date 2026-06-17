@@ -1,6 +1,6 @@
 ---
 name: af-push-staging
-description: Promote `development` safely through the configured release path. Use when the user asks to push staging, promote development to staging or main, reconcile worktrees before release promotion, or prepare a staging-to-main or development-to-main pull request.
+description: Promote `development` safely through the configured release path with validation and formal security review. Use when the user asks to push staging, promote development to staging or main, reconcile worktrees before release promotion, or prepare a staging-to-main or development-to-main pull request.
 ---
 
 # AF Push Staging Skill
@@ -18,6 +18,8 @@ Use this skill to move completed work from `development` through the repo's conf
 - Never delete branches or remove worktrees without explicit approval for each path or branch.
 - Never resolve merge conflicts destructively without the user's approval.
 - Do not switch away from a dirty worktree unless the changes are understood and preserved.
+- Do not create or offer a pull request to `staging` or `main` until `af-security-review` has passed for that target.
+- When staging is updated by direct release push, run the same formal security review before that protected push.
 - Offer a `staging` to `main` pull request only after `development` and `staging` push successfully.
 - When staging is disabled, offer a `development` to `main` pull request after `development` pushes successfully.
 
@@ -91,7 +93,24 @@ scripts/check-push-readiness.sh development
 
 Do not push while any child task worktree from `development` is dirty or unmerged.
 
-### 5. Merge `development` into `staging` when enabled
+### 5. Run formal security review before staging promotion
+
+Use `af-security-review` when available. This is required before creating any pull request whose base is `staging`, and before a direct protected release push to `staging`.
+
+If `staging_enabled = true` and `staging` does not exist, stop and report the branch state before attempting the security review.
+
+For the default direct staging promotion path, review:
+
+```text
+base = staging
+head = development
+```
+
+If `staging_enabled = false`, skip this staging-target review.
+
+Do not merge or push to `staging` while SEC-P1 findings remain open. Do not proceed with SEC-P2 findings unless the user explicitly accepts the risk.
+
+### 6. Merge `development` into `staging` when enabled
 
 Run:
 
@@ -105,7 +124,7 @@ If `staging_enabled = false`, skip this step and do not create or use `staging`.
 
 If `staging_enabled = true` and `staging` does not exist, stop and report the branch state. If conflicts occur, stop, list conflicted files, and ask before resolving.
 
-### 6. Push release branches
+### 7. Push release branches
 
 After the merge succeeds and `git status --short` is clean:
 
@@ -116,9 +135,31 @@ AF_ALLOW_RELEASE_PUSH=1 git push origin staging
 
 When staging is disabled, push only `development`. If any push is rejected, stop and report the exact rejection. Do not force-push.
 
-### 7. Offer the main PR
+### 8. Run formal security review before the main PR
 
-After required pushes succeed, ask whether to create the pull request to `main`. Do not create it until the user explicitly agrees.
+Before asking to create a pull request whose base is `main`, run `af-security-review` when available.
+
+Use:
+
+```text
+base = main
+head = staging
+```
+
+when staging is enabled. Use:
+
+```text
+base = main
+head = development
+```
+
+when staging is disabled.
+
+Do not create or offer the `main` pull request while SEC-P1 findings remain open. Do not create or offer it with SEC-P2 findings unless the user explicitly accepts the risk.
+
+### 9. Offer the main PR
+
+After required pushes and the formal security review succeed, ask whether to create the pull request to `main`. Do not create it until the user explicitly agrees.
 
 Use the available GitHub tooling or:
 
@@ -136,6 +177,7 @@ Report:
 - commits created on `development`
 - worktrees or branches merged, removed, skipped, or awaiting approval
 - validation run and results
+- formal security review target, result, and accepted risks if any
 - whether `development` and optional `staging` pushed successfully
 - whether a `staging` to `main` or `development` to `main` PR was offered or created
 - remaining user decisions

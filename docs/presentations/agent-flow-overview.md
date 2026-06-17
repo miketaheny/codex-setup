@@ -26,7 +26,7 @@ Visual: hub-and-spoke diagram.
 
 ## Slide 5: Skills and Scripts
 
-AF skills cover small changes, worktrees, docs, devlogs, review, reconciliation, release promotion, and Backlog migration.
+AF skills cover small changes, worktrees, docs, devlogs, review, security review, reconciliation, release promotion, and Backlog migration.
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 

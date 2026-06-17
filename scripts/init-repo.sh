@@ -222,6 +222,9 @@ protected_branches = $PROTECTED
 
 devlog = "required-for-changes"
 docs = "required-when-impacted"
+
+formal_security_review = "required-before-protected-pr"
+security_review_pr_bases = ["staging", "main"]
 EOF
 
 append_local_choices() {

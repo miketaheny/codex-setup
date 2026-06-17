@@ -26,7 +26,8 @@ Get the benefit of deeper planning and review without making every small fix slo
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
 | Before merge | `af-review-gate` |
-| Before release promotion | `af-reconcile-worktrees -> af-docs -> af-push-staging` |
+| Before protected-branch PR | `af-security-review` |
+| Before release promotion | `af-reconcile-worktrees -> af-docs -> af-push-staging` with `af-security-review` |
 
 ## When a Heavier Workflow Is Worth It
 

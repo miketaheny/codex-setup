@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Security Review"
+  short_description: "Formal protected-branch security gate"
+  default_prompt: "Use $af-security-review before creating a PR to staging or main."

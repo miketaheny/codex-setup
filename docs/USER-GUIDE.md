@@ -60,6 +60,7 @@ Branch defaults:
 - Task worktrees branch from the checked-out parent branch and merge back there.
 - File-changing prompts use task worktrees.
 - Agents ask before merge by default.
+- Formal security review is required before protected-branch pull requests to `staging` or `main`.
 - `development` is the SDLC integration branch.
 - `main` is production and agents must not edit it directly.
 - `staging` is optional in the release path, and direct edits to a branch named `staging` are blocked.
@@ -92,6 +93,7 @@ flowchart LR
 | Project docs, diagrams, guides, demos, decks, or marketing content | `af-docs` |
 | Convert legacy Backlog task files to devlog entries | `af-migrate-backlog-devlog` |
 | Review before merge | `af-review-gate` |
+| Formal security review before protected-branch PRs | `af-security-review` |
 | Audit worktrees and branch cleanup candidates | `af-reconcile-worktrees` |
 | Promote `development` through release path | `af-push-staging` |
 | Decide whether a heavier workflow is needed | `af-compound-mode` |
@@ -155,10 +157,10 @@ Good defaults for Agent-Flow repos:
 Use this sequence:
 
 ```text
-af-reconcile-worktrees -> af-docs -> af-push-staging
+af-reconcile-worktrees -> af-docs -> af-push-staging with af-security-review
 ```
 
-The flow checks worktree state, updates docs, and validates `development`. With staging enabled, it merges to `staging`, pushes `development` and `staging`, and asks before creating a `staging` to `main` pull request. With staging disabled, it pushes `development` and asks before creating a `development` to `main` pull request.
+The flow checks worktree state, updates docs, validates `development`, and runs formal security review before protected-branch promotion or PR creation. With staging enabled, it reviews `development` to `staging`, merges to `staging`, pushes `development` and `staging`, then reviews `staging` to `main` before asking to create the main pull request. With staging disabled, it pushes `development`, reviews `development` to `main`, and asks before creating a `development` to `main` pull request.
 
 Before pushing any parent branch, run:
 

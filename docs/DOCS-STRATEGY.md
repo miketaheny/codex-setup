@@ -39,7 +39,7 @@ Docs should help readers:
 - install the global Agent-Flow setup
 - initialize or bootstrap new repositories
 - choose the correct AF skill for a task
-- understand prompt classification, branch, worktree, devlog, review, merge, push-readiness, and release promotion rules
+- understand prompt classification, branch, worktree, devlog, review, formal security review, merge, push-readiness, and release promotion rules
 - migrate legacy backlog/task stores into `devlog/`
 - understand how the setup stays agent-agnostic
 - visualize architecture, skill routing, and daily workflows
@@ -89,7 +89,7 @@ Run `af-docs` when changes affect:
 - skills under `skills/`
 - agent adapters such as `AGENTS.md`, `CLAUDE.md`, or `AGENT-FLOW.md`
 - templates copied into target repos
-- prompt lifecycle, branch, worktree, devlog, review, merge, push-readiness, or release promotion workflows
+- prompt lifecycle, branch, worktree, devlog, review, formal security review, merge, push-readiness, or release promotion workflows
 - backlog migration behavior
 - visual documentation, demo, presentation, or marketing guidance
 - README navigation or setup commands

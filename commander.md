@@ -14,4 +14,5 @@ Recommended flow:
 8. Run `af-review-gate`.
 9. Merge into `development`.
 10. Run `af-reconcile-worktrees` before cleanup or staging promotion.
-11. Run `af-push-staging` when ready to promote `development` to `staging`.
+11. Run `af-security-review` before protected-branch PRs or direct staging promotion.
+12. Run `af-push-staging` when ready to promote `development` to `staging`.

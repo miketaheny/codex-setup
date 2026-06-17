@@ -64,6 +64,7 @@ TODO
 - Add reusable patterns to `docs/solutions/`.
 - Add architectural decisions to `docs/decisions/`.
 - Run docs maintenance before pushing or promoting `development` to optional `staging` or `main`.
+- Run formal security review before creating a pull request to `staging` or `main`.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
 ## Gitignore and IDE Files
@@ -82,3 +83,9 @@ Before merge:
 - update docs
 - run `af-review-gate`
 - resolve P1 findings
+
+Before protected-branch PRs:
+
+- run `af-security-review`
+- resolve SEC-P1 findings
+- resolve SEC-P2 findings or record explicit user risk acceptance
