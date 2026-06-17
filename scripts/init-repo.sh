@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_HOME="$(cd "$SCRIPT_DIR/.." && pwd)"
+AF_HOME="${AF_HOME:-${AGENT_FLOW_HOME:-$HOME/.agent-flow}}"
+
+if [ ! -d "$AF_HOME/templates" ]; then
+  AF_HOME="$SCRIPT_HOME"
+fi
+
+FORCE=0
+YES=0
+MODE=""
+STAGING_CHOICE=""
+HOOKS_CHOICE=""
+INTEGRATION_BRANCH="development"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --force)
+      FORCE=1
+      ;;
+    --yes)
+      YES=1
+      ;;
+    --disabled)
+      MODE="disabled"
+      ;;
+    --enforced)
+      MODE="enforced"
+      ;;
+    --staging)
+      STAGING_CHOICE="true"
+      ;;
+    --no-staging)
+      STAGING_CHOICE="false"
+      ;;
+    --install-hooks)
+      HOOKS_CHOICE="true"
+      ;;
+    --no-hooks)
+      HOOKS_CHOICE="false"
+      ;;
+    --integration-branch)
+      shift
+      if [ "$#" -eq 0 ]; then
+        echo "Error: --integration-branch requires a branch name." >&2
+        exit 2
+      fi
+      INTEGRATION_BRANCH="$1"
+      ;;
+    -h|--help)
+      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--integration-branch <branch>]" >&2
+      exit 0
+      ;;
+    *)
+      echo "Error: unknown argument: $1" >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+  echo "Error: run this inside a git repository." >&2
+  exit 1
+fi
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+CONFIG_DIR=".agent-flow"
+CONFIG_FILE="$CONFIG_DIR/config.toml"
+
+prompt_yes_no() {
+  local question="$1"
+  local default="$2"
+  local answer
+
+  if [ "$YES" -eq 1 ]; then
+    printf '%s\n' "$default"
+    return
+  fi
+
+  if [ "$default" = "yes" ]; then
+    read -r -p "$question [Y/n] " answer
+    case "${answer:-Y}" in
+      y|Y|yes|YES) printf '%s\n' "yes" ;;
+      *) printf '%s\n' "no" ;;
+    esac
+  else
+    read -r -p "$question [y/N] " answer
+    case "${answer:-N}" in
+      y|Y|yes|YES) printf '%s\n' "yes" ;;
+      *) printf '%s\n' "no" ;;
+    esac
+  fi
+}
+
+if [ -f "$CONFIG_FILE" ] && [ "$FORCE" -ne 1 ]; then
+  echo "Agent-Flow already initialized: $CONFIG_FILE"
+  echo "Use --force to rewrite repo choices."
+  exit 0
+fi
+
+AF_BOOTSTRAP_SUPPRESS_INIT_HINT=1 "$SCRIPT_DIR/bootstrap-repo.sh"
+mkdir -p "$CONFIG_DIR"
+
+if [ -z "$MODE" ]; then
+  disable="$(prompt_yes_no "Disable Agent-Flow enforcement for this repo?" "no")"
+  if [ "$disable" = "yes" ]; then
+    MODE="disabled"
+  else
+    MODE="enforced"
+  fi
+fi
+
+if [ -z "$STAGING_CHOICE" ]; then
+  if [ "$MODE" = "disabled" ]; then
+    STAGING_CHOICE="false"
+  else
+    staging_answer="$(prompt_yes_no "Does this repo use a staging branch between development and main?" "no")"
+    if [ "$staging_answer" = "yes" ]; then
+      STAGING_CHOICE="true"
+    else
+      STAGING_CHOICE="false"
+    fi
+  fi
+fi
+
+if [ "$MODE" = "disabled" ]; then
+  ENABLED="false"
+else
+  ENABLED="true"
+fi
+
+if [ -z "$HOOKS_CHOICE" ]; then
+  if [ "$MODE" = "disabled" ]; then
+    HOOKS_CHOICE="false"
+  else
+    hooks_answer="$(prompt_yes_no "Install a local pre-push hook to check child task worktrees before push?" "yes")"
+    if [ "$hooks_answer" = "yes" ]; then
+      HOOKS_CHOICE="true"
+    else
+      HOOKS_CHOICE="false"
+    fi
+  fi
+fi
+
+PROTECTED='["main", "staging"]'
+FLOW="development -> main"
+STAGING_NOTE="Staging: disabled. Do not assume a staging branch unless .agent-flow/config.toml changes."
+if [ "$STAGING_CHOICE" = "true" ]; then
+  FLOW="development -> staging -> main"
+  STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only for promotion/release flow."
+fi
+
+cat > "$CONFIG_FILE" <<EOF
+version = 1
+enabled = $ENABLED
+mode = "$MODE"
+
+task_base = "checked-out"
+task_merge_target = "parent"
+worktrees = "required-for-changes"
+
+merge_prompt = "always"
+auto_commit = "finish"
+dirty_parent_policy = "review-and-commit"
+devlog_filename = "date-subject"
+auto_merge = "off"
+large_task_parent_branch = "ask"
+pre_push_worktree_check = true
+pre_push_hook_installed = $HOOKS_CHOICE
+
+integration_branch = "$INTEGRATION_BRANCH"
+production_branch = "main"
+staging_enabled = $STAGING_CHOICE
+staging_branch = "staging"
+reserved_branch_names = ["master", "production", "prod"]
+protected_branches = $PROTECTED
+
+devlog = "required-for-changes"
+docs = "required-when-impacted"
+EOF
+
+append_local_choices() {
+  local file="$1"
+
+  if [ ! -f "$file" ]; then
+    return
+  fi
+
+  if grep -q "agent-flow-local-start" "$file"; then
+    return
+  fi
+
+  cat >> "$file" <<EOF
+
+<!-- agent-flow-local-start -->
+## Agent-Flow Local Repo Choices
+
+- Enforcement: $MODE via \`.agent-flow/config.toml\`.
+- Task worktrees branch from the checked-out parent branch and merge back there after review.
+- Merge behavior: ask before merge by default; auto-merge is off unless config changes.
+- Push behavior: check child task worktrees before pushing a parent branch.
+- Pre-push hook installed: $HOOKS_CHOICE.
+- SDLC flow: $FLOW. \`main\` is production.
+- $STAGING_NOTE
+- Legacy branch names \`master\`, \`production\`, and \`prod\` are reserved and should not be used as mainline branches.
+<!-- agent-flow-local-end -->
+EOF
+}
+
+append_local_choices "AGENTS.md"
+append_local_choices "CLAUDE.md"
+
+if [ "$HOOKS_CHOICE" = "true" ]; then
+  AF_HOME="$AF_HOME" "$SCRIPT_DIR/install-hooks.sh"
+fi
+
+echo "Agent-Flow initialized at $ROOT"
+echo "Config: $CONFIG_FILE"
+echo "Mode: $MODE"
+echo "Flow: $FLOW"
+echo "Pre-push hook: $HOOKS_CHOICE"

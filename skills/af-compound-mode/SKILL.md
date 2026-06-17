@@ -19,14 +19,14 @@ Get the benefit of deeper planning and review without making every small fix slo
 | Small known bug | `af-small-change` or a focused work pass |
 | Small bug with side effects | brief plan -> work -> `af-review-gate` |
 | Normal feature | plan -> work -> code review |
-| Risky/broad feature | heavier planning/review workflow |
+| Risky/broad feature | ask about a feature parent branch -> heavier planning/review workflow |
 | Multi-agent exploration | heavier multi-agent workflow |
 | Reusable lesson | project docs or solution note |
 | Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
 | Before merge | `af-review-gate` |
-| Before staging promotion | `af-reconcile-worktrees -> af-docs -> af-push-staging` |
+| Before release promotion | `af-reconcile-worktrees -> af-docs -> af-push-staging` |
 
 ## When a Heavier Workflow Is Worth It
 
@@ -55,10 +55,12 @@ Allowed only when each session has its own worktree and narrow scope.
 Rules:
 
 - One worktree per task.
+- For large/risky prompts from `development`, ask whether to create a user-controlled feature parent branch first.
 - Avoid editing shared files across sessions.
 - Add per-commit devlog files under `devlog/`; do not rewrite unrelated devlog files.
-- Merge back to `development` one branch at a time.
+- Merge each task branch back to its recorded parent branch one at a time.
 - Run `af-review-gate` after conflict resolution.
+- Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
 ## Required output when invoked
 

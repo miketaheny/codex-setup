@@ -7,21 +7,46 @@ These instructions apply to AI coding agent sessions unless a repository-level i
 Make agent-assisted solo development safe and consistent across Claude, Codex, and other coding agents by enforcing:
 
 - isolated work per task
-- no direct work on protected branches
-- merge-back to `development` only
+- no direct work on protected or reserved branches
+- merge-back to the user-controlled parent branch that was checked out for the task
 - per-commit devlog files under `devlog/`
 - maintained project documentation and useful visual assets
 - review before merge
+- first-contact repo initialization or explicit local opt-out
+- push readiness checks before remote pushes
 - heavier multi-step workflows only when the task deserves them
+
+## First-Contact Repo Rules
+
+When an agent first opens a repository:
+
+- Read repo-local `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `.agent-flow/config.toml` when present.
+- If repo-local instructions or `.agent-flow/config.toml` set `mode = "disabled"`, disclose that Agent-Flow is locally disabled and do not enforce AF for that repo.
+- If no repo-local Agent-Flow files or config exist, ask whether to initialize Agent-Flow or disable it locally for the repo.
+- Prefer `~/.agent-flow/scripts/init-repo.sh` for initialization. It records whether enforcement is enabled, whether staging is used, and the local branch model.
+- Pure read-only chat does not need a worktree. Any file edit, commit, push, dependency change, config change, or destructive action must follow the full AF workflow.
+- Agent-Flow should not leave untracked, unstaged, or uncommitted files behind. Dirty worktrees must be reviewed, documented with a devlog entry, and committed before starting another task or merging.
+
+## Prompt Lifecycle
+
+Classify every prompt before acting:
+
+- `chat`: read-only explanation, research, review, or planning. Do not create a worktree unless the user asks to make changes.
+- `tiny`: narrow typo, text, CSS, config, or one-file fix with low risk. Create a task worktree, validate, then ask to merge unless `auto_merge = "tiny-only"` is configured.
+- `normal`: ordinary fix or feature. Create a task worktree, validate, run review, then ask to merge.
+- `large` or `risky`: broad feature, architecture change, migration, dependency change, security-sensitive work, or unclear blast radius. Ask whether to create a user-controlled feature parent branch first.
+
+Use `scripts/start-task.sh` when available to create task worktrees and record lifecycle metadata. Use `scripts/finish-task.sh` when available to check readiness and apply the configured merge policy.
 
 ## Non-Negotiable Branch Rules
 
-- Never modify `main`, `master`, `staging`, `production`, `prod`, or release branches directly.
-- Do not commit to protected branches.
-- Do not push to remote protected branches unless explicitly instructed.
-- Default base branch is `development`.
-- If `development` does not exist, stop and explain the current branches before changing anything.
-- Use a feature branch or separate git worktree for every implementation task.
+- `main` is the production branch. Do not modify, commit to, or push directly to `main`.
+- `staging` is optional per repo. When present or enabled, do not modify, commit to, or push directly to `staging` except through the release promotion workflow.
+- `master`, `production`, and `prod` are reserved legacy names. Do not use them as mainline branches.
+- Default SDLC integration branch is `development`; it feeds `staging` when enabled and then `main`.
+- The task parent branch is the branch the user has checked out for the work. It can be `development` or a user-controlled feature branch.
+- Use a separate git worktree and task branch for every implementation task.
+- Merge reviewed task worktrees back to their recorded parent branch, not always to `development`.
 - Prefer branch names like:
   - `fix/<short-description>`
   - `feat/<short-description>`
@@ -30,14 +55,27 @@ Make agent-assisted solo development safe and consistent across Claude, Codex, a
 
 ## Worktree Rules
 
-When the user runs multiple agent sessions or mentions parallel work:
-
-- Use one git worktree per task.
+- Use one git worktree per implementation task.
+- Create worktrees from the checked-out parent branch unless the user explicitly supplies another non-protected parent branch.
+- Record the parent branch for task branches, for example with `branch.<task-branch>.agentFlowParent`.
+- Record task class for task branches, for example with `branch.<task-branch>.agentFlowTaskClass`.
 - Keep each task narrowly scoped.
 - Avoid editing the same shared files across parallel sessions when possible.
 - Add one devlog file under `devlog/` for each meaningful commit or planned squash commit.
 - Do not rewrite unrelated devlog files from other branches or worktrees.
-- Before merge, rebase or merge latest `development`, resolve conflicts, then run review.
+- Before merge, update from the parent branch, resolve conflicts, then run review.
+
+Long-running feature work can use a user-controlled feature branch as the parent. Agents should create subtask worktrees from that feature branch and merge reviewed subtasks back into it. The user can later merge the feature branch into `development`, then promote through the repo's release path.
+
+## Merge Policy
+
+- Default behavior is `merge_prompt = "always"`: after a task is validated and reviewed, ask before merging back to the parent branch.
+- `auto_merge = "off"` is the default and safest behavior.
+- `auto_merge = "tiny-only"` may merge only tasks recorded as `tiny`, after validation and review pass, and never into `main` or `staging`.
+- `auto_merge = "always"` is allowed only for repos that explicitly opt into it; agents must still respect protected branch, devlog, docs, and validation gates.
+- Do not merge dirty worktrees. Commit or clean task changes before merge.
+- With `auto_commit = "finish"`, `scripts/finish-task.sh` may commit dirty task work after creating or verifying a devlog entry.
+- Dirty parent branches are different: review the existing changes first, create or update a devlog entry, commit them, then start the new task worktree.
 
 ## Task Intake
 
@@ -45,7 +83,7 @@ Before implementation, the agent should identify:
 
 - the goal
 - affected area of the repo
-- expected branch/worktree
+- parent branch and task worktree
 - validation command(s)
 - documentation and devlog impact
 - whether a heavier planning/review workflow is needed
@@ -72,6 +110,8 @@ Use one devlog file per commit. If the branch will be squashed, use one devlog f
 devlog/YYYY-MM-DD-<commit-subject-slug>.md
 ```
 
+Devlog filenames are based on the date plus the planned commit subject slug, not the commit SHA. Store the short commit SHA inside the devlog entry when it is already known; otherwise use `pending`.
+
 Each devlog file should include:
 
 - date
@@ -95,13 +135,24 @@ Update project docs and useful visual assets when the change affects:
 - operational workflows
 - onboarding, demos, presentations, screenshots, or marketing communication
 
-Run project docs maintenance before pushing or promoting `development` to protected branches such as `staging`, `main`, release, or production branches.
+Run project docs maintenance before pushing or promoting `development` to release branches such as optional `staging` and `main`.
+
+## Push Readiness
+
+Before pushing any user-controlled branch, verify all child task worktrees that branch from it are complete:
+
+- no dirty child task worktrees
+- no child task branches with commits missing from the parent branch
+- no unresolved review or validation blockers
+
+Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install `scripts/install-hooks.sh` to enforce this with a local `pre-push` hook. Direct pushes to `main` are blocked. Direct pushes to `staging` are blocked unless the explicit release promotion workflow sets `AF_ALLOW_RELEASE_PUSH=1`.
 
 ## Review Gate
 
-Before merging back to `development`:
+Before merging a task branch back to its parent branch:
 
-- Confirm current branch is not protected.
+- Confirm current branch is not `main`, `staging`, `master`, `production`, or `prod`.
+- Confirm the merge target is the task's recorded parent branch.
 - Inspect `git status` and `git diff`.
 - Run available tests, linting, type checks, and builds where practical.
 - Run or simulate code review.
@@ -130,6 +181,7 @@ Do not rely on commit messages as the only project history. `devlog/` is the det
 - Do not reformat the whole repo unless explicitly requested.
 - Do not change dependencies unless needed and documented.
 - Do not alter environment files, secrets, production config, DNS, auth, payments, or deployment settings without explicit approval.
+- Do not edit `main` or `staging` directly; use release promotion or pull requests.
 - Keep changes tightly scoped to the user's request.
 - Flag suspicious, risky, or destructive operations before running them.
 
@@ -142,4 +194,6 @@ A task is done when:
 - a per-commit devlog file exists under `devlog/`
 - affected project docs and visual assets are updated
 - review has been performed for merge-ready work
+- merge readiness has been reported and the user has been asked whether to merge, unless local config allowed an automatic merge
+- parent branch push readiness has been checked before any remote push
 - the final response includes what changed, validation, docs updated, and merge status

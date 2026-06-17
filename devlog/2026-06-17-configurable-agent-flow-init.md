@@ -1,0 +1,47 @@
+# 2026-06-17 - configurable Agent-Flow init and parent-branch worktrees
+
+- Branch/worktree: `chore/checked-out-branch-flow` / `/Users/taheny/vault/teamt/codex-setup-checked-out-branch-flow`
+- Commit: `pending`
+- Goal: Update Agent-Flow so agents enforce the workflow after first-contact repo initialization, use task worktrees from the checked-out parent branch, keep `development` as the SDLC integration branch, treat `main` as production, and make staging optional.
+- Summary:
+  - Added repo init configuration for enforcement mode, checked-out parent branch task worktrees, optional staging, and `main` as production.
+  - Added lifecycle helpers so agents can start every mutating prompt in a task worktree, finish with readiness checks, ask before merge, and block pushes when child task worktrees are incomplete.
+  - Updated scripts, skills, templates, and docs to merge task worktrees back to their recorded parent branch instead of always targeting `development`.
+  - Kept `main` and `staging` blocked for direct agent edits; reserved `master`, `production`, and `prod` as legacy names.
+- Files changed:
+  - `AGENT-FLOW.md` - canonical workflow rules for first-contact init, parent-branch worktrees, protected release branches, and release promotion.
+  - `scripts/init-repo.sh` - interactive/non-interactive repo initialization with `.agent-flow/config.toml` and local adapter notes.
+  - `scripts/start-task.sh` - classifies and creates task worktrees, records parent/task metadata, and asks for feature parent branches on large/risky work.
+  - `scripts/commit-task.sh` - ensures dirty worktrees get a devlog and a commit before task finish or new task start.
+  - `scripts/finish-task.sh` - checks merge readiness, applies merge policy, asks before merge by default, and supports opt-in tiny auto-merge.
+  - `scripts/check-push-readiness.sh` - blocks parent branch pushes when child task worktrees are dirty or unmerged.
+  - `scripts/install-hooks.sh` - installs a local `pre-push` hook that calls the push-readiness gate.
+  - `scripts/new-worktree.sh` - defaults task worktrees to the checked-out parent branch and records `agentFlowParent`.
+  - `scripts/check-branch-safety.sh` - blocks direct work on `main`, `staging`, and reserved legacy branch names unless local AF mode is disabled.
+  - `scripts/review-snapshot.sh` - uses recorded task parent metadata when no base branch argument is supplied and prints untracked files.
+  - `skills/` - updated AF workflows for parent-branch task work, review, reconciliation, docs, and release promotion.
+  - `templates/` - added config template and updated repo adapter templates.
+  - `README.md`, `docs/`, `CHANGELOG.md` - updated user-facing docs for init, optional staging, and release promotion.
+- Decisions:
+  - Keep `development` user-controlled and open as the SDLC integration branch instead of treating it as protected.
+  - Treat `main` as production in all repos and prevent direct agent edits to it.
+  - Treat `staging` as optional, but still protected/reserved when present.
+  - Preserve the existing `af-push-staging` skill name for compatibility while broadening it to the configured release path.
+- Validation:
+  - `bash -n scripts/install.sh scripts/bootstrap-repo.sh scripts/init-repo.sh scripts/new-worktree.sh scripts/review-snapshot.sh scripts/check-branch-safety.sh` - passed.
+  - `bash -n scripts/*.sh` - passed after adding lifecycle scripts.
+  - `python3 -m py_compile skills/af-reconcile-worktrees/scripts/audit_repo.py skills/af-migrate-backlog-devlog/scripts/migrate_backlog_to_devlog.py` - passed.
+  - `AF_HOME="$PWD" CODEX_HOME="$PWD" CLAUDE_HOME="$PWD" python3 skills/af-reconcile-worktrees/scripts/audit_repo.py .` - passed with no heuristic conflicts and correctly reported this dirty, unmerged task branch as blocking `development` push readiness.
+  - `scripts/init-repo.sh --yes --no-staging` in a temporary repo - passed; wrote lifecycle config, protected `main` and `staging`, installed the pre-push hook, and wrote local adapter notes for staging-disabled flow.
+  - `scripts/install-hooks.sh` in a temporary repo - passed; installed an executable `pre-push` hook that calls `check-push-readiness.sh`.
+  - `scripts/new-worktree.sh fix smoke-test` in a temporary repo - passed; created worktree and recorded `branch.fix/smoke-test.agentFlowParent = development`.
+  - Lifecycle smoke test - passed; `start-task.sh` asked for a feature parent on large work, created a tiny task worktree, `check-push-readiness.sh` blocked push before merge, `finish-task.sh` reported `ASK_USER_MERGE`, `finish-task.sh --merge` merged to `development`, and push readiness passed after merge.
+  - Tiny auto-merge smoke test - passed; with `auto_merge = "tiny-only"`, `finish-task.sh` automatically merged a ready `tiny` task branch.
+  - Protected branch smoke tests - passed; `check-branch-safety.sh` blocked `main` and `staging`, and `new-worktree.sh` refused `main` as a parent branch.
+  - Disabled-mode smoke test from a nested directory - passed; `check-branch-safety.sh` read the repo-root config and skipped enforcement when `.agent-flow/config.toml` set `mode = "disabled"`.
+  - `git diff --check` - passed.
+  - `scripts/review-snapshot.sh` - passed and listed untracked files.
+- Review:
+  - Final diff review found no P1/P2 issues.
+- Risks / follow-ups:
+  - Shell scripts use lightweight TOML parsing for simple config keys only.

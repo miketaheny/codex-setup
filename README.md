@@ -4,7 +4,7 @@ A clean Agent-Flow setup for solo development with Claude, Codex, and other codi
 
 ## What this gives you
 
-- A canonical `AGENT-FLOW.md` with branch safety and documentation rules.
+- A canonical `AGENT-FLOW.md` with first-contact, branch safety, worktree, and documentation rules.
 - Adapter files for agent-specific entrypoints:
   - `AGENTS.md` for Codex-compatible agents.
   - `CLAUDE.md` for Claude-compatible agents.
@@ -18,7 +18,8 @@ A clean Agent-Flow setup for solo development with Claude, Codex, and other codi
   - `af-reconcile-worktrees`
   - `af-push-staging`
   - `af-compound-mode`
-- Scripts for common safety checks and repo bootstrapping.
+- Scripts for repo initialization, common safety checks, worktrees, and repo bootstrapping.
+- Lifecycle helpers for prompt-to-worktree start, task finish/merge readiness, push readiness, and optional local hooks.
 - Templates for repo-level `AGENT-FLOW.md`, agent adapters, `devlog/`, and decision records.
 
 ## Install
@@ -55,6 +56,29 @@ cp -R docs/. ~/.agent-flow/docs/
 cp -R skills/. ~/.codex/skills/
 ```
 
+## Per-repo init
+
+Inside a Git repository:
+
+```bash
+~/.agent-flow/scripts/init-repo.sh
+```
+
+Init runs the bootstrap step, then records local repo choices in `.agent-flow/config.toml`:
+
+- whether Agent-Flow enforcement is enabled or locally disabled
+- that task worktrees branch from the checked-out parent branch and merge back there
+- that file-changing prompts require task worktrees
+- that dirty worktrees are reviewed, devlogged, and committed instead of being left loose
+- that agents ask before merging by default
+- `development` as the SDLC integration branch
+- `main` as the production branch
+- whether optional `staging` is used between `development` and `main`
+- `main` and `staging` as protected branch names for direct agent edits
+- whether to install a local pre-push hook for child worktree readiness checks
+
+When staging is disabled, init notes that in the repo-local `AGENTS.md` and `CLAUDE.md` adapters so agents do not assume a staging branch.
+
 ## Per-repo bootstrap
 
 Inside a Git repository:
@@ -63,7 +87,7 @@ Inside a Git repository:
 ~/.agent-flow/scripts/bootstrap-repo.sh
 ```
 
-This creates missing repo files:
+Bootstrap only creates missing repo files:
 
 - `AGENT-FLOW.md`
 - `AGENTS.md`
@@ -76,15 +100,15 @@ This creates missing repo files:
 - `docs/assets/`
 - `docs/presentations/`
 
-It will not overwrite existing files.
+It will not overwrite existing files or record first-contact choices. Prefer `init-repo.sh` for new repos.
 
 ## Documentation Map
 
 - [Changelog](CHANGELOG.md) - user-facing workflow, docs, skill, and setup changes.
 - [Documentation Strategy](docs/DOCS-STRATEGY.md) - how `af-docs` owns ongoing docs maintenance, interview setup, visuals, and validation.
-- [Workflow](docs/WORKFLOW.md) - branch model, daily loop, migration, and staging promotion.
-- [Architecture](docs/ARCHITECTURE.md) - system map, install flow, bootstrap flow, and skill routing diagrams.
-- [User Guide](docs/USER-GUIDE.md) - install, bootstrap, skill selection, migration, visual docs, and staging usage.
+- [Workflow](docs/WORKFLOW.md) - branch model, daily loop, migration, and release promotion.
+- [Architecture](docs/ARCHITECTURE.md) - system map, install flow, init/bootstrap flow, and skill routing diagrams.
+- [User Guide](docs/USER-GUIDE.md) - install, init, skill selection, migration, visual docs, and release promotion.
 - [Visual Plan](docs/VISUALS.md) - diagram inventory, screenshot checklist, demo video plan, and content recommendations.
 - [Demo Plan](docs/DEMO.md) - live demo and recording script.
 - [Pitch](docs/PITCH.md) - positioning, value props, objections, and marketing recommendations.
@@ -101,13 +125,19 @@ Use af-small-change to fix this. Keep scope narrow and add a devlog entry under 
 ### Worktree task
 
 ```text
-Use af-worktree-task. Create an isolated worktree from development for this task, then implement, document, and review.
+Use af-worktree-task. Create an isolated worktree from the checked-out parent branch for this task, then implement, document, and review.
+```
+
+### Seamless task lifecycle
+
+```text
+Use Agent-Flow for this change. Classify the task, create the task worktree, finish with readiness checks, then ask me whether to merge back to the parent branch.
 ```
 
 ### Review before merge
 
 ```text
-Use af-review-gate and tell me whether this branch is ready to merge into development.
+Use af-review-gate and tell me whether this task branch is ready to merge into its recorded parent branch.
 ```
 
 ### Detailed documentation after a change
@@ -116,10 +146,12 @@ Use af-review-gate and tell me whether this branch is ready to merge into develo
 Use af-devlog to add a per-commit devlog entry under devlog/.
 ```
 
+Devlog filenames use `YYYY-MM-DD-<commit-subject-slug>.md`. They are date and subject based, not SHA based; the commit SHA belongs inside the file when known.
+
 ### Project docs maintenance
 
 ```text
-Use af-docs to update project docs from the latest devlog entries and commits before promoting development.
+Use af-docs to update project docs from the latest devlog entries and commits before promoting development through the release path.
 ```
 
 ### Existing docs stewardship
@@ -143,13 +175,19 @@ Use af-migrate-backlog-devlog to convert Backlog.md, backlog/, or .backlog task 
 ### Worktree reconciliation
 
 ```text
-Use af-reconcile-worktrees to audit worktrees, branches, and agent instruction conflicts before cleanup or staging promotion.
+Use af-reconcile-worktrees to audit worktrees, branches, and agent instruction conflicts before cleanup or release promotion.
 ```
 
-### Staging promotion
+### Push readiness
 
 ```text
-Use af-push-staging to reconcile worktrees, validate development, merge development into staging, and offer a staging-to-main PR.
+Run scripts/check-push-readiness.sh for this branch before pushing. Tell me which child worktrees, if any, still need to be merged or cleaned.
+```
+
+### Release promotion
+
+```text
+Use af-push-staging to reconcile worktrees, validate development, and promote through the configured release path. If staging is enabled, use development -> staging -> main. If staging is disabled, offer a development-to-main PR.
 ```
 
 ### Bigger/riskier work

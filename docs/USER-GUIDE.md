@@ -1,6 +1,6 @@
 # Agent-Flow User Guide
 
-This guide covers the common workflows for installing Agent-Flow, bootstrapping a repo, and choosing the right AF skill.
+This guide covers the common workflows for installing Agent-Flow, initializing a repo, and choosing the right AF skill.
 
 ## Install Agent-Flow
 
@@ -23,19 +23,20 @@ Use environment variables when you need custom install locations:
 AF_HOME=/path/to/agent-flow CODEX_HOME=/path/to/codex CLAUDE_HOME=/path/to/claude ./scripts/install.sh
 ```
 
-## Bootstrap a Project Repo
+## Initialize a Project Repo
 
 Inside a target Git repo:
 
 ```bash
-~/.agent-flow/scripts/bootstrap-repo.sh
+~/.agent-flow/scripts/init-repo.sh
 ```
 
-This creates missing:
+Init creates missing bootstrap files, then records local choices in `.agent-flow/config.toml`:
 
 - `AGENT-FLOW.md`
 - `AGENTS.md`
 - `CLAUDE.md`
+- `.agent-flow/config.toml`
 - `devlog/README.md`
 - `docs/decisions/000-template.md`
 - `docs/solutions/`
@@ -44,20 +45,35 @@ This creates missing:
 - `docs/assets/`
 - `docs/presentations/`
 
-The script does not overwrite existing files.
+The script asks whether to disable Agent-Flow enforcement for this repo, whether the repo uses optional `staging`, and whether to install a local pre-push hook. If staging is disabled, the local agent adapters note that agents should not assume a staging branch.
+
+Use `bootstrap-repo.sh` only when you want to copy missing files without recording first-contact repo choices.
+
+Branch defaults:
+
+- Task worktrees branch from the checked-out parent branch and merge back there.
+- File-changing prompts use task worktrees.
+- Agents ask before merge by default.
+- `development` is the SDLC integration branch.
+- `main` is production and agents must not edit it directly.
+- `staging` is optional in the release path, and direct edits to a branch named `staging` are blocked.
+- `master`, `production`, and `prod` are reserved legacy branch names.
 
 ## Daily Agent-Flow Loop
 
 ```mermaid
 flowchart LR
-    Start["Start from development"] --> Branch["Create branch or worktree"]
+    Prompt["User prompt"] --> Classify["Classify chat/tiny/normal/large"]
+    Classify --> Branch["Create task worktree for changes"]
     Branch --> Skill["Use lightest AF skill"]
     Skill --> Change["Implement scoped change"]
     Change --> Validate["Run validation"]
     Validate --> Devlog["Add devlog entry"]
     Devlog --> Docs["Update docs and visuals if needed"]
     Docs --> Review["Run af-review-gate"]
-    Review --> Merge["Merge to development"]
+    Review --> Ask["Ask whether to merge"]
+    Ask --> Merge["Merge to parent branch after approval"]
+    Merge --> PushCheck["Check child worktrees before push"]
 ```
 
 ## Choose a Skill
@@ -71,8 +87,34 @@ flowchart LR
 | Convert legacy Backlog task files to devlog entries | `af-migrate-backlog-devlog` |
 | Review before merge | `af-review-gate` |
 | Audit worktrees and branch cleanup candidates | `af-reconcile-worktrees` |
-| Promote `development` to `staging` | `af-push-staging` |
+| Promote `development` through release path | `af-push-staging` |
 | Decide whether a heavier workflow is needed | `af-compound-mode` |
+
+## Start And Finish A Task
+
+Use the lifecycle helpers directly when working outside a skill:
+
+```bash
+scripts/start-task.sh --class normal feat export-csv
+```
+
+At the end of the task worktree:
+
+```bash
+scripts/finish-task.sh
+```
+
+If it reports `ASK_USER_MERGE`, ask before merging. After approval:
+
+```bash
+scripts/finish-task.sh --merge
+```
+
+For large or risky work from `development`, ask whether to create a feature parent branch first:
+
+```bash
+scripts/start-task.sh --class large --create-parent feat/payments feat payment-form
+```
 
 ## Migrate Legacy Backlog Files
 
@@ -102,7 +144,7 @@ Good defaults for Agent-Flow repos:
 - Demo scripts and screenshot lists before recording videos.
 - Generated images only for marketing or conceptual visuals when real product screenshots are not available.
 
-## Promote to Staging
+## Promote Development
 
 Use this sequence:
 
@@ -110,4 +152,16 @@ Use this sequence:
 af-reconcile-worktrees -> af-docs -> af-push-staging
 ```
 
-The flow checks worktree state, updates docs, validates `development`, merges to `staging`, pushes both branches, and asks before creating a `staging` to `main` pull request.
+The flow checks worktree state, updates docs, and validates `development`. With staging enabled, it merges to `staging`, pushes `development` and `staging`, and asks before creating a `staging` to `main` pull request. With staging disabled, it pushes `development` and asks before creating a `development` to `main` pull request.
+
+Before pushing any parent branch, run:
+
+```bash
+scripts/check-push-readiness.sh <branch>
+```
+
+Init can install the local hook. To install or refresh it later:
+
+```bash
+scripts/install-hooks.sh
+```

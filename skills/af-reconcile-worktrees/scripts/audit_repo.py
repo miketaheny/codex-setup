@@ -12,7 +12,51 @@ from pathlib import Path
 from typing import Any
 
 
-PRIMARY_BRANCHES = {"development", "staging", "main", "master", "production", "prod"}
+RESERVED_BRANCHES = {"master", "production", "prod"}
+
+
+def parse_bool(value: str | None) -> bool | None:
+    if value is None:
+        return None
+    normalized = value.strip().strip('"').lower()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    return None
+
+
+def read_af_config(root: Path) -> dict[str, Any]:
+    config = {
+        "path": str(root / ".agent-flow" / "config.toml"),
+        "mode": "enforced",
+        "integration_branch": "development",
+        "production_branch": "main",
+        "staging_enabled": None,
+        "staging_branch": "staging",
+    }
+    text = read_optional(root / ".agent-flow" / "config.toml")
+    if text is None:
+        return config
+
+    for line in text.splitlines():
+        clean = line.split("#", 1)[0].strip()
+        if "=" not in clean:
+            continue
+        key, value = [part.strip() for part in clean.split("=", 1)]
+        if key in {"mode", "integration_branch", "production_branch", "staging_branch"}:
+            config[key] = value.strip('"')
+        elif key == "staging_enabled":
+            parsed = parse_bool(value)
+            if parsed is not None:
+                config[key] = parsed
+    return config
+
+
+def protected_branches(config: dict[str, Any]) -> set[str]:
+    branches = {config["production_branch"], *RESERVED_BRANCHES}
+    branches.add(config["staging_branch"])
+    return branches
 
 
 def run(args: list[str], cwd: Path) -> tuple[int, str, str]:
@@ -75,13 +119,21 @@ def ahead_behind(root: Path, left: str, right: str) -> tuple[int, int] | None:
     return int(left_only), int(right_only)
 
 
-def local_branches(root: Path) -> list[dict[str, Any]]:
+def branch_parent(root: Path, branch: str, config: dict[str, Any]) -> tuple[str, bool]:
+    code, out, _ = run(["git", "config", "--get", f"branch.{branch}.agentFlowParent"], root)
+    if code == 0 and out:
+        return out, True
+    return config["integration_branch"], False
+
+
+def local_branches(root: Path, config: dict[str, Any]) -> list[dict[str, Any]]:
     fmt = "%(refname:short)|%(objectname)|%(upstream:short)|%(HEAD)"
     out = git(["for-each-ref", f"--format={fmt}", "refs/heads"], root)
     branches: list[dict[str, Any]] = []
     for line in out.splitlines():
         name, commit, upstream, head = (line.split("|") + ["", "", "", ""])[:4]
-        merged = is_ancestor(root, name, "development") if name != "development" else True
+        merge_target, explicit_parent = branch_parent(root, name, config)
+        merged = is_ancestor(root, name, merge_target) if name != merge_target else True
         remote_state = ahead_behind(root, upstream, name) if upstream else None
         branches.append(
             {
@@ -89,7 +141,9 @@ def local_branches(root: Path) -> list[dict[str, Any]]:
                 "commit": commit[:12],
                 "upstream": upstream or None,
                 "current": head == "*",
-                "merged_to_development": merged,
+                "merge_target": merge_target,
+                "explicit_parent": explicit_parent,
+                "merged_to_target": merged,
                 "remote_behind_ahead": remote_state,
             }
         )
@@ -132,7 +186,7 @@ def agents_review(root: Path) -> dict[str, Any]:
     if global_flow_text is None:
         concerns.append(f"Global AGENT-FLOW.md missing: {global_flow}")
     else:
-        required = ("development", "staging", "main", "protected")
+        required = ("development", "staging", "main", "protected", "parent")
         missing = [word for word in required if word.lower() not in global_flow_text.lower()]
         if missing:
             concerns.append(f"Global AGENT-FLOW.md may be missing branch-rule terms: {', '.join(missing)}")
@@ -165,102 +219,164 @@ def agents_review(root: Path) -> dict[str, Any]:
     }
 
 
-def classify_worktree(root: Path, item: dict[str, str]) -> dict[str, Any]:
+def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) -> dict[str, Any]:
     path = Path(item["worktree"])
     branch = item.get("branch_name", "(detached)")
     head = item.get("HEAD", "")
     status = status_short(path)
     target = branch if branch != "(detached)" else head
-    merged = is_ancestor(root, target, "development") if target else None
+    merge_target, explicit_parent = branch_parent(root, branch, config) if branch != "(detached)" else (config["integration_branch"], False)
+    merged = is_ancestor(root, target, merge_target) if target else None
 
-    if branch in PRIMARY_BRANCHES:
-        action = f"keep protected {branch} worktree"
+    release_or_reserved = {config["production_branch"], config["staging_branch"], *RESERVED_BRANCHES}
+    if branch == config["integration_branch"]:
+        action = "keep integration worktree"
+    elif branch in release_or_reserved:
+        action = f"keep protected or reserved {branch} worktree"
     elif status:
         action = "skip dirty worktree"
+    elif not explicit_parent:
+        action = "skip; no recorded AF parent branch"
     elif merged is True:
         action = "eligible for worktree removal"
     elif merged is False:
-        action = "skip; commits not merged to development"
+        action = f"skip; commits not merged to {merge_target}"
     else:
-        action = "skip; cannot verify development ancestry"
+        action = f"skip; cannot verify {merge_target} ancestry"
 
     return {
         "path": str(path),
         "branch": branch,
         "head": head[:12],
         "dirty_count": len(status),
-        "merged_to_development": merged,
+        "merge_target": merge_target,
+        "explicit_parent": explicit_parent,
+        "merged_to_target": merged,
         "action": action,
     }
 
 
 def build_report(path: Path) -> dict[str, Any]:
     root = repo_root(path)
+    config = read_af_config(root)
     current_branch = git(["branch", "--show-current"], root) or "(detached)"
     worktrees = [
-        classify_worktree(root, item)
+        classify_worktree(root, item, config)
         for item in parse_worktrees(git(["worktree", "list", "--porcelain"], root))
     ]
-    branches = local_branches(root)
-    dev_branch = next((branch for branch in branches if branch["name"] == "development"), None)
-    local_main = next((branch for branch in branches if branch["name"] == "main"), None)
-    dev_worktree = next((worktree for worktree in worktrees if worktree["branch"] == "development"), None)
+    branches = local_branches(root, config)
+    integration_name = config["integration_branch"]
+    production_name = config["production_branch"]
+    integration_branch = next((branch for branch in branches if branch["name"] == integration_name), None)
+    local_main = next((branch for branch in branches if branch["name"] == production_name), None)
+    integration_worktree = next((worktree for worktree in worktrees if worktree["branch"] == integration_name), None)
+    protected = protected_branches(config)
 
     branch_actions = []
     for branch in branches:
         name = branch["name"]
-        if name in {"development", "staging"}:
+        if name == integration_name:
             action = "keep"
-        elif name == "main":
-            action = "ask to remove local main"
+        elif name in protected:
+            action = "keep protected or reserved branch"
         elif branch["current"]:
             action = "skip checked-out branch"
-        elif branch["merged_to_development"] is True:
-            action = "ask to delete merged branch"
-        elif branch["merged_to_development"] is False:
-            action = "skip; not merged to development"
+        elif not branch["explicit_parent"]:
+            action = "skip user-controlled branch without AF parent metadata"
+        elif branch["merged_to_target"] is True:
+            action = "ask to delete merged task branch"
+        elif branch["merged_to_target"] is False:
+            action = f"skip; not merged to {branch['merge_target']}"
         else:
             action = "skip; cannot verify"
         branch_actions.append({**branch, "action": action})
 
+    worktree_by_branch = {worktree["branch"]: worktree for worktree in worktrees}
+    parent_readiness: dict[str, Any] = {}
+    for branch in branch_actions:
+        if not branch["explicit_parent"]:
+            continue
+        parent = branch["merge_target"]
+        worktree = worktree_by_branch.get(branch["name"], {})
+        dirty_count = int(worktree.get("dirty_count", 0) or 0)
+        merged = branch["merged_to_target"] is True
+        incomplete = dirty_count > 0 or not merged
+        parent_entry = parent_readiness.setdefault(
+            parent,
+            {
+                "child_count": 0,
+                "incomplete_count": 0,
+                "children": [],
+            },
+        )
+        parent_entry["child_count"] += 1
+        if incomplete:
+            parent_entry["incomplete_count"] += 1
+        parent_entry["children"].append(
+            {
+                "name": branch["name"],
+                "dirty_count": dirty_count,
+                "merged": merged,
+                "incomplete": incomplete,
+            }
+        )
+
     return {
         "repo": str(root),
+        "config": config,
         "current_branch": current_branch,
-        "development": dev_branch,
-        "development_worktree": dev_worktree,
+        "integration": integration_branch,
+        "integration_worktree": integration_worktree,
         "local_main_present": local_main is not None,
         "worktrees": worktrees,
         "branches": branch_actions,
+        "parent_readiness": parent_readiness,
         "agents": agents_review(root),
     }
 
 
 def markdown(report: dict[str, Any]) -> str:
+    config = report["config"]
     lines = [
         f"# Reconcile audit: {report['repo']}",
         "",
         f"- Current branch: `{report['current_branch']}`",
-        f"- Local `main` present: {'yes' if report['local_main_present'] else 'no'}",
+        f"- Agent-Flow mode: `{config['mode']}`",
+        f"- Integration branch: `{config['integration_branch']}`",
+        f"- Production branch: `{config['production_branch']}`",
+        f"- Staging enabled: {'yes' if config.get('staging_enabled') is True else 'no' if config.get('staging_enabled') is False else 'not configured'}",
+        f"- Local `{config['production_branch']}` present: {'yes' if report['local_main_present'] else 'no'}",
     ]
-    dev = report.get("development")
-    if dev:
-        remote = dev.get("remote_behind_ahead")
+    integration = report.get("integration")
+    if integration:
+        remote = integration.get("remote_behind_ahead")
         remote_text = f", upstream behind/ahead: {remote[0]}/{remote[1]}" if remote else ""
-        lines.append(f"- Development: `{dev['commit']}`{remote_text}")
+        lines.append(f"- Integration: `{integration['commit']}`{remote_text}")
     else:
-        lines.append("- Development: missing local branch")
-    dev_wt = report.get("development_worktree")
-    if dev_wt:
-        lines.append(f"- Development worktree changes: {dev_wt['dirty_count']}")
+        lines.append("- Integration: missing local branch")
+    integration_wt = report.get("integration_worktree")
+    if integration_wt:
+        lines.append(f"- Integration worktree changes: {integration_wt['dirty_count']}")
 
     lines += ["", "## Worktrees"]
     for wt in report["worktrees"]:
         dirty = "dirty" if wt["dirty_count"] else "clean"
-        lines.append(f"- `{wt['branch']}` at `{wt['path']}`: {dirty}, merged={wt['merged_to_development']}, {wt['action']}")
+        lines.append(f"- `{wt['branch']}` at `{wt['path']}`: {dirty}, target=`{wt['merge_target']}`, merged={wt['merged_to_target']}, {wt['action']}")
 
     lines += ["", "## Branches"]
     for branch in report["branches"]:
-        lines.append(f"- `{branch['name']}`: merged={branch['merged_to_development']}, {branch['action']}")
+        lines.append(f"- `{branch['name']}`: target=`{branch['merge_target']}`, merged={branch['merged_to_target']}, {branch['action']}")
+
+    lines += ["", "## Push Readiness By Parent"]
+    if report["parent_readiness"]:
+        for parent, readiness in sorted(report["parent_readiness"].items()):
+            status = "ready" if readiness["incomplete_count"] == 0 else "blocked"
+            lines.append(f"- `{parent}`: {status}, children={readiness['child_count']}, incomplete={readiness['incomplete_count']}")
+            for child in readiness["children"]:
+                if child["incomplete"]:
+                    lines.append(f"  - incomplete child `{child['name']}`: dirty={child['dirty_count']}, merged={child['merged']}")
+    else:
+        lines.append("- No task child branches with recorded parents found.")
 
     lines += ["", "## Agent Instruction Review"]
     concerns = report["agents"]["concerns"]

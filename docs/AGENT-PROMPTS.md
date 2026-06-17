@@ -3,25 +3,37 @@
 ## Small change
 
 ```text
-Use af-small-change. Fix [issue]. Keep scope narrow. Do not touch main/staging. Add a devlog entry under devlog/.
+Use af-small-change. Fix [issue]. Keep scope narrow. Do not touch main or staging. Add a devlog entry under devlog/.
 ```
 
 ## Worktree task
 
 ```text
-Use af-worktree-task. Create a worktree from development named ../[repo]-[task] with branch [type]/[task]. Implement the task, validate, add a devlog entry under devlog/, and run review before merge.
+Use af-worktree-task. Create a worktree from the checked-out parent branch named ../[repo]-[task] with branch [type]/[task]. Implement the task, validate, add a devlog entry under devlog/, and run review before merge.
+```
+
+## Seamless task lifecycle
+
+```text
+Use Agent-Flow for this change. Classify the task, create a task worktree, implement it, run finish-task, and ask me before merging if it is ready.
+```
+
+## Large feature branch
+
+```text
+This may be large. Ask whether to create a feature parent branch first. If approved, create the feature parent branch, then create task worktrees under it and merge reviewed subtasks back there.
 ```
 
 ## Review branch
 
 ```text
-Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into development.
+Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
 ```
 
 ## Project docs
 
 ```text
-Use af-docs. Update project docs from devlog/ and recent commits before promoting development.
+Use af-docs. Update project docs from devlog/ and recent commits before promoting development through the release path.
 ```
 
 ## Existing docs stewardship
@@ -54,10 +66,16 @@ Use af-migrate-backlog-devlog. Dry-run a migration from Backlog.md, backlog/, or
 Use af-reconcile-worktrees. Audit worktrees, local branches, and agent instruction conflicts. Do not remove worktrees or delete branches without explicit approval.
 ```
 
-## Promote staging
+## Push readiness
 
 ```text
-Use af-push-staging. Reconcile worktrees, validate development, merge development into staging, push development and staging, then ask before creating a staging-to-main PR.
+Run scripts/check-push-readiness.sh for the branch I am about to push. Block the push if any child task worktree is dirty or unmerged.
+```
+
+## Promote development
+
+```text
+Use af-push-staging. Reconcile worktrees, validate development, and promote through the configured release path. If staging is enabled, merge development into staging and ask before creating a staging-to-main PR. If staging is disabled, ask before creating a development-to-main PR.
 ```
 
 ## Workflow decision
