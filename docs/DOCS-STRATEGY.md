@@ -84,7 +84,7 @@ For this repo, prefer efficient, technical, and data-driven visuals in core docs
 
 Run `af-docs` when changes affect:
 
-- installation, init, or bootstrap behavior
+- installation, init, bootstrap, gitignore, or IDE policy behavior
 - scripts under `scripts/`
 - skills under `skills/`
 - agent adapters such as `AGENTS.md`, `CLAUDE.md`, or `AGENT-FLOW.md`

@@ -72,6 +72,12 @@ Use af-reconcile-worktrees. Audit worktrees, local branches, and agent instructi
 Run scripts/check-push-readiness.sh for the branch I am about to push. Block the push if any child task worktree is dirty or unmerged.
 ```
 
+## Gitignore and IDE policy
+
+```text
+Ensure this repo has the Agent-Flow .gitignore block. Preserve existing ignore rules. Commit IDE files only if they encode shared project tooling, not personal preferences.
+```
+
 ## Promote development
 
 ```text

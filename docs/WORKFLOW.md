@@ -127,6 +127,12 @@ Name devlog files from the date and planned commit subject, such as `devlog/YYYY
 
 Update project docs when behavior, setup, architecture, security, deployment, or operations change.
 
+## Gitignore and IDE Policy
+
+Repo init ensures `.gitignore` has an Agent-Flow block for local runtime files, env files, OS/editor noise, logs, temp files, and personal IDE state. Existing ignore rules are preserved.
+
+Commit IDE files only when they encode shared project behavior. Good examples are recommended extensions, debug tasks, launch configs, formatter/linter settings, and test runner integration. Do not commit personal IDE preferences such as themes, window titles, UI layout, local paths, or machine-specific interpreter paths.
+
 Use `af-docs` for initial documentation stewardship and ongoing docs maintenance. For repos with existing docs, the first stewardship pass should inventory current docs, interview the user about audiences and visual style, update useful docs in place, and record the maintenance contract in `docs/DOCS-STRATEGY.md`.
 
 After `docs/DOCS-STRATEGY.md` exists, `af-docs` should fully manage `docs/` from devlog files, commits, diffs, scripts, templates, skills, screenshots, and config changes. Do not repeat the full interview for routine changes unless the user asks or the repo's audience, product direction, or documentation structure changes.

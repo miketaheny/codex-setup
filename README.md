@@ -76,8 +76,11 @@ Init runs the bootstrap step, then records local repo choices in `.agent-flow/co
 - whether optional `staging` is used between `development` and `main`
 - `main` and `staging` as protected branch names for direct agent edits
 - whether to install a local pre-push hook for child worktree readiness checks
+- a non-destructive `.gitignore` Agent-Flow block for local config, env files, OS/editor noise, logs, temp files, and personal IDE state
 
 When staging is disabled, init notes that in the repo-local `AGENTS.md` and `CLAUDE.md` adapters so agents do not assume a staging branch.
+
+Agent-Flow ignores IDE folders by default but allows curated shared VS Code files. Commit `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, or `.vscode/settings.json` only when they encode project tooling. Do not commit personal IDE preferences such as themes, window titles, UI layout, local paths, or machine-specific interpreter paths.
 
 ## Per-repo bootstrap
 
@@ -92,6 +95,7 @@ Bootstrap only creates missing repo files:
 - `AGENT-FLOW.md`
 - `AGENTS.md`
 - `CLAUDE.md`
+- `.gitignore` Agent-Flow block
 - `devlog/README.md`
 - `docs/decisions/`
 - `docs/solutions/`

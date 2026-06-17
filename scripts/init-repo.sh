@@ -107,6 +107,45 @@ fi
 AF_BOOTSTRAP_SUPPRESS_INIT_HINT=1 "$SCRIPT_DIR/bootstrap-repo.sh"
 mkdir -p "$CONFIG_DIR"
 
+ensure_gitignore() {
+  local gitignore=".gitignore"
+  local block="$AF_HOME/templates/repo-gitignore-block"
+
+  if [ ! -f "$block" ]; then
+    block="$SCRIPT_HOME/templates/repo-gitignore-block"
+  fi
+
+  if [ ! -f "$block" ]; then
+    echo "Warning: Agent-Flow gitignore template missing; skipped .gitignore update." >&2
+    return
+  fi
+
+  if [ ! -f "$gitignore" ]; then
+    {
+      echo "# agent-flow-gitignore-start"
+      cat "$block"
+      echo "# agent-flow-gitignore-end"
+    } > "$gitignore"
+    echo "Created: .gitignore"
+    return
+  fi
+
+  if grep -q "agent-flow-gitignore-start" "$gitignore"; then
+    echo "Exists: .gitignore Agent-Flow block"
+    return
+  fi
+
+  {
+    echo
+    echo "# agent-flow-gitignore-start"
+    cat "$block"
+    echo "# agent-flow-gitignore-end"
+  } >> "$gitignore"
+  echo "Updated: .gitignore"
+}
+
+ensure_gitignore
+
 if [ -z "$MODE" ]; then
   disable="$(prompt_yes_no "Disable Agent-Flow enforcement for this repo?" "no")"
   if [ "$disable" = "yes" ]; then

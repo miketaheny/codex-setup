@@ -67,6 +67,7 @@ flowchart LR
     Repo["Target Git repo"] --> Init["~/.agent-flow/scripts/init-repo.sh"]
     Init --> Config[".agent-flow/config.toml"]
     Init --> Choices["enforcement + staging choices"]
+    Init --> Gitignore[".gitignore Agent-Flow block"]
     Init --> Bootstrap["bootstrap-repo.sh"]
     Bootstrap --> Rules["AGENT-FLOW.md"]
     Bootstrap --> Adapters["AGENTS.md + CLAUDE.md"]
@@ -76,7 +77,7 @@ flowchart LR
     Bootstrap --> VisualDirs["docs/diagrams/ + docs/assets/ + docs/presentations/"]
 ```
 
-`init-repo.sh` records first-contact repo choices, including whether Agent-Flow enforcement is enabled, whether staging is used, and whether the local pre-push hook was installed. It also notes staging-disabled repos in local agent adapters.
+`init-repo.sh` records first-contact repo choices, including whether Agent-Flow enforcement is enabled, whether staging is used, and whether the local pre-push hook was installed. It also ensures `.gitignore` has the Agent-Flow local/IDE/env block and notes staging-disabled repos in local agent adapters.
 
 `bootstrap-repo.sh` only copies missing files. Existing repo instructions and docs are left in place.
 
@@ -125,6 +126,7 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Global setup files under `~/.agent-flow`, `~/.codex`, and `~/.claude`.
 - Repo-level instructions and docs copied into target repositories.
 - Repo-level choices stored in `.agent-flow/config.toml`.
+- Repo-level ignore policy stored in `.gitignore`.
 - Task branch parent metadata stored in Git config as `branch.<task-branch>.agentFlowParent`.
 - Task class and lifecycle state stored in Git config as `agentFlowTaskClass` and `agentFlowState`.
 - Git branches, worktrees, and commits managed by the developer.

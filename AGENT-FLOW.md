@@ -182,6 +182,8 @@ Do not rely on commit messages as the only project history. `devlog/` is the det
 - Do not change dependencies unless needed and documented.
 - Do not alter environment files, secrets, production config, DNS, auth, payments, or deployment settings without explicit approval.
 - Do not edit `main` or `staging` directly; use release promotion or pull requests.
+- Keep `.gitignore` valid and non-destructive. Init should create or append an Agent-Flow ignore block, never replace existing repo rules.
+- Treat IDE folders as personal by default. Commit `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, or `.vscode/settings.json` only when they intentionally encode shared project tooling; do not commit themes, window titles, local paths, or UI preferences.
 - Keep changes tightly scoped to the user's request.
 - Flag suspicious, risky, or destructive operations before running them.
 

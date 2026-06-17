@@ -66,6 +66,13 @@ TODO
 - Run docs maintenance before pushing or promoting `development` to optional `staging` or `main`.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
+## Gitignore and IDE Files
+
+- Keep a valid `.gitignore` for local runtime files, environment files, OS noise, logs, temp files, and personal IDE state.
+- Do not overwrite existing repo ignore rules; append project policy blocks.
+- Commit IDE files only when they encode shared project behavior such as recommended extensions, debug tasks, launch configs, formatter/linter settings, or test runner integration.
+- Do not commit personal IDE preferences such as themes, window titles, UI layout, local paths, or machine-specific interpreter paths.
+
 ## Review Expectations
 
 Before merge:
