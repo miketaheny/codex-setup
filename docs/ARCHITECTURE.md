@@ -112,7 +112,7 @@ Skills are written as Markdown workflows. Codex can auto-discover them through i
 ```mermaid
 flowchart LR
     Prompt["File-changing prompt"] --> Start["start-task.sh"]
-    Start --> Worktree["task worktree + branch metadata"]
+    Start --> Worktree["detached task worktree + worktree metadata"]
     Worktree --> Finish["finish-task.sh"]
     Finish --> Ask["ASK_USER_MERGE"]
     Ask --> Merge["finish-task.sh --merge"]
@@ -130,8 +130,8 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Repo-level choices stored in `.agent-flow/config.toml`.
 - Repo-level ignore policy stored in `.gitignore`.
 - Local protected branch policy derived from `.agent-flow/config.toml`: `main` is disallowed locally, and `staging` is local only when staging is enabled.
-- Task branch parent metadata stored in Git config as `branch.<task-branch>.agentFlowParent`.
-- Task class and lifecycle state stored in Git config as `agentFlowTaskClass` and `agentFlowState`.
+- Detached task metadata stored in worktree-local Git config as `agentFlow.parent`, `agentFlow.taskClass`, and `agentFlow.state`.
+- Explicit named task branches, when requested, also store parent metadata in Git config as `branch.<task-branch>.agentFlowParent`.
 - Git branches, worktrees, and commits managed by the developer.
 - Engineering history stored in repo `devlog/` files.
 

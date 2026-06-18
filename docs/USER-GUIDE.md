@@ -57,7 +57,8 @@ Gitignore and IDE defaults:
 
 Branch defaults:
 
-- Task worktrees branch from the checked-out parent branch and merge back there.
+- Task worktrees are detached from the checked-out parent branch by default and merge back there.
+- Named task or feature branches are created only when the user explicitly requests a branch.
 - File-changing prompts use task worktrees.
 - Agents ask before merge by default.
 - Formal security review is required before protected-branch pull requests to `staging` or `main`.
@@ -71,8 +72,8 @@ Branch defaults:
 ```mermaid
 flowchart LR
     Prompt["User prompt"] --> Classify["Classify chat/tiny/normal/large"]
-    Classify --> Branch["Create task worktree for changes"]
-    Branch --> Skill["Use lightest AF skill"]
+    Classify --> Worktree["Create detached task worktree for changes"]
+    Worktree --> Skill["Use lightest AF skill"]
     Skill --> Change["Implement scoped change"]
     Change --> Validate["Run validation"]
     Validate --> Devlog["Add devlog entry"]
@@ -118,10 +119,10 @@ If it reports `ASK_USER_MERGE`, ask before merging. After approval:
 scripts/finish-task.sh --merge
 ```
 
-For large or risky work from `development`, ask whether to create a feature parent branch first:
+Create a named task branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --class large --create-parent feat/payments feat payment-form
+scripts/start-task.sh --branch feat/payment-form --class large feat payment-form
 ```
 
 ## Migrate Legacy Backlog Files

@@ -1,0 +1,37 @@
+# 2026-06-18 - use branchless task worktrees
+
+- Branch/worktree: `chore/branchless-worktrees` / `/Users/taheny/vault/teamt/codex-setup-branchless-worktrees`
+- Commit: `pending`
+- Goal: Make Agent-Flow create detached task worktrees by default and create named branches only when the user explicitly requests one.
+- Summary:
+  - Updated lifecycle helpers so `start-task.sh` and `new-worktree.sh` create detached task worktrees by default.
+  - Added worktree-local Agent-Flow metadata for detached tasks and kept explicit branch metadata for branch-backed tasks.
+  - Updated commit, finish, review snapshot, safety, readiness, reconciliation, docs, templates, and skills to understand detached task worktrees.
+- Files changed:
+  - `scripts/new-worktree.sh` - defaults to detached worktrees, adds `--branch`, and records worktree-local metadata.
+  - `scripts/start-task.sh` - removes mandatory task branch creation and keeps named branches as an explicit option.
+  - `scripts/commit-task.sh` - supports committing detached Agent-Flow task worktrees.
+  - `scripts/finish-task.sh` - supports readiness checks and merges from detached task commits.
+  - `scripts/check-push-readiness.sh` - blocks pushes when detached child worktrees are dirty or unmerged.
+  - `scripts/check-branch-safety.sh` and `scripts/review-snapshot.sh` - accept detached Agent-Flow task metadata.
+  - `scripts/init-repo.sh` and `templates/agent-flow-config.toml` - record explicit-only branch policy defaults.
+  - `skills/af-reconcile-worktrees/scripts/audit_repo.py` - recognizes detached task worktree parents in reconciliation reports.
+  - `AGENT-FLOW.md`, `README.md`, `commander.md`, `docs/`, `templates/`, and `skills/` - update workflow guidance to branchless-by-default task worktrees.
+- Decisions:
+  - Use `git config --worktree` metadata for detached tasks so each task can keep parent, class, and lifecycle state without creating a branch.
+  - Keep explicit named branch support for user-requested branches and for compatibility with existing branch-backed tasks.
+  - Keep large and risky changes on the checked-out parent by default; create feature branches only on explicit user request.
+- Validation:
+  - `bash -n scripts/*.sh` - passed.
+  - `python3 -m py_compile skills/af-reconcile-worktrees/scripts/audit_repo.py skills/af-migrate-backlog-devlog/scripts/migrate_backlog_to_devlog.py` - passed.
+  - `git diff --check` - passed.
+  - `for d in skills/*; do python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$d"; done` - passed for all skills.
+  - Markdown relative link check across 43 Markdown files - passed.
+  - Stale branch-first wording scan - no old branch-default policy matches found.
+  - Temporary Git smoke test - passed detached default lifecycle, push-readiness blocking before merge, detached merge, post-merge readiness, and explicit `--branch` lifecycle.
+  - `python3 skills/af-reconcile-worktrees/scripts/audit_repo.py .` - passed.
+  - `python3 skills/af-reconcile-worktrees/scripts/audit_repo.py --json .` with `python3 -m json.tool` - passed.
+- Review:
+  - Self-review completed against the script diffs, docs/skill wording, and lifecycle smoke test behavior.
+- Risks / follow-ups:
+  - Existing branch-backed Agent-Flow task worktrees remain supported through branch metadata fallbacks.

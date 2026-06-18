@@ -104,6 +104,64 @@ while IFS= read -r line; do
   fi
 done < <(git config --get-regexp '^branch\..*\.agentflowparent$' || true)
 
+check_worktree_child() {
+  local wt="$1"
+  local head="$2"
+  local parent
+
+  parent="$(git -C "$wt" config --worktree --get agentFlow.parent 2>/dev/null || true)"
+  if [ "$parent" != "$TARGET" ]; then
+    return
+  fi
+
+  checked=$((checked + 1))
+  if [ -z "$head" ]; then
+    echo "NOT_READY: child task worktree has no recorded HEAD: $wt" >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  if [ -n "$(git -C "$wt" status --short)" ]; then
+    echo "NOT_READY: child task worktree has dirty changes: $wt" >&2
+    git -C "$wt" status --short >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  if ! git merge-base --is-ancestor "$head" "$TARGET"; then
+    echo "NOT_READY: child task worktree is not merged into '$TARGET': $wt" >&2
+    echo "  HEAD: $(git -C "$wt" rev-parse --short HEAD)" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+wt_path=""
+wt_head=""
+wt_branch=""
+while IFS= read -r line; do
+  if [ -z "$line" ]; then
+    if [ -n "$wt_path" ] && [ -z "$wt_branch" ]; then
+      check_worktree_child "$wt_path" "$wt_head"
+    fi
+    wt_path=""
+    wt_head=""
+    wt_branch=""
+    continue
+  fi
+
+  key="${line%% *}"
+  value="${line#* }"
+  case "$key" in
+    worktree) wt_path="$value" ;;
+    HEAD) wt_head="$value" ;;
+    branch) wt_branch="$value" ;;
+  esac
+done < <(git worktree list --porcelain)
+
+if [ -n "$wt_path" ] && [ -z "$wt_branch" ]; then
+  check_worktree_child "$wt_path" "$wt_head"
+fi
+
 if [ "$failures" -gt 0 ]; then
   echo "Push readiness failed for '$TARGET': $failures incomplete child task(s)." >&2
   exit 1

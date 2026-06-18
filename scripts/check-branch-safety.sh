@@ -21,11 +21,17 @@ fi
 
 case "$branch" in
   main|master|staging|production|prod)
-    echo "BLOCKED: current branch '$branch' is protected or reserved. Create a task worktree from a user-controlled parent branch such as development or feat/<name>." >&2
+    echo "BLOCKED: current branch '$branch' is protected or reserved. Create a task worktree from a user-controlled parent branch such as development." >&2
     exit 1
     ;;
   "")
-    echo "BLOCKED: detached HEAD. Check out a user-controlled parent branch before editing." >&2
+    parent="$(git config --worktree --get agentFlow.parent 2>/dev/null || true)"
+    mode="$(git config --worktree --get agentFlow.mode 2>/dev/null || true)"
+    if [ "$mode" = "detached" ] && [ -n "$parent" ]; then
+      echo "OK: detached Agent-Flow task worktree for parent '$parent'."
+      exit 0
+    fi
+    echo "BLOCKED: detached HEAD without Agent-Flow task metadata. Check out a user-controlled parent branch or create a task worktree with start-task.sh." >&2
     exit 1
     ;;
   *)

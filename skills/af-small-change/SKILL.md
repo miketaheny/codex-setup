@@ -36,9 +36,11 @@ If on a user-controlled parent branch such as `development` or `feat/<name>`, cr
 scripts/start-task.sh --class tiny fix <short-description>
 ```
 
-If `scripts/start-task.sh` is unavailable, use `scripts/new-worktree.sh fix <short-description>` and record `agentFlowTaskClass = tiny` manually.
+If `scripts/start-task.sh` is unavailable, use `scripts/new-worktree.sh --class tiny fix <short-description>` and record `agentFlow.taskClass = tiny` in worktree-local config manually if needed.
 
 If on a protected or reserved branch, ask the user to check out the intended parent branch first. Do not branch from `main` or `staging`.
+
+Named task branches are not the default. Create one only when the user explicitly asks for a branch, for example with `scripts/start-task.sh --branch fix/<short-description> --class tiny fix <short-description>`.
 
 ## Finish behavior
 

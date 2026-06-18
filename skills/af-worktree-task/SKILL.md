@@ -1,15 +1,15 @@
 ---
 name: af-worktree-task
-description: Create and use isolated git worktrees for agent tasks, based from the checked-out parent branch, with safe branch naming, scoped work, docs updates, and review readiness.
+description: Create and use isolated git worktrees for agent tasks, based from the checked-out parent branch, with named branches only when explicitly requested.
 ---
 
 # AF Worktree Task Skill
 
-Use this skill for any prompt that changes files, and when the user wants safe parallel work, multiple agent sessions, or a clean isolated task branch.
+Use this skill for any prompt that changes files, and when the user wants safe parallel work, multiple agent sessions, or a clean isolated task worktree.
 
 ## Goal
 
-Prevent agent sessions from colliding by isolating each implementation task in a separate git worktree and task branch.
+Prevent agent sessions from colliding by isolating each implementation task in a separate git worktree. Use detached task worktrees by default; create a named branch only when the user explicitly asks for one.
 
 ## Preconditions
 
@@ -22,7 +22,7 @@ Before changing files:
 5. If there are uncommitted changes in the current tree, do not overwrite them.
 6. If the current branch is `main`, `staging`, `master`, `production`, or `prod`, stop and ask the user to check out a user-controlled parent branch such as `development` or `feat/<name>`.
 7. Classify the task as `tiny`, `normal`, `large`, or `risky`.
-8. For `large` or `risky` tasks from `development`, ask whether to create a user-controlled feature parent branch first.
+8. For `large` or `risky` tasks, use the checked-out parent branch unless the user explicitly asks for a feature branch or different parent.
 
 ## Worktree naming
 
@@ -32,7 +32,7 @@ Use this pattern:
 ../<repo-name>-<short-task>
 ```
 
-Branch pattern:
+Branch pattern when explicitly requested:
 
 ```text
 fix/<short-task>
@@ -49,10 +49,10 @@ Prefer the lifecycle helper when available:
 scripts/start-task.sh --class <tiny|normal|large|risky> <type> <short-task>
 ```
 
-For large feature work, create a feature parent branch first when the user approves:
+Create a named task branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --class large --create-parent feat/<feature-name> feat <short-task>
+scripts/start-task.sh --branch <type>/<short-task> --class <tiny|normal|large|risky> <type> <short-task>
 ```
 
 Manual equivalent:
@@ -61,14 +61,14 @@ Manual equivalent:
 git fetch --all --prune
 git branch --show-current
 git pull --ff-only
-git worktree add ../<repo-name>-<short-task> -b <type>/<short-task> <checked-out-parent-branch>
-git config branch.<type>/<short-task>.agentFlowParent <checked-out-parent-branch>
-git config branch.<type>/<short-task>.agentFlowTaskClass <tiny|normal|large|risky>
+git worktree add --detach ../<repo-name>-<short-task> <checked-out-parent-branch>
+git -C ../<repo-name>-<short-task> config --worktree agentFlow.parent <checked-out-parent-branch>
+git -C ../<repo-name>-<short-task> config --worktree agentFlow.taskClass <tiny|normal|large|risky>
 ```
 
 If `git pull --ff-only` is not appropriate because there is no upstream, document that and continue from the local parent branch.
 
-The parent branch is user-controlled. It is usually `development` for fixes and routine work. For larger features, it can be a feature branch the user intentionally checked out so subtask worktrees merge back into that feature branch before later merging into `development`.
+The parent branch is user-controlled. It is usually `development` for fixes and routine work. For larger features, still use detached task worktrees from the checked-out parent unless the user intentionally asks for a feature branch.
 
 ## In the worktree
 
@@ -99,7 +99,7 @@ Defaults:
 
 - `merge_prompt = "always"` means ask before merge.
 - `auto_merge = "off"` means no automatic merge.
-- `auto_merge = "tiny-only"` may auto-merge only `tiny` task branches after readiness checks pass.
+- `auto_merge = "tiny-only"` may auto-merge only `tiny` task worktrees after readiness checks pass.
 - Never auto-merge to `main` or `staging`.
 
 Before suggesting merge:
@@ -113,7 +113,7 @@ git diff <parent-branch>...HEAD
 Summarize:
 
 - worktree path
-- branch name
+- branch name, or detached commit when no branch was requested
 - parent branch
 - changed files
 - validation

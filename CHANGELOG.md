@@ -20,6 +20,6 @@
 - Tightened local protected branch policy so `main` is flagged for local cleanup, and `staging` is allowed locally only when staging is enabled.
 - Expanded `af-docs` from basic docs maintenance into a docs stewardship workflow for existing docs, visual assets, user guides, demos, presentations, and marketing content.
 - Updated bootstrap and install behavior to create/copy Agent-Flow docs, skills, scripts, templates, and adapter files consistently.
-- Changed task workflow guidance so task worktrees branch from and merge back to the checked-out parent branch. `development` remains the SDLC integration branch, optional `staging` is protected when configured, and `main` is always production.
+- Changed task workflow guidance so task worktrees are detached from and merge back to the checked-out parent branch by default. Named task or feature branches are created only when explicitly requested. `development` remains the SDLC integration branch, optional `staging` is protected when configured, and `main` is always production.
 - Changed completion guidance so agents ask before merge by default, can auto-merge only when repo config opts in, and check child task worktrees before pushing parent branches.
 - Documented IDE config policy: commit shared tooling settings only, not personal editor preferences.

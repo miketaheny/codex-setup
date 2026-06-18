@@ -19,7 +19,7 @@ Get the benefit of deeper planning and review without making every small fix slo
 | Small known bug | `af-small-change` or a focused work pass |
 | Small bug with side effects | brief plan -> work -> `af-review-gate` |
 | Normal feature | plan -> work -> code review |
-| Risky/broad feature | ask about a feature parent branch -> heavier planning/review workflow |
+| Risky/broad feature | use a task worktree from the checked-out parent -> heavier planning/review workflow when needed |
 | Multi-agent exploration | heavier multi-agent workflow |
 | Reusable lesson | project docs or solution note |
 | Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
@@ -56,10 +56,10 @@ Allowed only when each session has its own worktree and narrow scope.
 Rules:
 
 - One worktree per task.
-- For large/risky prompts from `development`, ask whether to create a user-controlled feature parent branch first.
+- For large/risky prompts, use the checked-out parent branch unless the user explicitly requests a feature branch or different parent.
 - Avoid editing shared files across sessions.
 - Add per-commit devlog files under `devlog/`; do not rewrite unrelated devlog files.
-- Merge each task branch back to its recorded parent branch one at a time.
+- Merge each task worktree back to its recorded parent branch one at a time.
 - Run `af-review-gate` after conflict resolution.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
@@ -69,7 +69,7 @@ State:
 
 - chosen workflow
 - why it is the lightest safe option
-- branch/worktree recommendation
+- worktree recommendation and branch only if explicitly requested
 - documentation requirements
 - validation expectations
 

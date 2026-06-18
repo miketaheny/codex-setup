@@ -68,7 +68,8 @@ Inside a Git repository:
 Init runs the bootstrap step, then records local repo choices in `.agent-flow/config.toml`:
 
 - whether Agent-Flow enforcement is enabled or locally disabled
-- that task worktrees branch from the checked-out parent branch and merge back there
+- that task worktrees are detached from the checked-out parent branch by default and merge back there
+- that named task or feature branches are created only when the user explicitly requests a branch
 - that file-changing prompts require task worktrees
 - that dirty worktrees are reviewed, devlogged, and committed instead of being left loose
 - that agents ask before merging by default
@@ -144,7 +145,7 @@ Use Agent-Flow for this change. Classify the task, create the task worktree, fin
 ### Review before merge
 
 ```text
-Use af-review-gate and tell me whether this task branch is ready to merge into its recorded parent branch.
+Use af-review-gate and tell me whether this task worktree is ready to merge into its recorded parent branch.
 ```
 
 ### Formal security review

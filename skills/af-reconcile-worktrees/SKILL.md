@@ -1,6 +1,6 @@
 ---
 name: af-reconcile-worktrees
-description: Audit and reconcile AF solo-developer git worktrees, branches, parent-branch metadata, and instruction conflicts. Use when the user asks to review worktrees, clean up completed worktrees, inspect development/staging/main branch state, find branch cleanup candidates, or compare agent instruction guidance against AF workflow rules.
+description: Audit and reconcile AF solo-developer git worktrees, optional branches, parent metadata, and instruction conflicts. Use when the user asks to review worktrees, clean up completed worktrees, inspect development/staging/main branch state, find branch cleanup candidates, or compare agent instruction guidance against AF workflow rules.
 ---
 
 # AF Reconcile Worktrees Skill
@@ -35,7 +35,7 @@ python3 <this-skill-dir>/scripts/audit_repo.py /path/to/repo
 The script reports:
 
 - current branch and configured integration branch status
-- worktree cleanliness and merge ancestry against each task's recorded parent branch
+- worktree cleanliness and merge ancestry against each task's recorded parent branch, including detached task worktrees
 - local protected branch policy for `main`, optional `staging`, and reserved legacy names
 - push readiness by parent branch
 - local branch cleanup candidates
@@ -47,7 +47,7 @@ Use the script as a baseline, then apply judgment before taking action.
 
 Use these classifications:
 
-- Complete task worktree: clean status, has recorded `agentFlowParent`, and HEAD is already an ancestor of that parent branch.
+- Complete task worktree: clean status, has recorded `agentFlow.parent` worktree metadata or explicit branch `agentFlowParent`, and HEAD is already an ancestor of that parent branch.
 - Ongoing: dirty status, detached/unknown state, missing parent metadata, or has commits not merged to the parent branch.
 - Keep: worktree is the configured integration branch, or `staging` when `staging_enabled = true`.
 - Disallowed local protected worktree: `main`, `staging` when staging is disabled or unconfigured, or reserved `master`, `production`, or `prod`.
@@ -70,7 +70,7 @@ Flag local `staging` for deletion when `staging_enabled = false` or no staging c
 
 Flag reserved local branches `master`, `production`, and `prod` for deletion after confirming they have no unique work.
 
-For task branches with recorded AF parent metadata and already merged to that parent, ask before deleting:
+For explicit task branches with recorded AF parent metadata and already merged to that parent, ask before deleting:
 
 ```bash
 git branch -d <branch>
@@ -96,7 +96,7 @@ Before pushing any user-controlled branch, run:
 scripts/check-push-readiness.sh <branch>
 ```
 
-The branch is not ready to push if any child task branch with `agentFlowParent = <branch>` has a dirty worktree or commits not merged into the parent.
+The branch is not ready to push if any child task worktree with recorded parent metadata has dirty changes or commits not merged into the parent.
 
 ### 7. Re-check after approved actions
 
