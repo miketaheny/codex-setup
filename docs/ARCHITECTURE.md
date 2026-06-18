@@ -38,7 +38,7 @@ flowchart TD
 | `AGENTS.md` | Codex-compatible adapter that points to `AGENT-FLOW.md`. |
 | `CLAUDE.md` | Claude-compatible adapter that points to `AGENT-FLOW.md`. |
 | `skills/` | AF workflow skills in Codex-compatible `SKILL.md` format. |
-| `scripts/` | Portable shell helpers for install, init, bootstrap, task lifecycle, push readiness, hooks, worktrees, branch checks, and review snapshots. |
+| `scripts/` | Portable shell helpers for install, init, bootstrap, session lifecycle, push readiness, hooks, worktrees, branch checks, and review snapshots. |
 | `templates/` | Repo-level instruction, devlog, and decision templates. |
 | `docs/` | Project documentation, visual plans, prompts, guides, and communication assets. |
 | `devlog/` | Per-commit engineering history and validation records. |

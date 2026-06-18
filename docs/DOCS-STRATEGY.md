@@ -74,7 +74,7 @@ Use visual assets when they reduce explanation cost.
 
 - Mermaid is the default for source-accurate workflow, sequence, and architecture diagrams.
 - D2 is recommended when larger topology or dependency diagrams need stronger layout control.
-- Screenshots are recommended for install, init/bootstrap, task lifecycle, skill discovery, and real UI or terminal flows.
+- Screenshots are recommended for install, init/bootstrap, session lifecycle, skill discovery, and real UI or terminal flows.
 - Demo videos are recommended for install-to-init, start-session-to-finish-session, worktree-manager pickup/cleanup, push-readiness, release PR, backlog migration, and docs maintenance walkthroughs.
 - Generated images should be limited to conceptual, marketing, or presentation assets when real product screenshots are not available.
 

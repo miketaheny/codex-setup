@@ -30,11 +30,11 @@ AF skills cover small changes, worktrees, finishing sessions, docs, devlogs, rev
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 
-## Slide 6: Task Lifecycle Helpers
+## Slide 6: Session Lifecycle Helpers
 
 `start-session.sh`, `finish-session.sh`, `worktree-manager.py`, and `check-push-readiness.sh` make the default flow repeatable while keeping merges explicit.
 
-Visual: task lifecycle diagram from `docs/ARCHITECTURE.md`.
+Visual: session lifecycle diagram from `docs/ARCHITECTURE.md`.
 
 ## Slide 7: Documentation and Visuals
 
@@ -44,7 +44,7 @@ Visual: docs artifact matrix.
 
 ## Slide 8: Demo Flow
 
-Install, initialize a repo, inspect generated config and instruction files, start a task, run finish checks, inspect push readiness.
+Install, initialize a repo, inspect generated config and instruction files, start a session, run finish checks, inspect push readiness.
 
 Visual: terminal screenshot sequence.
 
