@@ -1,0 +1,32 @@
+# 2026-06-18 - chore: update release and finish skills
+
+- Branch/worktree: `detached:1976806` / `/Users/taheny/vault/teamt/codex-setup-update-release-skills`
+- Commit: `pending`
+- Goal: Add an AF session finish skill and convert the staging-push workflow into a PR-first release skill.
+- Summary:
+  - Added `af-finish-session` for validation, optional app/browser review, devlog/docs checks, review gate, finish script, and ask-before-merge.
+  - Renamed the release workflow to `af-release-pr` and made it PR-first with open-worktree confirmation, development push verification, release diff review, formal security review, and default `development -> staging` then `staging -> main` behavior.
+  - Updated AF docs, prompts, templates, and init defaults to match the new finish and release PR workflows.
+- Files changed:
+  - `skills/af-finish-session/SKILL.md` - new session completion workflow.
+  - `skills/af-finish-session/agents/openai.yaml` - Codex UI metadata for the new skill.
+  - `skills/af-release-pr/SKILL.md` - PR-first release workflow replacing the old staging-push instructions.
+  - `skills/af-release-pr/agents/openai.yaml` - renamed release skill UI metadata.
+  - `skills/af-push-staging/SKILL.md` - legacy alias that points old prompts to the PR-first release workflow.
+  - `skills/af-reconcile-worktrees/scripts/audit_repo.py` - audit lookup updated for `af-release-pr` with old skill fallback.
+  - `AGENT-FLOW.md`, `README.md`, `docs/`, `templates/`, and related skills - wording updated for finish-session browser QA and release PR defaults.
+  - `scripts/init-repo.sh`, `templates/agent-flow-config.toml`, and `scripts/check-push-readiness.sh` - staging default and direct-push safety wording updated.
+- Decisions:
+  - Added a separate `af-finish-session` skill instead of expanding `af-review-gate`, because finishing includes orchestration beyond review: start/run checks, browser QA, devlog/docs, commit readiness, and merge prompting.
+  - Renamed the release workflow to `af-release-pr` while keeping "push staging" as a trigger phrase so legacy user wording still routes to the PR-first process.
+  - Kept direct staging push support only as an explicit exception because existing hooks and safety scripts already model that escape hatch.
+- Validation:
+  - `for d in skills/*; do [ -d "$d" ] || continue; python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$d" || exit 1; done` - passed for all 12 skill folders.
+  - `bash -n scripts/init-repo.sh && bash -n scripts/check-push-readiness.sh` - passed.
+  - `python3 -m py_compile skills/af-reconcile-worktrees/scripts/audit_repo.py` - passed.
+  - `git diff --check` - passed.
+  - App/browser review - not applicable; this change updates Markdown workflow skills, docs, and shell/Python helpers, not a runnable UI.
+- Review:
+  - Manual `af-review-gate` checklist completed against the session diff: branch safety, scope, docs/devlog, validation, and release workflow wording reviewed. No P1/P2 findings.
+- Risks / follow-ups:
+  - Existing installs should rerun `scripts/install.sh` to install `af-release-pr`; the retained `af-push-staging` alias prevents old prompts from using stale direct-push guidance.

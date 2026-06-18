@@ -15,7 +15,7 @@ Use af-worktree-task. Create or adopt one AF session worktree from the checked-o
 ## Seamless session lifecycle
 
 ```text
-Use Agent-Flow for this change. Create one AF session worktree, implement it, run finish-session, and ask me before merging if it is ready.
+Use Agent-Flow for this change. Create one AF session worktree, implement it, then use af-finish-session to validate, review, run browser QA if applicable, and ask me before merging if it is ready.
 ```
 
 ## Explicit feature branch
@@ -30,6 +30,12 @@ Create a feature branch for this work only if needed, then create session worktr
 Use af-review-gate. Review this session worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
 ```
 
+## Finish session
+
+```text
+Use af-finish-session. Start the repo and open the Codex browser if the change is user-facing, run validation and review, update devlog/docs, then ask me before merging into the recorded parent branch.
+```
+
 ## Formal security review
 
 ```text
@@ -39,7 +45,7 @@ Use af-security-review. Run the formal security gate for [head branch] against [
 ## Project docs
 
 ```text
-Use af-docs. Update project docs from devlog/ and recent commits before promoting development through the release path.
+Use af-docs. Update project docs from devlog/ and recent commits before preparing release PRs.
 ```
 
 ## Existing docs stewardship
@@ -84,10 +90,10 @@ Run scripts/check-push-readiness.sh for the branch I am about to push. Block the
 Ensure this repo has the Agent-Flow .gitignore block. Preserve existing ignore rules. Commit IDE files only if they encode shared project tooling, not personal preferences.
 ```
 
-## Promote development
+## Release PR
 
 ```text
-Use af-push-staging. Reconcile worktrees, validate development, run formal security review, and promote through the configured release path. If staging is enabled, review development to staging, merge development into staging, then review staging to main before asking to create a staging-to-main PR. If staging is disabled, review development to main before asking to create a development-to-main PR.
+Use af-release-pr. Ask me about open worktrees, validate development, run docs and security review, push origin development when ready, then prepare the correct release PR. Default to development -> staging, then staging -> main after staging contains the release; use development -> main only when staging is disabled or I explicitly request it.
 ```
 
 ## Workflow decision

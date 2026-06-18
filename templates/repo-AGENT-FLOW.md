@@ -64,7 +64,7 @@ TODO
 - Update project docs and useful visual assets when behavior, setup, architecture, security, deployment, operations, onboarding, demos, or marketing needs change.
 - Add reusable patterns to `docs/solutions/`.
 - Add architectural decisions to `docs/decisions/`.
-- Run docs maintenance before pushing or promoting `development` to optional `staging` or `main`.
+- Run docs maintenance before pushing `development` or preparing release pull requests to optional `staging` or `main`.
 - Run formal security review before creating a pull request to `staging` or `main`.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
@@ -81,6 +81,7 @@ Before merge:
 
 - inspect diff against the session's parent branch
 - run relevant validation
+- start the repo and use Codex browser/manual review when the change needs visual or user-facing verification
 - update docs
 - run `af-review-gate`
 - resolve P1 findings

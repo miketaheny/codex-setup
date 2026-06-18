@@ -77,7 +77,7 @@ flowchart LR
     Bootstrap --> VisualDirs["docs/diagrams/ + docs/assets/ + docs/presentations/"]
 ```
 
-`init-repo.sh` records first-contact repo choices, including whether Agent-Flow enforcement is enabled, whether staging is used, and whether the local pre-push hook was installed. It also ensures `.gitignore` has the Agent-Flow local/IDE/env block and notes staging-disabled repos in local agent adapters.
+`init-repo.sh` records first-contact repo choices, including whether Agent-Flow enforcement is enabled, whether staging is used, and whether the local pre-push hook was installed. Enforced repos default to the `development -> staging -> main` PR path unless staging is disabled. It also ensures `.gitignore` has the Agent-Flow local/IDE/env block and notes staging-disabled repos in local agent adapters.
 
 `bootstrap-repo.sh` only copies missing files. Existing repo instructions and docs are left in place.
 
@@ -88,21 +88,24 @@ flowchart TD
     Request["User request"] --> Choose["Choose lightest safe AF skill"]
     Choose --> Small["af-small-change"]
     Choose --> Worktree["af-worktree-task"]
+    Choose --> Finish["af-finish-session"]
     Choose --> Docs["af-docs"]
     Choose --> Migration["af-migrate-backlog-devlog"]
     Choose --> Review["af-review-gate"]
     Choose --> Security["af-security-review"]
-    Choose --> Staging["af-push-staging"]
+    Choose --> Release["af-release-pr"]
     Choose --> Reconcile["af-reconcile-worktrees"]
     Choose --> Compound["af-compound-mode"]
 
     Small --> Devlog["devlog entry"]
     Worktree --> Devlog
+    Finish --> BrowserQA["app/browser review when applicable"]
+    Finish --> Review
     Docs --> ProjectDocs["project docs + visuals"]
     Migration --> Devlog
     Review --> MergeDecision["merge readiness"]
     Security --> ProtectedReview["protected-branch security gate"]
-    Staging --> Protected["release promotion"]
+    Release --> Protected["protected release PRs"]
 ```
 
 Skills are written as Markdown workflows. Codex can auto-discover them through its skill format; other agents can still read them directly as reusable process instructions.
@@ -151,7 +154,7 @@ Agent-Flow has no database or service runtime. State is file-based:
 
 - Install scripts write to local home directories and should be reviewed before running.
 - Init and bootstrap scripts write into the current Git repository and refuse to run outside a Git repo.
-- Staging promotion and cleanup skills require explicit approval before destructive actions such as branch deletion or worktree removal.
+- Release PR and cleanup skills require explicit approval before remote side effects or destructive actions such as PR creation, branch deletion, or worktree removal.
 - Pull requests to protected branches require a distinct formal security review before PR creation.
 - `main` is a production PR target and direct local agent work is blocked by workflow. `staging` is local only when enabled and protected/reserved when present.
 - Optional local `pre-push` hooks call `check-push-readiness.sh` so parent branches are not pushed while child session worktrees are dirty or unmerged.

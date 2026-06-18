@@ -25,9 +25,9 @@ Get the benefit of deeper planning and review without making every small fix slo
 | Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
-| Before merge | `af-review-gate` |
+| Complete a session before merge | `af-finish-session` with `af-review-gate` |
 | Before protected-branch PR | `af-security-review` |
-| Before release promotion | `af-reconcile-worktrees -> af-docs -> af-push-staging` with `af-security-review` |
+| Before release PR | `af-reconcile-worktrees -> af-docs -> af-release-pr` with `af-security-review` |
 
 ## When a Heavier Workflow Is Worth It
 

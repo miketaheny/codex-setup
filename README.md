@@ -1,6 +1,6 @@
 # AF Agent-Flow Global Setup
 
-A clean Agent-Flow setup for solo development with Claude, Codex, and other coding agents: shared instructions, Codex-compatible skills, session worktrees, finish-time devlog files, project documentation maintenance, review gates, formal protected-branch security review, and optional heavier workflows.
+A clean Agent-Flow setup for solo development with Claude, Codex, and other coding agents: shared instructions, Codex-compatible skills, session worktrees, finish-time devlog files, project documentation maintenance, review gates, optional browser QA before merge, formal protected-branch security review, release pull requests, and optional heavier workflows.
 
 ## What this gives you
 
@@ -11,13 +11,14 @@ A clean Agent-Flow setup for solo development with Claude, Codex, and other codi
 - AF skills for repeatable workflows:
   - `af-small-change`
   - `af-worktree-task`
+  - `af-finish-session`
   - `af-review-gate`
   - `af-security-review`
   - `af-devlog`
   - `af-docs`
   - `af-migrate-backlog-devlog`
   - `af-reconcile-worktrees`
-  - `af-push-staging`
+  - `af-release-pr`
   - `af-compound-mode`
 - Scripts for repo initialization, common safety checks, worktrees, and repo bootstrapping.
 - Lifecycle helpers for chat-to-worktree session start, finish/merge readiness, push readiness, and optional local hooks.
@@ -76,7 +77,7 @@ Init runs the bootstrap step, then records local repo choices in `.agent-flow/co
 - that formal security review is required before pull requests to `staging` or `main`
 - `development` as the SDLC integration branch
 - `main` as the production PR target, not a local work branch
-- whether optional `staging` is used between `development` and `main`
+- whether optional `staging` is used between `development` and `main`; enforced repos default to the `development -> staging -> main` PR path unless staging is disabled
 - `staging` as a local branch only when staging is enabled
 - `main`, configured `staging`, and reserved branch names as protected from direct agent edits
 - whether to install a local pre-push hook for child worktree readiness checks
@@ -114,9 +115,9 @@ It will not overwrite existing files or record first-contact choices. Prefer `in
 
 - [Changelog](CHANGELOG.md) - user-facing workflow, docs, skill, and setup changes.
 - [Documentation Strategy](docs/DOCS-STRATEGY.md) - how `af-docs` owns ongoing docs maintenance, interview setup, visuals, and validation.
-- [Workflow](docs/WORKFLOW.md) - branch model, daily loop, migration, and release promotion.
+- [Workflow](docs/WORKFLOW.md) - branch model, daily loop, migration, and release PRs.
 - [Architecture](docs/ARCHITECTURE.md) - system map, install flow, init/bootstrap flow, and skill routing diagrams.
-- [User Guide](docs/USER-GUIDE.md) - install, init, skill selection, migration, visual docs, and release promotion.
+- [User Guide](docs/USER-GUIDE.md) - install, init, skill selection, migration, visual docs, and release PRs.
 - [Visual Plan](docs/VISUALS.md) - diagram inventory, screenshot checklist, demo video plan, and content recommendations.
 - [Demo Plan](docs/DEMO.md) - live demo and recording script.
 - [Pitch](docs/PITCH.md) - positioning, value props, objections, and marketing recommendations.
@@ -136,10 +137,10 @@ Use af-small-change to fix this in one AF worktree session. Keep scope narrow an
 Use af-worktree-task. Create or adopt one isolated AF worktree session from the checked-out parent branch, then implement, document, validate, and review.
 ```
 
-### Seamless session lifecycle
+### Finish session
 
 ```text
-Use Agent-Flow for this change. Create one session worktree, finish with readiness checks, then ask me whether to merge back to the parent branch.
+Use af-finish-session. Finish this worktree session with validation, devlog/docs checks, browser review if applicable, review gate, and merge readiness.
 ```
 
 ### Review before merge
@@ -165,7 +166,7 @@ Devlog filenames use `YYYY-MM-DD-<commit-subject-slug>.md`. They are date and su
 ### Project docs maintenance
 
 ```text
-Use af-docs to update project docs from the latest devlog entries and commits before promoting development through the release path.
+Use af-docs to update project docs from the latest devlog entries and commits before preparing release PRs.
 ```
 
 ### Existing docs stewardship
@@ -189,7 +190,7 @@ Use af-migrate-backlog-devlog to convert Backlog.md, backlog/, or .backlog task 
 ### Worktree reconciliation
 
 ```text
-Use af-reconcile-worktrees to open the worktree manager, pick up incomplete work, and clean up completed worktrees before release promotion.
+Use af-reconcile-worktrees to open the worktree manager, pick up incomplete work, and clean up completed worktrees before release PRs.
 ```
 
 ### Push readiness
@@ -198,10 +199,10 @@ Use af-reconcile-worktrees to open the worktree manager, pick up incomplete work
 Run scripts/check-push-readiness.sh for this branch before pushing. Tell me which child worktrees, if any, still need to be merged or cleaned.
 ```
 
-### Release promotion
+### Release pull request
 
 ```text
-Use af-push-staging to reconcile worktrees, validate development, run formal security review, and promote through the configured release path. If staging is enabled, use development -> staging -> main. If staging is disabled, offer a development-to-main PR.
+Use af-release-pr to ask about open worktrees, validate development, run formal security review, push origin development when ready, and prepare the correct protected-branch PR. Default to development -> staging, then staging -> main after staging contains the release; use development -> main only when staging is disabled or explicitly requested.
 ```
 
 ### Bigger/riskier work
