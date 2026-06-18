@@ -22,7 +22,7 @@ Agent-Flow provides:
 - shared `AGENT-FLOW.md` rules for all agents
 - `AGENTS.md` and `CLAUDE.md` adapters
 - Codex-compatible AF skills for common workflows
-- scripts for install, init/bootstrap, task lifecycle, push readiness, worktrees, branch safety, and review snapshots
+- scripts for install, init/bootstrap, session lifecycle, push readiness, worktrees, branch safety, and review snapshots
 - finish-time session `devlog/` conventions
 - docs and visual asset guidance
 

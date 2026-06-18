@@ -66,7 +66,7 @@ Narrative:
 Start from the checked-out parent branch, create one session worktree for the file-changing chat, validate, start the repo and inspect browser-visible changes when applicable, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development pushes to origin and opens a development-to-staging PR by default, followed by a staging-to-main PR after staging contains the release.
 ```
 
-### 4. Demonstrate Task Lifecycle
+### 4. Demonstrate Session Lifecycle
 
 ```bash
 ~/.agent-flow/scripts/start-session.sh docs demo-copy

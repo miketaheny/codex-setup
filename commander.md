@@ -13,6 +13,6 @@ Recommended flow:
 7. Use `af-migrate-backlog-devlog` before removing legacy Backlog task files.
 8. Run `af-review-gate`.
 9. Merge into `development`.
-10. Run `af-reconcile-worktrees` or `scripts/worktree-manager.py --interactive` before cleanup or staging promotion.
-11. Run `af-security-review` before protected-branch PRs or direct staging promotion.
-12. Run `af-push-staging` when ready to promote `development` to `staging`.
+10. Run `af-reconcile-worktrees` or `scripts/worktree-manager.py --interactive` before cleanup or release PR prep.
+11. Run `af-security-review` before protected-branch PRs or any explicitly approved direct staging promotion.
+12. Run `af-release-pr` when ready to promote `development` through the protected release PR path.

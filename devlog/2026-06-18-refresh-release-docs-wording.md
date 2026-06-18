@@ -1,0 +1,29 @@
+# 2026-06-18 - refresh release docs wording
+
+- Branch/worktree: `detached:cc797ec` / `/Users/taheny/vault/teamt/codex-setup-docs-maintenance`
+- Commit: `pending`
+- Goal: Run `af-docs` maintenance before pushing `development` and align docs with the current session lifecycle and PR-first release workflow.
+- Summary:
+  - Updated repo owner notes to point release prep to `af-release-pr` instead of the legacy `af-push-staging` skill.
+  - Replaced stale task-lifecycle labels with session-lifecycle wording in architecture, demo, visual strategy, pitch, and presentation docs.
+  - Clarified the changelog helper summary so the current user-facing lifecycle helpers are `start-session.sh`, `finish-session.sh`, and `worktree-manager.py`, while `start-task.sh` and `finish-task.sh` remain compatibility wrappers.
+- Files changed:
+  - `CHANGELOG.md`
+  - `commander.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DEMO.md`
+  - `docs/DOCS-STRATEGY.md`
+  - `docs/PITCH.md`
+  - `docs/presentations/agent-flow-overview.md`
+- Decisions:
+  - Kept `af-push-staging` references where they document the intentional legacy alias.
+  - Kept direct staging push wording only where it describes an explicit exception path.
+- Validation:
+  - `git diff --check` - passed.
+  - Markdown relative link check across Markdown files - passed.
+  - Stale wording scan for legacy `af-push-staging` command prompts and task-lifecycle labels - passed; remaining `af-push-staging` references document the intentional legacy alias.
+  - App/browser review - not applicable; this session changes Markdown docs and no runnable UI.
+- Review:
+  - Self-review completed with `af-review-gate` checklist: branch safety, scope, dirty diff, docs/devlog, and validation reviewed. No P1/P2/P3 findings.
+- Risks / follow-ups:
+  - None known.

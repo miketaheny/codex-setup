@@ -10,7 +10,7 @@
 - Added visual documentation coverage: architecture diagrams, user guide, demo plan, pitch copy, visual plan, and presentation outline.
 - Added `docs/DOCS-STRATEGY.md` so `af-docs` can own ongoing docs maintenance without repeating the full stewardship interview for routine changes.
 - Added `init-repo.sh` and `.agent-flow/config.toml` defaults for first-contact Agent-Flow enforcement choices, checked-out parent branch worktrees, optional staging, and `main` as production.
-- Added lifecycle helpers for `start-task.sh`, `finish-task.sh`, `check-push-readiness.sh`, and `install-hooks.sh`.
+- Added lifecycle and safety helpers for `start-session.sh`, `finish-session.sh`, `worktree-manager.py`, `check-push-readiness.sh`, and `install-hooks.sh`, with `start-task.sh` and `finish-task.sh` retained as compatibility wrappers.
 - Added an Agent-Flow `.gitignore` template and init behavior that appends ignore policy without overwriting existing repo rules.
 - Added `af-security-review` as a distinct gate before pull requests to `staging` or `main`.
 - Added session lifecycle helpers and a functional worktree manager for visual worktree review, pickup, and cleanup.
