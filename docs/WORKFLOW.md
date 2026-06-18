@@ -19,28 +19,28 @@ Use AI coding agents like a disciplined solo engineering team:
 
 Agent-Flow has two branch concepts:
 
-- Task parent branch: the user-controlled branch that is checked out when the task begins. Task worktrees branch from it and merge back to it.
+- Task parent branch: the user-controlled branch that is checked out when the task begins. Task worktrees are detached from it by default and merge back to it.
 - SDLC integration branch: `development`, which stays open for ongoing fixes and feeds the release path.
 
 Typical routine work:
 
 ```text
 development
-  ├── fix/navbar-spacing
-  ├── fix/contact-form-validation
-  └── docs/devlog-cleanup
+  ├── ../repo-navbar-spacing
+  ├── ../repo-contact-form-validation
+  └── ../repo-devlog-cleanup
 ```
 
 Longer feature work:
 
 ```text
-feat/payments-redesign
-  ├── feat/payment-form
-  ├── fix/payment-validation
-  └── docs/payment-runbook
+development
+  ├── ../repo-payment-form
+  ├── ../repo-payment-validation
+  └── ../repo-payment-runbook
 ```
 
-After the feature branch is ready, the user merges it into `development`.
+Create a feature branch only when the user explicitly asks for one. If that happens, the feature branch becomes the checked-out parent for later task worktrees.
 
 Protected or reserved branches:
 
@@ -60,14 +60,14 @@ Release path:
 | Chat/read-only | Answer directly; no worktree needed. |
 | Tiny | Create a task worktree, validate, update devlog/docs if needed, ask to merge. |
 | Normal | Create a task worktree, validate, run review, ask to merge. |
-| Large/risky | Ask whether to create a feature parent branch first, then create task worktrees under that parent. |
+| Large/risky | Create a task worktree from the checked-out parent branch unless the user explicitly requests a feature branch or different parent. |
 
 Default merge policy:
 
 - `auto_commit = "finish"` commits dirty task work after devlog checks before merge readiness.
 - `merge_prompt = "always"`
 - `auto_merge = "off"`
-- Optional `auto_merge = "tiny-only"` can merge only validated tiny task branches.
+- Optional `auto_merge = "tiny-only"` can merge only validated tiny task worktrees.
 - Agents never auto-merge into `main` or `staging`.
 
 Dirty parent worktrees are handled before task start: review the existing changes, create or update a devlog entry, commit them, then create the new task worktree.
@@ -80,10 +80,10 @@ scripts/finish-task.sh
 scripts/finish-task.sh --merge
 ```
 
-For large work:
+Create a named task branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --class large --create-parent feat/payments feat payment-form
+scripts/start-task.sh --branch feat/payment-form --class large feat payment-form
 ```
 
 ## Parallel Work Model
@@ -94,11 +94,11 @@ For multiple agent sessions:
 git switch <parent-branch>
 git pull
 
-git worktree add ../repo-navbar -b fix/navbar-spacing <parent-branch>
-git config branch.fix/navbar-spacing.agentFlowParent <parent-branch>
+git worktree add --detach ../repo-navbar <parent-branch>
+git -C ../repo-navbar config --worktree agentFlow.parent <parent-branch>
 
-git worktree add ../repo-contact-form -b fix/contact-form-validation <parent-branch>
-git config branch.fix/contact-form-validation.agentFlowParent <parent-branch>
+git worktree add --detach ../repo-contact-form <parent-branch>
+git -C ../repo-contact-form config --worktree agentFlow.parent <parent-branch>
 ```
 
 Open one agent session per worktree.
@@ -151,7 +151,7 @@ Use `af-migrate-backlog-devlog` when a repo still has `Backlog.md`, `triage.md`,
 
 Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing task-parent metadata, local protected branch policy violations, and instruction conflicts.
 
-Run `scripts/check-push-readiness.sh development` before pushing `development`. For feature parent branches, run the same check against the feature branch before pushing it.
+Run `scripts/check-push-readiness.sh development` before pushing `development`. For an explicitly requested feature parent branch, run the same check against the feature branch before pushing it.
 
 Use `af-push-staging` to promote `development` through the configured release path. With staging enabled, it validates, runs formal security review for `development -> staging`, merges `development` into `staging`, pushes both branches, runs formal security review for `staging -> main`, then offers a `staging` to `main` PR. With staging disabled, it validates and pushes `development`, runs formal security review for `development -> main`, then offers a `development` to `main` PR.
 

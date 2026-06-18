@@ -9,7 +9,7 @@ Use af-small-change. Fix [issue]. Keep scope narrow. Do not touch main or stagin
 ## Worktree task
 
 ```text
-Use af-worktree-task. Create a worktree from the checked-out parent branch named ../[repo]-[task] with branch [type]/[task]. Implement the task, validate, add a devlog entry under devlog/, and run review before merge.
+Use af-worktree-task. Create a detached worktree from the checked-out parent branch named ../[repo]-[task]. Do not create a named branch unless I explicitly ask for one. Implement the task, validate, add a devlog entry under devlog/, and run review before merge.
 ```
 
 ## Seamless task lifecycle
@@ -18,16 +18,16 @@ Use af-worktree-task. Create a worktree from the checked-out parent branch named
 Use Agent-Flow for this change. Classify the task, create a task worktree, implement it, run finish-task, and ask me before merging if it is ready.
 ```
 
-## Large feature branch
+## Explicit feature branch
 
 ```text
-This may be large. Ask whether to create a feature parent branch first. If approved, create the feature parent branch, then create task worktrees under it and merge reviewed subtasks back there.
+Create a feature branch for this work, then create task worktrees under it and merge reviewed subtasks back there.
 ```
 
 ## Review branch
 
 ```text
-Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
+Use af-review-gate. Review this task worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
 ```
 
 ## Formal security review

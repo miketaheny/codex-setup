@@ -5,7 +5,7 @@ This file is optional scratch guidance for the repo owner.
 Recommended flow:
 
 1. Start from `development`.
-2. Create a branch or worktree.
+2. Create a detached task worktree; create a branch only when you explicitly want one.
 3. Use the lightest safe skill.
 4. Add a per-commit devlog entry under `devlog/`.
 5. Update project docs and useful visual assets when behavior, setup, architecture, security, deployment, operations, onboarding, demos, or marketing needs change.

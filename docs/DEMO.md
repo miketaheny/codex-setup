@@ -73,11 +73,11 @@ Start from the checked-out parent branch, classify the prompt, create a task wor
 cd ../agent-flow-demo-demo-copy
 ```
 
-Show that the task branch has parent metadata:
+Show that the detached task worktree has parent metadata:
 
 ```bash
-git config --get branch.docs/demo-copy.agentFlowParent
-git config --get branch.docs/demo-copy.agentFlowTaskClass
+git config --worktree --get agentFlow.parent
+git config --worktree --get agentFlow.taskClass
 ```
 
 After a small committed change, run:

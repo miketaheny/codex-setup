@@ -48,17 +48,21 @@ ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
 BRANCH="$(git branch --show-current)"
-if [ -z "$BRANCH" ]; then
-  echo "Error: detached HEAD cannot be committed under Agent-Flow." >&2
+WORKTREE_MODE="$(git config --worktree --get agentFlow.mode 2>/dev/null || true)"
+WORKTREE_PARENT="$(git config --worktree --get agentFlow.parent 2>/dev/null || true)"
+
+if [ -n "$BRANCH" ]; then
+  case "$BRANCH" in
+    main|staging|master|production|prod)
+      echo "Error: current branch '$BRANCH' is protected or reserved." >&2
+      exit 1
+      ;;
+  esac
+elif [ "$WORKTREE_MODE" != "detached" ] || [ -z "$WORKTREE_PARENT" ]; then
+  echo "Error: detached HEAD has no Agent-Flow task metadata." >&2
+  echo "Create task worktrees with scripts/start-task.sh or scripts/new-worktree.sh." >&2
   exit 1
 fi
-
-case "$BRANCH" in
-  main|staging|master|production|prod)
-    echo "Error: current branch '$BRANCH' is protected or reserved." >&2
-    exit 1
-    ;;
-esac
 
 STATUS="$(git status --short)"
 if [ -z "$STATUS" ]; then
@@ -73,6 +77,16 @@ if [ -z "$MESSAGE" ]; then
       SUBJECT="${BRANCH#*/}"
       SUBJECT="${SUBJECT//-/ }"
       MESSAGE="$TYPE: $SUBJECT"
+      ;;
+    "")
+      TYPE="$(git config --worktree --get agentFlow.taskType 2>/dev/null || true)"
+      SUBJECT="$(git config --worktree --get agentFlow.taskName 2>/dev/null || true)"
+      SUBJECT="${SUBJECT//-/ }"
+      if [ -n "$TYPE" ] && [ -n "$SUBJECT" ]; then
+        MESSAGE="$TYPE: $SUBJECT"
+      else
+        MESSAGE="chore: save detached worktree"
+      fi
       ;;
     *)
       MESSAGE="chore: save $BRANCH worktree"
@@ -104,7 +118,11 @@ if [ "$devlog_dirty_count" = "0" ]; then
   {
     echo "# $date_prefix - $MESSAGE"
     echo
-    echo "- Branch/worktree: \`$BRANCH\` / \`$ROOT\`"
+    if [ -n "$BRANCH" ]; then
+      echo "- Branch/worktree: \`$BRANCH\` / \`$ROOT\`"
+    else
+      echo "- Branch/worktree: \`detached:$(git rev-parse --short HEAD)\` / \`$ROOT\`"
+    fi
     echo "- Commit: \`pending\`"
     echo "- Goal: Commit reviewed Agent-Flow worktree changes."
     echo "- Summary:"
@@ -132,6 +150,10 @@ git diff --stat
 
 git add -A
 git commit -m "$MESSAGE"
-git config "branch.$BRANCH.agentFlowLastCommit" "$(git rev-parse --short HEAD)"
+if [ -n "$BRANCH" ]; then
+  git config "branch.$BRANCH.agentFlowLastCommit" "$(git rev-parse --short HEAD)"
+else
+  git config --worktree agentFlow.lastCommit "$(git rev-parse --short HEAD)"
+fi
 
 echo "COMMITTED: $(git rev-parse --short HEAD) $MESSAGE"

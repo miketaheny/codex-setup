@@ -66,7 +66,7 @@ Capture these after the next local install test:
 - `~/.agent-flow/scripts/init-repo.sh` output in a sample repo
 - generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `devlog/README.md`
 - generated `.git/hooks/pre-push`
-- `start-task.sh` output showing parent branch and task class
+- `start-task.sh` output showing detached worktree mode, parent branch, and task class
 - `finish-task.sh` output showing `ASK_USER_MERGE`
 - `check-push-readiness.sh` output before push
 - `af-migrate-backlog-devlog` dry-run output on a sample task file

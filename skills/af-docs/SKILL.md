@@ -257,7 +257,7 @@ When creating presentations, prefer a crisp outline first unless the user explic
 
 Before pushing or promoting `development` through the release path:
 
-1. Confirm the work is on `development` or a non-protected task branch/worktree.
+1. Confirm the work is on `development` or a non-protected task worktree.
 2. Review devlog files and commits since the last promotion or since the target branch diverged.
 3. Check whether all user-facing, operational, architectural, setup, and security changes are reflected in docs.
 4. Run `scripts/check-push-readiness.sh development` when available so incomplete child task worktrees do not get bypassed.

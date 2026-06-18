@@ -8,6 +8,7 @@ Make agent-assisted solo development safe and consistent across Claude, Codex, a
 
 - isolated work per task
 - no direct work on protected or reserved branches
+- named task branches only when the user explicitly requests a branch
 - merge-back to the user-controlled parent branch that was checked out for the task
 - per-commit devlog files under `devlog/`
 - maintained project documentation and useful visual assets
@@ -35,7 +36,7 @@ Classify every prompt before acting:
 - `chat`: read-only explanation, research, review, or planning. Do not create a worktree unless the user asks to make changes.
 - `tiny`: narrow typo, text, CSS, config, or one-file fix with low risk. Create a task worktree, validate, then ask to merge unless `auto_merge = "tiny-only"` is configured.
 - `normal`: ordinary fix or feature. Create a task worktree, validate, run review, then ask to merge.
-- `large` or `risky`: broad feature, architecture change, migration, dependency change, security-sensitive work, or unclear blast radius. Ask whether to create a user-controlled feature parent branch first.
+- `large` or `risky`: broad feature, architecture change, migration, dependency change, security-sensitive work, or unclear blast radius. Create a task worktree from the checked-out parent branch unless the user explicitly asks for a feature branch or a different parent.
 
 Use `scripts/start-task.sh` when available to create task worktrees and record lifecycle metadata. Use `scripts/finish-task.sh` when available to check readiness and apply the configured merge policy.
 
@@ -45,10 +46,11 @@ Use `scripts/start-task.sh` when available to create task worktrees and record l
 - `staging` is optional per repo. Keep a local `staging` branch only when `staging_enabled = true`; otherwise flag it for deletion after confirming it has no unique work. When present or enabled, do not modify, commit to, or push directly to `staging` except through the release promotion workflow.
 - `master`, `production`, and `prod` are reserved legacy names. Do not use them as mainline branches.
 - Default SDLC integration branch is `development`; it feeds `staging` when enabled and then `main`.
-- The task parent branch is the branch the user has checked out for the work. It can be `development` or a user-controlled feature branch.
-- Use a separate git worktree and task branch for every implementation task.
+- The task parent branch is the branch the user has checked out for the work. It is usually `development`, unless the user explicitly checked out or requested another non-protected parent.
+- Use a separate git worktree for every implementation task.
+- Do not create named task branches by default. Use detached task worktrees unless the user explicitly requests a named branch.
 - Merge reviewed task worktrees back to their recorded parent branch, not always to `development`.
-- Prefer branch names like:
+- When the user requests a named task branch, prefer names like:
   - `fix/<short-description>`
   - `feat/<short-description>`
   - `docs/<short-description>`
@@ -58,15 +60,15 @@ Use `scripts/start-task.sh` when available to create task worktrees and record l
 
 - Use one git worktree per implementation task.
 - Create worktrees from the checked-out parent branch unless the user explicitly supplies another non-protected parent branch.
-- Record the parent branch for task branches, for example with `branch.<task-branch>.agentFlowParent`.
-- Record task class for task branches, for example with `branch.<task-branch>.agentFlowTaskClass`.
+- Record detached task metadata in worktree-local Git config, for example `agentFlow.parent` and `agentFlow.taskClass`.
+- For explicit named task branches, also record branch metadata, for example `branch.<task-branch>.agentFlowParent`.
 - Keep each task narrowly scoped.
 - Avoid editing the same shared files across parallel sessions when possible.
 - Add one devlog file under `devlog/` for each meaningful commit or planned squash commit.
 - Do not rewrite unrelated devlog files from other branches or worktrees.
 - Before merge, update from the parent branch, resolve conflicts, then run review.
 
-Long-running feature work can use a user-controlled feature branch as the parent. Agents should create subtask worktrees from that feature branch and merge reviewed subtasks back into it. The user can later merge the feature branch into `development`, then promote through the repo's release path.
+Long-running feature work still uses task worktrees by default. Create a feature branch only when the user explicitly asks for one; then use that branch as the checked-out parent for subsequent task worktrees.
 
 ## Merge Policy
 
@@ -140,10 +142,10 @@ Run project docs maintenance before pushing or promoting `development` to releas
 
 ## Push Readiness
 
-Before pushing any user-controlled branch, verify all child task worktrees that branch from it are complete:
+Before pushing any user-controlled branch, verify all child task worktrees recorded against it are complete:
 
 - no dirty child task worktrees
-- no child task branches with commits missing from the parent branch
+- no child task worktrees, detached or branch-backed, with commits missing from the parent branch
 - no unresolved review or validation blockers
 
 Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install `scripts/install-hooks.sh` to enforce this with a local `pre-push` hook. Direct pushes to `main` are blocked. Direct pushes to `staging` are blocked unless the explicit release promotion workflow sets `AF_ALLOW_RELEASE_PUSH=1`.
@@ -158,10 +160,10 @@ The review must inspect the full protected-branch diff, check security-sensitive
 
 ## Review Gate
 
-Before merging a task branch back to its parent branch:
+Before merging a task worktree back to its parent branch:
 
 - Confirm current branch is not `main`, `staging`, `master`, `production`, or `prod`.
-- Confirm the merge target is the task's recorded parent branch.
+- Confirm the merge target is the task's recorded parent branch, from worktree-local config or explicit branch metadata.
 - Inspect `git status` and `git diff`.
 - Run available tests, linting, type checks, and builds where practical.
 - Run or simulate code review.
@@ -200,7 +202,7 @@ Do not rely on commit messages as the only project history. `devlog/` is the det
 
 A task is done when:
 
-- changes are implemented in a feature branch/worktree when Git is already initialized
+- changes are implemented in a task worktree when Git is already initialized
 - validation has been run or documented as unavailable
 - a per-commit devlog file exists under `devlog/`
 - affected project docs and visual assets are updated

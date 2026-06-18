@@ -67,7 +67,7 @@ For each worktree, inspect status and ancestry:
 
 ```bash
 git -C <worktree-path> status --short
-git config --get branch.<branch-name>.agentFlowParent
+git -C <worktree-path> config --worktree --get agentFlow.parent || git config --get branch.<branch-name>.agentFlowParent
 git merge-base --is-ancestor <branch-or-head> <recorded-parent-or-development>
 ```
 

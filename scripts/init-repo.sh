@@ -203,13 +203,14 @@ mode = "$MODE"
 task_base = "checked-out"
 task_merge_target = "parent"
 worktrees = "required-for-changes"
+task_branch = "explicit-only"
 
 merge_prompt = "always"
 auto_commit = "finish"
 dirty_parent_policy = "review-and-commit"
 devlog_filename = "date-subject"
 auto_merge = "off"
-large_task_parent_branch = "ask"
+large_task_parent_branch = "explicit-only"
 pre_push_worktree_check = true
 pre_push_hook_installed = $HOOKS_CHOICE
 
@@ -244,7 +245,8 @@ append_local_choices() {
 ## Agent-Flow Local Repo Choices
 
 - Enforcement: $MODE via \`.agent-flow/config.toml\`.
-- Task worktrees branch from the checked-out parent branch and merge back there after review.
+- Task worktrees are detached by default from the checked-out parent branch and merge back there after review.
+- Create named task or feature branches only when the user explicitly requests a branch.
 - Merge behavior: ask before merge by default; auto-merge is off unless config changes.
 - Push behavior: check child task worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.

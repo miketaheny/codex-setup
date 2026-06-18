@@ -5,18 +5,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: start-task.sh [options] <branch-type> <short-task-name>
+Usage: start-task.sh [options] <task-type> <short-task-name>
 
 Options:
   --class <tiny|normal|large|risky>   Task size/risk classification. Default: normal.
-  --parent <branch>                   Parent branch to branch from. Default: checked-out branch.
-  --create-parent <branch>            Create and switch to a user-controlled parent branch first.
-  --use-current-parent                Allow a large/risky task to branch directly from the current parent.
+  --parent <branch>                   Parent branch to create the worktree from. Default: checked-out branch.
+  --branch <branch>                   Create a named task branch. Use only when the user requested a branch.
+  --create-parent <branch>            Create and switch to a user-controlled parent branch first. Use only when requested.
+  --use-current-parent                Accepted for compatibility; large/risky tasks already use current parent by default.
 
 Examples:
   start-task.sh --class tiny fix navbar-spacing
   start-task.sh --class normal feat export-csv
-  start-task.sh --class large --create-parent feat/payments feat payment-form
+  start-task.sh --class large feat payment-form
+  start-task.sh --branch feat/payment-form --class large feat payment-form
 USAGE
 }
 
@@ -24,6 +26,7 @@ CLASS="normal"
 PARENT=""
 CREATE_PARENT=""
 USE_CURRENT_PARENT=0
+TASK_BRANCH=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -41,6 +44,11 @@ while [ "$#" -gt 0 ]; do
       shift
       [ "$#" -gt 0 ] || { echo "Error: --create-parent requires a branch name." >&2; exit 2; }
       CREATE_PARENT="$1"
+      ;;
+    --branch)
+      shift
+      [ "$#" -gt 0 ] || { echo "Error: --branch requires a branch name." >&2; exit 2; }
+      TASK_BRANCH="$1"
       ;;
     --use-current-parent)
       USE_CURRENT_PARENT=1
@@ -72,7 +80,6 @@ fi
 
 TYPE="$1"
 TASK="$2"
-BRANCH="$TYPE/$TASK"
 
 case "$CLASS" in
   tiny|normal|large|risky) ;;
@@ -153,23 +160,11 @@ elif [ -z "$PARENT" ]; then
   PARENT="$CURRENT_BRANCH"
 fi
 
-INTEGRATION_BRANCH="$(config_value integration_branch development)"
-if [ "$USE_CURRENT_PARENT" -ne 1 ] && [ "$PARENT" = "$INTEGRATION_BRANCH" ]; then
-  case "$CLASS" in
-    large|risky)
-      echo "ASK_USER_LARGE_TASK_PARENT" >&2
-      echo "Large/risky task requested from '$INTEGRATION_BRANCH'." >&2
-      echo "Ask whether to create a feature parent branch first, then rerun with --create-parent feat/<name>." >&2
-      echo "Use --use-current-parent only if the user wants this task to branch directly from '$INTEGRATION_BRANCH'." >&2
-      exit 3
-      ;;
-  esac
+if [ -n "$TASK_BRANCH" ]; then
+  "$SCRIPT_DIR/new-worktree.sh" --class "$CLASS" --branch "$TASK_BRANCH" "$TYPE" "$TASK" "$PARENT"
+else
+  "$SCRIPT_DIR/new-worktree.sh" --class "$CLASS" "$TYPE" "$TASK" "$PARENT"
 fi
-
-"$SCRIPT_DIR/new-worktree.sh" "$TYPE" "$TASK" "$PARENT"
-git config "branch.$BRANCH.agentFlowTaskClass" "$CLASS"
-git config "branch.$BRANCH.agentFlowState" "started"
-git config "branch.$BRANCH.agentFlowStartedAt" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 echo "Task class: $CLASS"
 echo "Lifecycle: finish with $SCRIPT_DIR/finish-task.sh from the task worktree."
