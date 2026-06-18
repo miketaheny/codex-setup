@@ -1,6 +1,6 @@
 # AF Agent-Flow Global Setup
 
-A clean Agent-Flow setup for solo development with Claude, Codex, and other coding agents: shared instructions, Codex-compatible skills, git worktrees, per-commit devlog files, project documentation maintenance, review gates, formal protected-branch security review, and optional heavier workflows.
+A clean Agent-Flow setup for solo development with Claude, Codex, and other coding agents: shared instructions, Codex-compatible skills, session worktrees, finish-time devlog files, project documentation maintenance, review gates, formal protected-branch security review, and optional heavier workflows.
 
 ## What this gives you
 
@@ -20,7 +20,7 @@ A clean Agent-Flow setup for solo development with Claude, Codex, and other codi
   - `af-push-staging`
   - `af-compound-mode`
 - Scripts for repo initialization, common safety checks, worktrees, and repo bootstrapping.
-- Lifecycle helpers for prompt-to-worktree start, task finish/merge readiness, push readiness, and optional local hooks.
+- Lifecycle helpers for chat-to-worktree session start, finish/merge readiness, push readiness, and optional local hooks.
 - Templates for repo-level `AGENT-FLOW.md`, agent adapters, `devlog/`, and decision records.
 
 ## Install
@@ -68,9 +68,9 @@ Inside a Git repository:
 Init runs the bootstrap step, then records local repo choices in `.agent-flow/config.toml`:
 
 - whether Agent-Flow enforcement is enabled or locally disabled
-- that task worktrees are detached from the checked-out parent branch by default and merge back there
-- that named task or feature branches are created only when the user explicitly requests a branch
-- that file-changing prompts require task worktrees
+- that session worktrees are detached from the checked-out parent branch by default and merge back there
+- that named branches are created only when the user explicitly requests a branch
+- that file-changing chats require AF session worktrees
 - that dirty worktrees are reviewed, devlogged, and committed instead of being left loose
 - that agents ask before merging by default
 - that formal security review is required before pull requests to `staging` or `main`
@@ -124,28 +124,28 @@ It will not overwrite existing files or record first-contact choices. Prefer `in
 
 ## Recommended Daily Usage
 
-### Tiny fix
+### Small fix
 
 ```text
-Use af-small-change to fix this. Keep scope narrow and add a devlog entry under devlog/.
+Use af-small-change to fix this in one AF worktree session. Keep scope narrow and add/update the devlog under devlog/ before finish.
 ```
 
-### Worktree task
+### Worktree session
 
 ```text
-Use af-worktree-task. Create an isolated worktree from the checked-out parent branch for this task, then implement, document, and review.
+Use af-worktree-task. Create or adopt one isolated AF worktree session from the checked-out parent branch, then implement, document, validate, and review.
 ```
 
-### Seamless task lifecycle
+### Seamless session lifecycle
 
 ```text
-Use Agent-Flow for this change. Classify the task, create the task worktree, finish with readiness checks, then ask me whether to merge back to the parent branch.
+Use Agent-Flow for this change. Create one session worktree, finish with readiness checks, then ask me whether to merge back to the parent branch.
 ```
 
 ### Review before merge
 
 ```text
-Use af-review-gate and tell me whether this task worktree is ready to merge into its recorded parent branch.
+Use af-review-gate and tell me whether this session worktree is ready to merge into its recorded parent branch.
 ```
 
 ### Formal security review
@@ -157,7 +157,7 @@ Use af-security-review. Review development against staging, or staging/developme
 ### Detailed documentation after a change
 
 ```text
-Use af-devlog to add a per-commit devlog entry under devlog/.
+Use af-devlog to add or update the finish-time session devlog entry under devlog/.
 ```
 
 Devlog filenames use `YYYY-MM-DD-<commit-subject-slug>.md`. They are date and subject based, not SHA based; the commit SHA belongs inside the file when known.
@@ -189,7 +189,7 @@ Use af-migrate-backlog-devlog to convert Backlog.md, backlog/, or .backlog task 
 ### Worktree reconciliation
 
 ```text
-Use af-reconcile-worktrees to audit worktrees, branches, local protected branch policy, and agent instruction conflicts before cleanup or release promotion.
+Use af-reconcile-worktrees to open the worktree manager, pick up incomplete work, and clean up completed worktrees before release promotion.
 ```
 
 ### Push readiness

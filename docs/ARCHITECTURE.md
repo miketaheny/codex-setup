@@ -107,18 +107,30 @@ flowchart TD
 
 Skills are written as Markdown workflows. Codex can auto-discover them through its skill format; other agents can still read them directly as reusable process instructions.
 
-## Task Lifecycle Scripts
+## Session Lifecycle Scripts
 
 ```mermaid
 flowchart LR
-    Prompt["File-changing prompt"] --> Start["start-task.sh"]
-    Start --> Worktree["detached task worktree + worktree metadata"]
-    Worktree --> Finish["finish-task.sh"]
+    Prompt["File-changing chat"] --> Start["start-session.sh"]
+    Start --> Worktree["detached session worktree + AF metadata"]
+    Worktree --> Finish["finish-session.sh"]
     Finish --> Ask["ASK_USER_MERGE"]
-    Ask --> Merge["finish-task.sh --merge"]
+    Ask --> Merge["finish-session.sh --merge"]
     Merge --> Parent["parent branch"]
     Parent --> PushCheck["check-push-readiness.sh"]
     PushCheck --> Remote["remote push"]
+```
+
+## Worktree Manager
+
+```mermaid
+flowchart LR
+    Manager["worktree-manager.py"] --> Map["visual worktree map"]
+    Manager --> Details["details view"]
+    Manager --> Pickup["pickup incomplete work"]
+    Manager --> Cleanup["cleanup complete worktrees"]
+    Pickup --> Metadata["agentFlow.state / owner / lastTouchedAt"]
+    Cleanup --> Remove["git worktree remove + merged branch delete"]
 ```
 
 ## Data and State
@@ -130,8 +142,8 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Repo-level choices stored in `.agent-flow/config.toml`.
 - Repo-level ignore policy stored in `.gitignore`.
 - Local protected branch policy derived from `.agent-flow/config.toml`: `main` is disallowed locally, and `staging` is local only when staging is enabled.
-- Detached task metadata stored in worktree-local Git config as `agentFlow.parent`, `agentFlow.taskClass`, and `agentFlow.state`.
-- Explicit named task branches, when requested, also store parent metadata in Git config as `branch.<task-branch>.agentFlowParent`.
+- Detached session metadata stored in worktree-local Git config as `agentFlow.kind`, `agentFlow.parent`, `agentFlow.sessionName`, `agentFlow.state`, `agentFlow.owner`, `agentFlow.devlogPolicy`, and timestamps.
+- Explicit named branches, when requested, also store parent metadata in Git config as `branch.<branch>.agentFlowParent`.
 - Git branches, worktrees, and commits managed by the developer.
 - Engineering history stored in repo `devlog/` files.
 
@@ -142,5 +154,5 @@ Agent-Flow has no database or service runtime. State is file-based:
 - Staging promotion and cleanup skills require explicit approval before destructive actions such as branch deletion or worktree removal.
 - Pull requests to protected branches require a distinct formal security review before PR creation.
 - `main` is a production PR target and direct local agent work is blocked by workflow. `staging` is local only when enabled and protected/reserved when present.
-- Optional local `pre-push` hooks call `check-push-readiness.sh` so parent branches are not pushed while child task worktrees are dirty or unmerged.
+- Optional local `pre-push` hooks call `check-push-readiness.sh` so parent branches are not pushed while child session worktrees are dirty or unmerged.
 - Generated docs and visuals must be grounded in source files, devlog entries, screenshots, or user-provided context.

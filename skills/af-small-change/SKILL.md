@@ -1,6 +1,6 @@
 ---
 name: af-small-change
-description: Fast, safe workflow for tiny and small code changes that still enforces branch safety, scoped edits, devlog updates, and validation.
+description: Fast, safe workflow for small file changes inside one Agent-Flow worktree session, with branch safety, scoped edits, finish-time devlog, and validation.
 ---
 
 # AF Small Change Skill
@@ -19,38 +19,38 @@ Move fast without losing discipline.
    - dirty files
    - whether branch is protected
 3. If on `main`, `staging`, `master`, `production`, or `prod`, do not edit directly.
-4. Use a task worktree from the checked-out user-controlled parent branch.
+4. Use an AF session worktree from the checked-out user-controlled parent branch.
 5. Keep the change narrow.
 6. Avoid unrelated refactors.
-7. Add a devlog file under `devlog/` for meaningful changes.
+7. Add or update a devlog file under `devlog/` before the session commit.
 8. Run the smallest relevant validation command available.
 9. Summarize what changed, validation, docs updated, and remaining risks.
 
 ## Branch handling
 
-If already in a safe task worktree, continue there.
+If already in a safe AF session worktree, continue there only when the request matches that session's direction.
 
-If on a user-controlled parent branch such as `development` or `feat/<name>`, create a task worktree:
+If on a user-controlled parent branch such as `development` or `feat/<name>`, create a session worktree:
 
 ```bash
-scripts/start-task.sh --class tiny fix <short-description>
+scripts/start-session.sh fix <short-description>
 ```
 
-If `scripts/start-task.sh` is unavailable, use `scripts/new-worktree.sh --class tiny fix <short-description>` and record `agentFlow.taskClass = tiny` in worktree-local config manually if needed.
+If `scripts/start-session.sh` is unavailable, use `scripts/new-worktree.sh fix <short-description>` and record `agentFlow.kind = session` plus `agentFlow.parent` in worktree-local config manually if needed.
 
 If on a protected or reserved branch, ask the user to check out the intended parent branch first. Do not branch from `main` or `staging`.
 
-Named task branches are not the default. Create one only when the user explicitly asks for a branch, for example with `scripts/start-task.sh --branch fix/<short-description> --class tiny fix <short-description>`.
+Named branches are not the default. Create one only when the user explicitly asks for a branch, for example with `scripts/start-session.sh --branch fix/<short-description> fix <short-description>`.
 
 ## Finish behavior
 
 At the end, run the finish helper when available:
 
 ```bash
-scripts/finish-task.sh
+scripts/finish-session.sh
 ```
 
-If it reports `ASK_USER_MERGE`, ask whether to merge back to the parent branch. Automatic merge is allowed only when repo config sets `auto_merge = "tiny-only"` or stronger and all readiness checks pass.
+If it reports `ASK_USER_MERGE`, ask whether to merge back to the parent branch. Automatic merge is only for repos that explicitly opt into it and all readiness checks pass.
 
 ## Validation preference
 
@@ -67,7 +67,7 @@ Document skipped validation honestly.
 
 ## Devlog entry format
 
-Create one Markdown file under `devlog/` for the commit or planned squash commit:
+Create one Markdown file under `devlog/` for the session commit or planned squash commit:
 
 ```md
 # YYYY-MM-DD — <commit subject>

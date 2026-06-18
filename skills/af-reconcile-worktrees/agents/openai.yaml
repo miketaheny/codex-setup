@@ -1,4 +1,4 @@
 interface:
   display_name: "AF Reconcile Worktrees"
-  short_description: "Audit worktrees, branches, and tasks"
-  default_prompt: "Use $af-reconcile-worktrees to audit worktrees, branches, and active tasks."
+  short_description: "Manage AF worktree sessions"
+  default_prompt: "Use $af-reconcile-worktrees to show the worktree manager, pick up incomplete work, and clean up completed worktrees."

@@ -39,7 +39,7 @@ Docs should help readers:
 - install the global Agent-Flow setup
 - initialize or bootstrap new repositories
 - choose the correct AF skill for a task
-- understand prompt classification, branch, worktree, devlog, review, formal security review, merge, push-readiness, and release promotion rules
+- understand chat/session classification, branch, worktree, devlog, review, formal security review, merge, push-readiness, and release promotion rules
 - migrate legacy backlog/task stores into `devlog/`
 - understand how the setup stays agent-agnostic
 - visualize architecture, skill routing, and daily workflows
@@ -75,7 +75,7 @@ Use visual assets when they reduce explanation cost.
 - Mermaid is the default for source-accurate workflow, sequence, and architecture diagrams.
 - D2 is recommended when larger topology or dependency diagrams need stronger layout control.
 - Screenshots are recommended for install, init/bootstrap, task lifecycle, skill discovery, and real UI or terminal flows.
-- Demo videos are recommended for install-to-init, start-task-to-finish-task, push-readiness, release promotion, backlog migration, and docs maintenance walkthroughs.
+- Demo videos are recommended for install-to-init, start-session-to-finish-session, worktree-manager pickup/cleanup, push-readiness, release promotion, backlog migration, and docs maintenance walkthroughs.
 - Generated images should be limited to conceptual, marketing, or presentation assets when real product screenshots are not available.
 
 For this repo, prefer efficient, technical, and data-driven visuals in core docs. Use polished but restrained visuals for presentations and stakeholder-facing content.

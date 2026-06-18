@@ -91,7 +91,7 @@ Before pushing `development`, run the push-readiness check when available:
 scripts/check-push-readiness.sh development
 ```
 
-Do not push while any child task worktree from `development` is dirty or unmerged.
+Do not push while any child session worktree from `development` is dirty or unmerged.
 
 ### 5. Run formal security review before staging promotion
 

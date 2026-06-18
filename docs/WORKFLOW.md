@@ -4,22 +4,22 @@
 
 Use AI coding agents like a disciplined solo engineering team:
 
-1. Classify the prompt.
-2. Isolate file-changing work in a task worktree.
+1. Decide whether the chat is read-only or file-changing.
+2. Isolate every file-changing chat in one AF worktree session.
 3. Keep scope narrow.
 4. Make the change.
 5. Validate it.
 6. Document the reasoning.
 7. Review before merge.
 8. Ask before merging back to the checked-out parent branch.
-9. Check child worktrees before pushing a parent branch.
+9. Check child session worktrees before pushing a parent branch.
 10. Run formal security review before protected-branch PRs.
 
 ## Branch Model
 
 Agent-Flow has two branch concepts:
 
-- Task parent branch: the user-controlled branch that is checked out when the task begins. Task worktrees are detached from it by default and merge back to it.
+- Session parent branch: the user-controlled branch that is checked out when the session begins. Session worktrees are detached from it by default and merge back to it.
 - SDLC integration branch: `development`, which stays open for ongoing fixes and feeds the release path.
 
 Typical routine work:
@@ -40,7 +40,7 @@ development
   └── ../repo-payment-runbook
 ```
 
-Create a feature branch only when the user explicitly asks for one. If that happens, the feature branch becomes the checked-out parent for later task worktrees.
+Create a feature branch only when the user explicitly asks for one. If that happens, the feature branch becomes the checked-out parent for later session worktrees.
 
 Protected or reserved branches:
 
@@ -53,37 +53,36 @@ Release path:
 - with staging: `development -> staging -> main`
 - without staging: `development -> main` by pull request
 
-## Prompt Lifecycle
+## Chat Lifecycle
 
-| Prompt class | Default behavior |
+| Chat kind | Default behavior |
 |---|---|
 | Chat/read-only | Answer directly; no worktree needed. |
-| Tiny | Create a task worktree, validate, update devlog/docs if needed, ask to merge. |
-| Normal | Create a task worktree, validate, run review, ask to merge. |
-| Large/risky | Create a task worktree from the checked-out parent branch unless the user explicitly requests a feature branch or different parent. |
+| File-changing | Create or adopt exactly one AF worktree session, validate, update devlog/docs if needed, ask to merge. |
+| Changed direction | Finish, pause, or abandon the current worktree, then start a new chat/worktree. |
 
 Default merge policy:
 
-- `auto_commit = "finish"` commits dirty task work after devlog checks before merge readiness.
+- `auto_commit = "finish"` commits dirty session work after devlog checks before merge readiness.
 - `merge_prompt = "always"`
 - `auto_merge = "off"`
-- Optional `auto_merge = "tiny-only"` can merge only validated tiny task worktrees.
+- `auto_merge = "tiny-only"` is retained only for older metadata; the default is still to ask before merge.
 - Agents never auto-merge into `main` or `staging`.
 
-Dirty parent worktrees are handled before task start: review the existing changes, create or update a devlog entry, commit them, then create the new task worktree.
+Dirty parent worktrees are reported before session start. Do not hide parent checkout changes inside a new session worktree.
 
 Lifecycle helpers:
 
 ```bash
-scripts/start-task.sh --class normal feat export-csv
-scripts/finish-task.sh
-scripts/finish-task.sh --merge
+scripts/start-session.sh feat export-csv
+scripts/finish-session.sh
+scripts/finish-session.sh --merge
 ```
 
-Create a named task branch only when the user explicitly asks for one:
+Create a named branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --branch feat/payment-form --class large feat payment-form
+scripts/start-session.sh --branch feat/payment-form feat payment-form
 ```
 
 ## Parallel Work Model
@@ -115,19 +114,34 @@ Open one agent session per worktree.
 | Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
+| Pick up incomplete work | `af-reconcile-worktrees` or `scripts/worktree-manager.py --pickup <id>` |
 | Before merge | `af-review-gate` |
 | Before protected-branch PR | `af-security-review` |
 | Before release promotion | `af-reconcile-worktrees` -> `af-docs` -> `af-push-staging` with `af-security-review` |
 
 ## Documentation Rules
 
-Always add a devlog file under `devlog/` for meaningful commits.
+Always add or update a devlog file under `devlog/` before finishing a session with meaningful changes.
 
-Use one Markdown file per commit, or one file for the planned squash commit when the branch will be squashed before merge.
+Use one Markdown file per session commit, or one file for the planned squash commit when the branch will be squashed before merge.
 
 Name devlog files from the date and planned commit subject, such as `devlog/YYYY-MM-DD-fix-navbar-spacing.md`. Do not name them from the commit SHA; record the SHA inside the file when known.
 
 Update project docs when behavior, setup, architecture, security, deployment, or operations change.
+
+## Worktree Manager
+
+Use the manager to visualize, pick up, and clean up worktrees:
+
+```bash
+scripts/worktree-manager.py --interactive
+scripts/worktree-manager.py --details <id>
+scripts/worktree-manager.py --pickup <id>
+scripts/worktree-manager.py --cleanup <id> --yes
+scripts/worktree-manager.py --cleanup-all --yes
+```
+
+Pickup marks incomplete work active in AF metadata and prints a handoff. Prefer a new Codex chat when picking up a different worktree.
 
 ## Gitignore and IDE Policy
 
@@ -149,7 +163,7 @@ Use `af-migrate-backlog-devlog` when a repo still has `Backlog.md`, `triage.md`,
 
 ## Release Promotion
 
-Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing task-parent metadata, local protected branch policy violations, and instruction conflicts.
+Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing session-parent metadata, local protected branch policy violations, and instruction conflicts.
 
 Run `scripts/check-push-readiness.sh development` before pushing `development`. For an explicitly requested feature parent branch, run the same check against the feature branch before pushing it.
 

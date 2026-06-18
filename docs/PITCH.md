@@ -23,7 +23,7 @@ Agent-Flow provides:
 - `AGENTS.md` and `CLAUDE.md` adapters
 - Codex-compatible AF skills for common workflows
 - scripts for install, init/bootstrap, task lifecycle, push readiness, worktrees, branch safety, and review snapshots
-- per-commit `devlog/` conventions
+- finish-time session `devlog/` conventions
 - docs and visual asset guidance
 
 ## Proof Points From This Repo

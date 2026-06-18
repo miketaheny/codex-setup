@@ -13,7 +13,7 @@ if [ -z "$configured_parent" ] && [ -n "$branch" ]; then
 fi
 BASE="${1:-${configured_parent:-development}}"
 
-echo "Branch: ${branch:-"(detached task worktree)"}"
+echo "Branch: ${branch:-"(detached session worktree)"}"
 echo "Base: $BASE"
 echo
 

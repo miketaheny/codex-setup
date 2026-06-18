@@ -3,11 +3,11 @@ set -euo pipefail
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: new-worktree.sh [options] <task-type> <short-task-name> [base-branch]
+Usage: new-worktree.sh [options] <type> <session-name> [base-branch]
 
 Options:
-  --branch <branch-name>              Create a named task branch. Use only when the user requested a branch.
-  --class <tiny|normal|large|risky>   Task size/risk classification. Default: normal.
+  --branch <branch-name>              Create a named branch. Use only when the user requested a branch.
+  --class <tiny|normal|large|risky>   Compatibility metadata. Default: normal.
 
 Examples:
   new-worktree.sh fix navbar-spacing
@@ -101,7 +101,7 @@ fi
 if [ -n "$BRANCH" ]; then
   case "$BRANCH" in
     main|staging|master|production|prod)
-      echo "Error: '$BRANCH' is protected or reserved and cannot be a task branch." >&2
+      echo "Error: '$BRANCH' is protected or reserved and cannot be a session branch." >&2
       exit 1
       ;;
   esac
@@ -116,8 +116,8 @@ if [ -e "$WORKTREE" ]; then
   exit 1
 fi
 
-# Worktree-local config lets detached task worktrees carry Agent-Flow metadata
-# without creating a branch for every task.
+# Worktree-local config lets detached session worktrees carry Agent-Flow metadata
+# without creating a branch for every session.
 git config extensions.worktreeConfig true
 
 if [ -n "$BRANCH" ]; then
@@ -133,12 +133,19 @@ else
 fi
 
 git -C "$WORKTREE" config --worktree agentFlow.mode "$MODE"
+git -C "$WORKTREE" config --worktree agentFlow.kind "session"
+git -C "$WORKTREE" config --worktree agentFlow.sessionKind "codex-chat"
+git -C "$WORKTREE" config --worktree agentFlow.sessionName "$TASK"
 git -C "$WORKTREE" config --worktree agentFlow.parent "$BASE"
 git -C "$WORKTREE" config --worktree agentFlow.taskType "$TYPE"
 git -C "$WORKTREE" config --worktree agentFlow.taskName "$TASK"
 git -C "$WORKTREE" config --worktree agentFlow.taskClass "$CLASS"
 git -C "$WORKTREE" config --worktree agentFlow.state "started"
-git -C "$WORKTREE" config --worktree agentFlow.startedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+git -C "$WORKTREE" config --worktree agentFlow.owner "codex"
+git -C "$WORKTREE" config --worktree agentFlow.devlogPolicy "finish"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+git -C "$WORKTREE" config --worktree agentFlow.startedAt "$STARTED_AT"
+git -C "$WORKTREE" config --worktree agentFlow.lastTouchedAt "$STARTED_AT"
 if [ -n "$BRANCH" ]; then
   git -C "$WORKTREE" config --worktree agentFlow.branch "$BRANCH"
 fi
@@ -148,8 +155,8 @@ echo "Mode: $MODE"
 if [ -n "$BRANCH" ]; then
   echo "Branch: $BRANCH"
 else
-  echo "Branch: none (detached task worktree)"
+  echo "Branch: none (detached session worktree)"
 fi
 echo "Parent branch: $BASE"
-echo "Task class: $CLASS"
+echo "Session metadata class: $CLASS"
 echo "Next: cd '$WORKTREE' and open your preferred agent CLI."

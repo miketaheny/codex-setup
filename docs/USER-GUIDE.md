@@ -55,11 +55,11 @@ Gitignore and IDE defaults:
 - `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, and `.vscode/settings.json` may be committed only when they encode shared project tooling.
 - Personal IDE preferences such as themes, window titles, UI layout, local paths, or machine-specific interpreters should stay untracked.
 
-Branch defaults:
+Worktree defaults:
 
-- Task worktrees are detached from the checked-out parent branch by default and merge back there.
-- Named task or feature branches are created only when the user explicitly requests a branch.
-- File-changing prompts use task worktrees.
+- Session worktrees are detached from the checked-out parent branch by default and merge back there.
+- Named branches are created only when the user explicitly requests a branch.
+- File-changing chats use one AF session worktree.
 - Agents ask before merge by default.
 - Formal security review is required before protected-branch pull requests to `staging` or `main`.
 - `development` is the SDLC integration branch.
@@ -71,8 +71,8 @@ Branch defaults:
 
 ```mermaid
 flowchart LR
-    Prompt["User prompt"] --> Classify["Classify chat/tiny/normal/large"]
-    Classify --> Worktree["Create detached task worktree for changes"]
+    Prompt["User chat"] --> Decide["Read-only or file-changing"]
+    Decide --> Worktree["Create or adopt one AF session worktree"]
     Worktree --> Skill["Use lightest AF skill"]
     Skill --> Change["Implement scoped change"]
     Change --> Validate["Run validation"]
@@ -99,31 +99,51 @@ flowchart LR
 | Promote `development` through release path | `af-push-staging` |
 | Decide whether a heavier workflow is needed | `af-compound-mode` |
 
-## Start And Finish A Task
+## Start And Finish A Session
 
 Use the lifecycle helpers directly when working outside a skill:
 
 ```bash
-scripts/start-task.sh --class normal feat export-csv
+scripts/start-session.sh feat export-csv
 ```
 
-At the end of the task worktree:
+At the end of the session worktree:
 
 ```bash
-scripts/finish-task.sh
+scripts/finish-session.sh
 ```
 
 If it reports `ASK_USER_MERGE`, ask before merging. After approval:
 
 ```bash
-scripts/finish-task.sh --merge
+scripts/finish-session.sh --merge
 ```
 
-Create a named task branch only when the user explicitly asks for one:
+Create a named branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --branch feat/payment-form --class large feat payment-form
+scripts/start-session.sh --branch feat/payment-form feat payment-form
 ```
+
+## Manage Worktrees
+
+Open the visual picker:
+
+```bash
+scripts/worktree-manager.py --interactive
+```
+
+Useful non-interactive commands:
+
+```bash
+scripts/worktree-manager.py
+scripts/worktree-manager.py --details <id>
+scripts/worktree-manager.py --pickup <id>
+scripts/worktree-manager.py --cleanup <id> --yes
+scripts/worktree-manager.py --cleanup-all --yes
+```
+
+Use pickup for incomplete or unmerged work. Prefer starting a new Codex chat in the picked-up worktree so prior context does not leak into a different worktree session.
 
 ## Migrate Legacy Backlog Files
 

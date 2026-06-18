@@ -178,7 +178,7 @@ if [ -z "$HOOKS_CHOICE" ]; then
   if [ "$MODE" = "disabled" ]; then
     HOOKS_CHOICE="false"
   else
-    hooks_answer="$(prompt_yes_no "Install a local pre-push hook to check child task worktrees before push?" "yes")"
+    hooks_answer="$(prompt_yes_no "Install a local pre-push hook to check child session worktrees before push?" "yes")"
     if [ "$hooks_answer" = "yes" ]; then
       HOOKS_CHOICE="true"
     else
@@ -204,6 +204,8 @@ task_base = "checked-out"
 task_merge_target = "parent"
 worktrees = "required-for-changes"
 task_branch = "explicit-only"
+session_unit = "chat"
+devlog_policy = "finish"
 
 merge_prompt = "always"
 auto_commit = "finish"
@@ -245,10 +247,10 @@ append_local_choices() {
 ## Agent-Flow Local Repo Choices
 
 - Enforcement: $MODE via \`.agent-flow/config.toml\`.
-- Task worktrees are detached by default from the checked-out parent branch and merge back there after review.
-- Create named task or feature branches only when the user explicitly requests a branch.
+- Session worktrees are detached by default from the checked-out parent branch and merge back there after review.
+- Create named branches only when the user explicitly requests a branch.
 - Merge behavior: ask before merge by default; auto-merge is off unless config changes.
-- Push behavior: check child task worktrees before pushing a parent branch.
+- Push behavior: check child session worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.
 - SDLC flow: $FLOW. \`main\` is the production PR target and should not be kept as a local work branch.
 - $STAGING_NOTE
