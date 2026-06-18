@@ -1,0 +1,34 @@
+# 2026-06-18 - add worktree session manager
+
+- Branch/worktree: `detached:fd6499d` / `/private/tmp/codex-setup-worktree-manager`
+- Commit: `pending`
+- Goal: Make Agent-Flow treat each file-changing Codex chat as one AF worktree session and provide a functional manager for visual review, pickup, and cleanup.
+- Summary:
+  - Added session lifecycle entrypoints for starting and finishing AF worktree sessions.
+  - Added a functional worktree manager with visual map output, details, pickup, cleanup-one, cleanup-all, and JSON modes.
+  - Updated AF metadata creation so session worktrees record parent, kind, session name, owner, devlog policy, state, and timestamps.
+  - Updated docs, templates, and skills from task-class workflow language to session worktree workflow language.
+  - Kept `start-task.sh` and `finish-task.sh` as compatibility internals while making `start-session.sh`, `finish-session.sh`, and `worktree-manager.py` the user-facing path.
+- Files changed:
+  - `scripts/start-session.sh`, `scripts/finish-session.sh`, and `scripts/worktree-manager.py` - add user-facing session and manager entrypoints.
+  - `skills/af-reconcile-worktrees/scripts/worktree_manager.py` - implements visual worktree review, details, pickup, and cleanup actions.
+  - `skills/af-reconcile-worktrees/scripts/audit_repo.py` - includes worktree-local AF metadata in audits.
+  - `scripts/new-worktree.sh`, `scripts/finish-task.sh`, `scripts/commit-task.sh`, `scripts/check-branch-safety.sh`, and `scripts/check-push-readiness.sh` - record and enforce session metadata, finish state, and session readiness.
+  - `AGENT-FLOW.md`, `README.md`, `docs/`, `templates/`, and AF skills - align workflow guidance with one worktree session per file-changing chat.
+- Decisions:
+  - Treat the worktree, not the chat transcript, as the durable unit of work.
+  - Prefer a new Codex chat when switching worktrees because context cannot be fully cleared inside an existing chat.
+  - Keep compatibility wrappers and metadata keys where existing scripts depend on them, but remove task-size modes from the active user-facing workflow.
+  - Commit devlog and AF metadata-driven workflow changes with the rest of the session changes before merging.
+- Validation:
+  - `bash -n scripts/*.sh` - passed.
+  - `python3 -m py_compile scripts/worktree-manager.py skills/af-reconcile-worktrees/scripts/audit_repo.py skills/af-reconcile-worktrees/scripts/worktree_manager.py skills/af-migrate-backlog-devlog/scripts/migrate_backlog_to_devlog.py` - passed.
+  - `git diff --check` - passed.
+  - `for d in skills/*; do python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$d"; done` - passed for all skills.
+  - Markdown relative link check across 44 Markdown files - passed.
+  - `scripts/worktree-manager.py`, `scripts/worktree-manager.py --json`, and `scripts/worktree-manager.py --details 2` - passed against the live repo/worktree graph.
+  - Temporary Git smoke test - passed session metadata, dirty detection, pickup, merge, cleanup-one, and cleanup-all dirty-work protection.
+- Review:
+  - Self-review completed against stale task-mode wording scans, manager behavior, and session metadata/devlog merge requirements.
+- Risks / follow-ups:
+  - `start-task.sh` and `finish-task.sh` remain as compatibility internals; a future cleanup can remove them after downstream repos stop referencing them.

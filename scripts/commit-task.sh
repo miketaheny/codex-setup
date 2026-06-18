@@ -60,7 +60,7 @@ if [ -n "$BRANCH" ]; then
   esac
 elif [ "$WORKTREE_MODE" != "detached" ] || [ -z "$WORKTREE_PARENT" ]; then
   echo "Error: detached HEAD has no Agent-Flow task metadata." >&2
-  echo "Create task worktrees with scripts/start-task.sh or scripts/new-worktree.sh." >&2
+  echo "Create session worktrees with scripts/start-session.sh or scripts/new-worktree.sh." >&2
   exit 1
 fi
 
@@ -155,5 +155,6 @@ if [ -n "$BRANCH" ]; then
 else
   git config --worktree agentFlow.lastCommit "$(git rev-parse --short HEAD)"
 fi
+git config --worktree agentFlow.lastTouchedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 echo "COMMITTED: $(git rev-parse --short HEAD) $MESSAGE"

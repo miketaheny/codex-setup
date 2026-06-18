@@ -1,11 +1,11 @@
 ---
 name: af-review-gate
-description: Pre-merge review gate for solo-dev Agent-Flow task worktrees. Checks branch safety, scope, diffs, docs, tests, risk, and readiness to merge back into the recorded parent branch.
+description: Pre-merge review gate for Agent-Flow worktree sessions. Checks branch safety, scope, diffs, docs, tests, risk, and readiness to merge back into the recorded parent branch.
 ---
 
 # AF Review Gate Skill
 
-Use this skill before merging any agent-created task worktree back into its recorded parent branch.
+Use this skill before merging any agent-created session worktree back into its recorded parent branch.
 
 ## Goal
 
@@ -16,8 +16,8 @@ Act like a disciplined reviewer for a solo developer.
 ### 1. Branch safety
 
 - Current branch is not `main`, `staging`, `master`, `production`, or `prod`.
-- Merge target is the task worktree's recorded parent branch, usually from worktree-local `agentFlow.parent`; explicit named branches may also use `branch.<branch>.agentFlowParent`.
-- Work is isolated to a task worktree. A named branch is optional and should exist only when explicitly requested.
+- Merge target is the session worktree's recorded parent branch, usually from worktree-local `agentFlow.parent`; explicit named branches may also use `branch.<branch>.agentFlowParent`.
+- Work is isolated to one AF worktree session. A named branch is optional and should exist only when explicitly requested.
 
 ### 2. Scope control
 
@@ -49,7 +49,7 @@ Look for:
 
 ### 4. Docs review
 
-- `devlog/` contains one entry file for each meaningful commit or planned squash commit.
+- `devlog/` contains one entry file for the session commit or planned squash commit.
 - Project docs are updated when behavior, setup, architecture, security, deployment, or operations changed.
 - Docs do not exaggerate validation.
 - Follow-ups/known risks recorded.
@@ -79,7 +79,7 @@ Use severity:
 Read `.agent-flow/config.toml` when present.
 
 - If `merge_prompt = "always"`, report ready state and ask the user before merge.
-- If `auto_merge = "tiny-only"`, auto-merge is eligible only for task worktrees with `agentFlow.taskClass = tiny` or explicit branches with `agentFlowTaskClass = tiny`, and no findings.
+- `auto_merge = "tiny-only"` is compatibility-only for older metadata; default behavior is to ask before merge.
 - Never approve automatic merge into `main` or `staging`.
 - Run `scripts/check-push-readiness.sh <parent-branch>` before pushing a parent branch.
 
@@ -105,7 +105,7 @@ NOT READY TO MERGE
 
 Include:
 
-- branch or detached task commit
+- branch or detached session commit
 - changed files summary
 - validation results
 - docs status

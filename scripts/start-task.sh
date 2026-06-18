@@ -5,20 +5,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: start-task.sh [options] <task-type> <short-task-name>
+Usage: start-task.sh [options] <type> <session-name>
+
+Compatibility helper for start-session.sh. New workflows should use start-session.sh.
 
 Options:
-  --class <tiny|normal|large|risky>   Task size/risk classification. Default: normal.
-  --parent <branch>                   Parent branch to create the worktree from. Default: checked-out branch.
-  --branch <branch>                   Create a named task branch. Use only when the user requested a branch.
+  --class <tiny|normal|large|risky>   Compatibility metadata. Default: normal.
+  --parent <branch>                   Parent branch to create the session worktree from. Default: checked-out branch.
+  --branch <branch>                   Create a named branch only when the user requested one.
   --create-parent <branch>            Create and switch to a user-controlled parent branch first. Use only when requested.
-  --use-current-parent                Accepted for compatibility; large/risky tasks already use current parent by default.
+  --use-current-parent                Accepted for compatibility.
 
 Examples:
-  start-task.sh --class tiny fix navbar-spacing
-  start-task.sh --class normal feat export-csv
-  start-task.sh --class large feat payment-form
-  start-task.sh --branch feat/payment-form --class large feat payment-form
+  start-session.sh fix navbar-spacing
+  start-session.sh feat export-csv
+  start-session.sh feat payment-form
+  start-session.sh --branch feat/payment-form feat payment-form
 USAGE
 }
 
@@ -139,14 +141,14 @@ if [ -n "$(git status --short)" ]; then
   echo "DIRTY_PARENT_REVIEW_AND_COMMIT_REQUIRED" >&2
   echo "Parent worktree has uncommitted or untracked changes." >&2
   echo "Review the diff, then run: $SCRIPT_DIR/commit-task.sh --message '<type>: <subject>'" >&2
-  echo "Restart start-task after the parent worktree is clean." >&2
+  echo "Restart start-session after the parent worktree is clean." >&2
   exit 1
 fi
 
 if [ -n "$CREATE_PARENT" ]; then
   case "$CREATE_PARENT" in
     main|staging|master|production|prod)
-      echo "Error: '$CREATE_PARENT' is protected or reserved and cannot be a task parent." >&2
+      echo "Error: '$CREATE_PARENT' is protected or reserved and cannot be a session parent." >&2
       exit 1
       ;;
   esac
@@ -166,5 +168,5 @@ else
   "$SCRIPT_DIR/new-worktree.sh" --class "$CLASS" "$TYPE" "$TASK" "$PARENT"
 fi
 
-echo "Task class: $CLASS"
-echo "Lifecycle: finish with $SCRIPT_DIR/finish-task.sh from the task worktree."
+echo "Session metadata class: $CLASS"
+echo "Lifecycle: finish with $SCRIPT_DIR/finish-session.sh from the session worktree."

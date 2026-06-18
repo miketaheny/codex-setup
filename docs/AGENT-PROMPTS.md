@@ -6,28 +6,28 @@
 Use af-small-change. Fix [issue]. Keep scope narrow. Do not touch main or staging. Add a devlog entry under devlog/.
 ```
 
-## Worktree task
+## Worktree session
 
 ```text
-Use af-worktree-task. Create a detached worktree from the checked-out parent branch named ../[repo]-[task]. Do not create a named branch unless I explicitly ask for one. Implement the task, validate, add a devlog entry under devlog/, and run review before merge.
+Use af-worktree-task. Create or adopt one AF session worktree from the checked-out parent branch. Do not create a named branch unless I explicitly ask for one. Implement the session goal, validate, add or update the devlog under devlog/, and run review before merge.
 ```
 
-## Seamless task lifecycle
+## Seamless session lifecycle
 
 ```text
-Use Agent-Flow for this change. Classify the task, create a task worktree, implement it, run finish-task, and ask me before merging if it is ready.
+Use Agent-Flow for this change. Create one AF session worktree, implement it, run finish-session, and ask me before merging if it is ready.
 ```
 
 ## Explicit feature branch
 
 ```text
-Create a feature branch for this work, then create task worktrees under it and merge reviewed subtasks back there.
+Create a feature branch for this work only if needed, then create session worktrees under it and merge reviewed sessions back there.
 ```
 
 ## Review branch
 
 ```text
-Use af-review-gate. Review this task worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
+Use af-review-gate. Review this session worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
 ```
 
 ## Formal security review
@@ -69,13 +69,13 @@ Use af-migrate-backlog-devlog. Dry-run a migration from Backlog.md, backlog/, or
 ## Reconcile worktrees
 
 ```text
-Use af-reconcile-worktrees. Audit worktrees, local branches, local protected branch policy, and agent instruction conflicts. Do not remove worktrees or delete branches without explicit approval.
+Use af-reconcile-worktrees. Open the worktree manager, show the visual worktree map, identify incomplete or unmerged work, and clean up completed worktrees I have approved.
 ```
 
 ## Push readiness
 
 ```text
-Run scripts/check-push-readiness.sh for the branch I am about to push. Block the push if any child task worktree is dirty or unmerged.
+Run scripts/check-push-readiness.sh for the branch I am about to push. Block the push if any child session worktree is dirty or unmerged.
 ```
 
 ## Gitignore and IDE policy
@@ -99,5 +99,5 @@ Use af-compound-mode. Decide whether this should use a light Agent-Flow skill or
 ## Parallel session
 
 ```text
-Use a heavier workflow for this task only. You are in an isolated worktree. Keep scope limited to [area]. Add devlog entries under devlog/. Avoid shared files unless required. Do not merge until review passes.
+Use a heavier workflow for this session only. You are in an isolated worktree. Keep scope limited to [area]. Add/update the devlog under devlog/. Avoid shared files unless required. Do not merge until review passes.
 ```

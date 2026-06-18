@@ -14,7 +14,7 @@ Visual: before/after comparison.
 
 ## Slide 3: The Core Loop
 
-Classify the prompt, create a task worktree, validate, write devlog, update docs, review, ask before merge, then check child worktrees before push.
+For file-changing chats, create one AF session worktree, validate, write devlog, update docs, review, ask before merge, then check child worktrees before push.
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 
@@ -32,7 +32,7 @@ Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 
 ## Slide 6: Task Lifecycle Helpers
 
-`start-task.sh`, `finish-task.sh`, and `check-push-readiness.sh` make the default flow repeatable while keeping merges explicit.
+`start-session.sh`, `finish-session.sh`, `worktree-manager.py`, and `check-push-readiness.sh` make the default flow repeatable while keeping merges explicit.
 
 Visual: task lifecycle diagram from `docs/ARCHITECTURE.md`.
 

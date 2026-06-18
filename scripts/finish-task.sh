@@ -13,10 +13,10 @@ Options:
   --parent <branch>    Override the recorded parent branch.
 
 Default behavior follows .agent-flow/config.toml:
-  auto_commit = "finish"    -> commit dirty task work before readiness checks
+  auto_commit = "finish"    -> commit dirty session work before readiness checks
   auto_merge = "off"       -> report READY and ask before merge
-  auto_merge = "tiny-only" -> auto-merge only task class tiny
-  auto_merge = "always"    -> auto-merge any ready task worktree
+  auto_merge = "tiny-only" -> compatibility auto-merge for older tiny metadata
+  auto_merge = "always"    -> auto-merge any ready session worktree
 USAGE
 }
 
@@ -94,7 +94,7 @@ if [ -n "$BRANCH" ]; then
   esac
 elif [ "$WORKTREE_MODE" != "detached" ]; then
   echo "NOT_READY: detached HEAD has no Agent-Flow task metadata." >&2
-  echo "Create task worktrees with scripts/start-task.sh or scripts/new-worktree.sh." >&2
+  echo "Create session worktrees with scripts/start-session.sh or scripts/new-worktree.sh." >&2
   exit 1
 fi
 
@@ -103,7 +103,7 @@ if [ -z "$PARENT" ] && [ -n "$BRANCH" ]; then
   PARENT="$(git config --get "branch.$BRANCH.agentFlowParent" || true)"
 fi
 if [ -z "$PARENT" ]; then
-  echo "NOT_READY: task worktree has no recorded Agent-Flow parent." >&2
+  echo "NOT_READY: session worktree has no recorded Agent-Flow parent." >&2
   if [ -n "$BRANCH" ]; then
     echo "Set it with: git config branch.$BRANCH.agentFlowParent <parent-branch>" >&2
   else
@@ -122,8 +122,8 @@ if [ -n "$(git status --short)" ]; then
   if [ "$AUTO_COMMIT" = "finish" ]; then
     "$SCRIPT_DIR/commit-task.sh"
   else
-    echo "NOT_READY: task worktree has uncommitted or untracked changes." >&2
-    echo "Commit or clean the task worktree before merging." >&2
+    echo "NOT_READY: session worktree has uncommitted or untracked changes." >&2
+    echo "Commit or clean the session worktree before merging." >&2
     git status --short
     exit 1
   fi
@@ -137,13 +137,13 @@ fi
 
 AHEAD_COUNT="$(git rev-list --count "$PARENT"..HEAD)"
 if [ "$AHEAD_COUNT" = "0" ]; then
-  echo "NO_CHANGE: task worktree has no commits ahead of '$PARENT'."
+  echo "NO_CHANGE: session worktree has no commits ahead of '$PARENT'."
   exit 0
 fi
 
 DEVLOG_COUNT="$(git diff --name-only "$PARENT"...HEAD -- 'devlog/*.md' | wc -l | tr -d ' ')"
 if [ "$DEVLOG_COUNT" = "0" ]; then
-  echo "NOT_READY: no devlog entry changed in this task worktree." >&2
+  echo "NOT_READY: no devlog entry changed in this session worktree." >&2
   exit 1
 fi
 
@@ -174,7 +174,7 @@ if [ -n "$BRANCH" ]; then
   MERGE_REF="$BRANCH"
 else
   MERGE_REF="$(git rev-parse HEAD)"
-  echo "Branch: none (detached task worktree)"
+  echo "Branch: none (detached session worktree)"
   echo "Commit: $(git rev-parse --short HEAD)"
 fi
 echo "Parent: $PARENT"
@@ -183,6 +183,15 @@ echo "Commits ahead: $AHEAD_COUNT"
 echo "Devlog files changed: $DEVLOG_COUNT"
 echo
 git diff --stat "$PARENT"...HEAD
+
+READY_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+git config --worktree agentFlow.state "ready"
+git config --worktree agentFlow.finishedAt "$READY_AT"
+git config --worktree agentFlow.lastTouchedAt "$READY_AT"
+if [ -n "$BRANCH" ]; then
+  git config "branch.$BRANCH.agentFlowState" "ready"
+  git config "branch.$BRANCH.agentFlowReadyAt" "$READY_AT"
+fi
 
 AUTO_MERGE="$(config_value auto_merge off)"
 TASK_CLASS="$(git config --worktree --get agentFlow.taskClass 2>/dev/null || true)"
@@ -210,17 +219,20 @@ fi
 if [ "$SHOULD_MERGE" -ne 1 ]; then
   echo
   echo "ASK_USER_MERGE: run this after approval:"
-  echo "  $SCRIPT_DIR/finish-task.sh --merge"
+  echo "  $SCRIPT_DIR/finish-session.sh --merge"
   exit 0
 fi
 
 git -C "$PARENT_WORKTREE" merge --no-ff "$MERGE_REF"
+MERGED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 if [ -n "$BRANCH" ]; then
   git config "branch.$BRANCH.agentFlowState" "merged"
-  git config "branch.$BRANCH.agentFlowMergedAt" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  git config "branch.$BRANCH.agentFlowMergedAt" "$MERGED_AT"
 else
-  git config --worktree agentFlow.state "merged"
-  git config --worktree agentFlow.mergedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  git config --worktree agentFlow.mergedAt "$MERGED_AT"
 fi
+git config --worktree agentFlow.state "merged"
+git config --worktree agentFlow.mergedAt "$MERGED_AT"
+git config --worktree agentFlow.lastTouchedAt "$MERGED_AT"
 
 echo "MERGED: ${BRANCH:-$(git rev-parse --short HEAD)} -> $PARENT"

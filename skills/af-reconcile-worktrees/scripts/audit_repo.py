@@ -147,6 +147,32 @@ def worktree_config(path: Path, key: str) -> str | None:
     return None
 
 
+def worktree_metadata(path: Path) -> dict[str, str]:
+    keys = (
+        "agentFlow.mode",
+        "agentFlow.kind",
+        "agentFlow.sessionKind",
+        "agentFlow.sessionName",
+        "agentFlow.taskType",
+        "agentFlow.taskName",
+        "agentFlow.taskClass",
+        "agentFlow.parent",
+        "agentFlow.state",
+        "agentFlow.owner",
+        "agentFlow.devlogPolicy",
+        "agentFlow.startedAt",
+        "agentFlow.lastTouchedAt",
+        "agentFlow.finishedAt",
+        "agentFlow.lastCommit",
+    )
+    metadata: dict[str, str] = {}
+    for key in keys:
+        value = worktree_config(path, key)
+        if value:
+            metadata[key] = value
+    return metadata
+
+
 def local_branches(root: Path, config: dict[str, Any]) -> list[dict[str, Any]]:
     fmt = "%(refname:short)|%(objectname)|%(upstream:short)|%(HEAD)"
     out = git(["for-each-ref", f"--format={fmt}", "refs/heads"], root)
@@ -246,6 +272,7 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
     head = item.get("HEAD", "")
     status = status_short(path)
     target = branch if branch != "(detached)" else head
+    metadata = worktree_metadata(path)
     wt_parent = worktree_config(path, "agentFlow.parent")
     wt_mode = worktree_config(path, "agentFlow.mode")
     if wt_parent:
@@ -292,6 +319,7 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
         "branch": branch,
         "head": head[:12],
         "mode": wt_mode or ("branch" if branch != "(detached)" else "detached"),
+        "metadata": metadata,
         "dirty_count": len(status),
         "merge_target": merge_target,
         "explicit_parent": explicit_parent,
@@ -346,7 +374,7 @@ def build_report(path: Path) -> dict[str, Any]:
         elif not branch["explicit_parent"]:
             action = "skip user-controlled branch without AF parent metadata"
         elif branch["merged_to_target"] is True:
-            action = "ask to delete merged task branch"
+            action = "ask to delete merged session branch"
         elif branch["merged_to_target"] is False:
             action = f"skip; not merged to {branch['merge_target']}"
         else:
@@ -470,7 +498,7 @@ def markdown(report: dict[str, Any]) -> str:
                     path = f", path=`{child['path']}`" if child.get("path") else ""
                     lines.append(f"  - incomplete child `{child['name']}`: dirty={child['dirty_count']}, merged={child['merged']}{path}")
     else:
-        lines.append("- No task child worktrees with recorded parents found.")
+        lines.append("- No child session worktrees with recorded parents found.")
 
     lines += ["", "## Agent Instruction Review"]
     concerns = report["agents"]["concerns"]

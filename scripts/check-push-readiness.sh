@@ -92,14 +92,14 @@ while IFS= read -r line; do
   checked=$((checked + 1))
   wt="$(worktree_for_branch "$branch" || true)"
   if [ -n "$wt" ] && [ -n "$(git -C "$wt" status --short)" ]; then
-    echo "NOT_READY: child task '$branch' has dirty worktree: $wt" >&2
+    echo "NOT_READY: child session '$branch' has dirty worktree: $wt" >&2
     git -C "$wt" status --short >&2
     failures=$((failures + 1))
     continue
   fi
 
   if ! git merge-base --is-ancestor "$branch" "$TARGET"; then
-    echo "NOT_READY: child task '$branch' is not merged into '$TARGET'." >&2
+    echo "NOT_READY: child session '$branch' is not merged into '$TARGET'." >&2
     failures=$((failures + 1))
   fi
 done < <(git config --get-regexp '^branch\..*\.agentflowparent$' || true)
@@ -116,20 +116,20 @@ check_worktree_child() {
 
   checked=$((checked + 1))
   if [ -z "$head" ]; then
-    echo "NOT_READY: child task worktree has no recorded HEAD: $wt" >&2
+    echo "NOT_READY: child session worktree has no recorded HEAD: $wt" >&2
     failures=$((failures + 1))
     return
   fi
 
   if [ -n "$(git -C "$wt" status --short)" ]; then
-    echo "NOT_READY: child task worktree has dirty changes: $wt" >&2
+    echo "NOT_READY: child session worktree has dirty changes: $wt" >&2
     git -C "$wt" status --short >&2
     failures=$((failures + 1))
     return
   fi
 
   if ! git merge-base --is-ancestor "$head" "$TARGET"; then
-    echo "NOT_READY: child task worktree is not merged into '$TARGET': $wt" >&2
+    echo "NOT_READY: child session worktree is not merged into '$TARGET': $wt" >&2
     echo "  HEAD: $(git -C "$wt" rev-parse --short HEAD)" >&2
     failures=$((failures + 1))
   fi
@@ -163,8 +163,8 @@ if [ -n "$wt_path" ] && [ -z "$wt_branch" ]; then
 fi
 
 if [ "$failures" -gt 0 ]; then
-  echo "Push readiness failed for '$TARGET': $failures incomplete child task(s)." >&2
+  echo "Push readiness failed for '$TARGET': $failures incomplete child session(s)." >&2
   exit 1
 fi
 
-echo "PUSH_READY: '$TARGET' has no incomplete child task worktrees. Checked child tasks: $checked."
+echo "PUSH_READY: '$TARGET' has no incomplete child session worktrees. Checked child sessions: $checked."
