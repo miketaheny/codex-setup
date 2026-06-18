@@ -159,7 +159,7 @@ if [ -z "$STAGING_CHOICE" ]; then
   if [ "$MODE" = "disabled" ]; then
     STAGING_CHOICE="false"
   else
-    staging_answer="$(prompt_yes_no "Does this repo use a staging branch between development and main?" "no")"
+    staging_answer="$(prompt_yes_no "Does this repo use a staging branch between development and main?" "yes")"
     if [ "$staging_answer" = "yes" ]; then
       STAGING_CHOICE="true"
     else
@@ -192,7 +192,7 @@ FLOW="development -> main"
 STAGING_NOTE="Staging: disabled. Do not assume a staging branch unless .agent-flow/config.toml changes."
 if [ "$STAGING_CHOICE" = "true" ]; then
   FLOW="development -> staging -> main"
-  STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only for promotion/release flow."
+  STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only through the release PR flow unless an explicit direct-push exception is approved."
 fi
 
 cat > "$CONFIG_FILE" <<EOF

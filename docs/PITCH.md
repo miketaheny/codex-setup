@@ -30,13 +30,13 @@ Agent-Flow provides:
 
 - Agent-neutral canonical instructions exist in `AGENT-FLOW.md`.
 - Codex and Claude adapters point to the same rules.
-- Skills cover small changes, worktrees, docs, devlogs, review, security review, reconciliation, release promotion, and Backlog migration.
+- Skills cover small changes, worktrees, finishing sessions, docs, devlogs, review, security review, reconciliation, release PRs, and Backlog migration.
 - Bootstrap scripts create consistent repo instruction and documentation scaffolding.
 - Visual docs now include architecture diagrams, a user guide, demo plan, and presentation outline.
 
 ## Short Pitch
 
-Agent-Flow gives every AI coding agent the same operating system for solo development: safe branches, isolated work, devlog history, documentation updates, review before merge, formal security review before protected-branch PRs, and push checks before branch promotion.
+Agent-Flow gives every AI coding agent the same operating system for solo development: safe branches, isolated work, devlog history, documentation updates, review before merge, formal security review before protected-branch PRs, and push checks before release PRs.
 
 ## Longer Pitch
 

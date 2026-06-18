@@ -13,6 +13,7 @@ Make agent-assisted solo development safe and consistent across Claude, Codex, a
 - finish-time devlog files under `devlog/`
 - maintained project documentation and useful visual assets
 - review before merge
+- app/browser review before merge when the change needs visual or manual verification
 - formal security review before protected-branch pull requests
 - first-contact repo initialization or explicit local opt-out
 - push readiness checks before remote pushes
@@ -42,7 +43,7 @@ Use `scripts/start-session.sh` when available to create session worktrees and re
 ## Non-Negotiable Branch Rules
 
 - `main` is the production PR target. Do not keep it as a local work branch; if a local `main` branch appears, flag it for deletion after confirming it has no unique work. Do not modify, commit to, or push directly to `main`.
-- `staging` is optional per repo. Keep a local `staging` branch only when `staging_enabled = true`; otherwise flag it for deletion after confirming it has no unique work. When present or enabled, do not modify, commit to, or push directly to `staging` except through the release promotion workflow.
+- `staging` is optional per repo. Keep a local `staging` branch only when `staging_enabled = true`; otherwise flag it for deletion after confirming it has no unique work. When present or enabled, do not modify, commit to, or push directly to `staging` during normal work. Use the release PR workflow by default; allow direct staging pushes only as explicit repo-specific exceptions after review and approval.
 - `master`, `production`, and `prod` are reserved legacy names. Do not use them as mainline branches.
 - Default SDLC integration branch is `development`; it feeds `staging` when enabled and then `main`.
 - The session parent branch is the branch the user has checked out for the work. It is usually `development`, unless the user explicitly checked out or requested another non-protected parent.
@@ -135,7 +136,7 @@ Update project docs and useful visual assets when the change affects:
 - operational workflows
 - onboarding, demos, presentations, screenshots, or marketing communication
 
-Run project docs maintenance before pushing or promoting `development` to release branches such as optional `staging` and `main`.
+Run project docs maintenance before pushing `development` or preparing release pull requests to optional `staging` or `main`.
 
 ## Push Readiness
 
@@ -145,13 +146,13 @@ Before pushing any user-controlled branch, verify all child session worktrees re
 - no child session worktrees, detached or branch-backed, with commits missing from the parent branch
 - no unresolved review or validation blockers
 
-Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install `scripts/install-hooks.sh` to enforce this with a local `pre-push` hook. Direct pushes to `main` are blocked. Direct pushes to `staging` are blocked unless the explicit release promotion workflow sets `AF_ALLOW_RELEASE_PUSH=1`.
+Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install `scripts/install-hooks.sh` to enforce this with a local `pre-push` hook. Direct pushes to `main` are blocked. Direct pushes to `staging` are blocked unless an approved direct staging push exception sets `AF_ALLOW_RELEASE_PUSH=1`; the default release path uses pull requests.
 
 ## Formal Security Review
 
-Before creating a pull request whose base branch is `staging` or `main`, run a distinct formal security review. Use `af-security-review` when available. This gate is separate from `af-review-gate`: session review checks merge readiness, while security review checks the accumulated release diff before protected-branch promotion.
+Before creating a pull request whose base branch is `staging` or `main`, run a distinct formal security review. Use `af-security-review` when available. This gate is separate from `af-review-gate`: session review checks merge readiness, while security review checks the accumulated release diff before protected-branch PRs.
 
-Run the formal security review after worktree reconciliation, docs maintenance, and release validation, but before creating or offering the protected-branch pull request. If a repo updates `staging` by direct release push instead of a pull request, run the same security review before that protected release push.
+Run the formal security review after worktree reconciliation, docs maintenance, and release validation, but before creating or offering the protected-branch pull request. The default release PR path is `development -> staging`, then `staging -> main` after staging contains the release. If `staging_enabled = false`, use `development -> main`. If a repo updates `staging` by direct release push instead of a pull request, run the same security review before that protected release push.
 
 The review must inspect the full protected-branch diff, check security-sensitive changes such as auth, authorization, secret handling, input validation, dependencies, infrastructure, deployment, logging, privacy, and data access, and record findings with security severity. Fix SEC-P1 findings before PR creation. Fix SEC-P2 findings or get explicit user risk acceptance before PR creation.
 
@@ -189,7 +190,7 @@ Do not rely on commit messages as the only project history. `devlog/` is the det
 - Do not reformat the whole repo unless explicitly requested.
 - Do not change dependencies unless needed and documented.
 - Do not alter environment files, secrets, production config, DNS, auth, payments, or deployment settings without explicit approval.
-- Do not edit `main` or `staging` directly; use release promotion or pull requests.
+- Do not edit `main` or `staging` directly; use release pull requests by default.
 - Keep `.gitignore` valid and non-destructive. Init should create or append an Agent-Flow ignore block, never replace existing repo rules.
 - Treat IDE folders as personal by default. Commit `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, or `.vscode/settings.json` only when they intentionally encode shared project tooling; do not commit themes, window titles, local paths, or UI preferences.
 - Keep changes tightly scoped to the user's request.
@@ -201,10 +202,11 @@ A session is done when:
 
 - changes are implemented in one AF session worktree when Git is already initialized
 - validation has been run or documented as unavailable
+- app/browser review has been run or documented as not applicable when the change needs visual or manual verification
 - a session devlog file exists under `devlog/`
 - affected project docs and visual assets are updated
 - review has been performed for merge-ready work
-- formal security review has passed before protected-branch PRs or equivalent staging promotion when applicable
+- formal security review has passed before protected-branch PRs or an explicitly approved direct staging push exception
 - merge readiness has been reported and the user has been asked whether to merge, unless local config allowed an automatic merge
 - parent branch push readiness has been checked before any remote push
 - the final response includes what changed, validation, docs updated, and merge status

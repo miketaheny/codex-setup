@@ -62,8 +62,8 @@ agentFlow.devlogPolicy = finish
 4. Add or update one devlog file under `devlog/` before the session commit.
 5. Update affected project docs when behavior, setup, architecture, security, deployment, or operations change.
 6. Run validation.
-7. Run review gate.
-8. Finish with:
+7. Use `af-finish-session` when available to complete validation, app/browser review when applicable, docs/devlog checks, review, and merge readiness.
+8. If `af-finish-session` is unavailable, run review gate and finish with:
 
 ```bash
 scripts/finish-session.sh
@@ -95,6 +95,7 @@ Report:
 - changed files
 - devlog file
 - validation
+- app/browser review when applicable
 - docs updated
 - review result
 - merge command or cleanup action if ready

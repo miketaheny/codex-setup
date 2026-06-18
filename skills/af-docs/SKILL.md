@@ -21,7 +21,7 @@ Run this skill when:
 - recent devlog files or commits describe work that is not reflected in docs
 - the user asks to visualize a system, workflow, architecture, value proposition, or user journey
 - the repo needs user guides, screenshots, demo videos, diagrams, presentations, or marketing content
-- `development` is about to be pushed or promoted through optional `staging` or to `main`
+- `development` is about to be pushed or used for a release PR through optional `staging` or to `main`
 
 Do documentation work in an AF session worktree or user-controlled parent branch. Do not edit directly on `main` or `staging`.
 
@@ -172,7 +172,7 @@ If Git is unavailable, use the available filesystem state and devlog files, then
 2. Identify the docs that already exist and whether they are established or placeholder-only.
 3. Identify the change range:
    - for branch work, compare against the task's recorded parent branch or intended merge base
-   - for pre-promotion work, compare `development` against optional `staging` or `main` when available
+   - for pre-release work, compare `development` against optional `staging` or `main` when available
    - when no range is available, read recent devlog files and representative project files
 4. Decide whether this is stewardship setup, backfill, or ongoing maintenance.
 5. If stewardship setup is needed, inventory existing docs, interview the user, update docs in place, and record `docs/DOCS-STRATEGY.md`.
@@ -253,18 +253,18 @@ Ask whether the artifact should feel:
 
 When creating presentations, prefer a crisp outline first unless the user explicitly requests a PPTX. When creating marketing content, separate verified facts from recommended messaging.
 
-## Pre-Promotion Check
+## Pre-Release Check
 
-Before pushing or promoting `development` through the release path:
+Before pushing `development` or preparing release PRs through the release path:
 
 1. Confirm the work is on `development` or a non-protected session worktree.
-2. Review devlog files and commits since the last promotion or since the target branch diverged.
+2. Review devlog files and commits since the last release PR or since the target branch diverged.
 3. Check whether all user-facing, operational, architectural, setup, and security changes are reflected in docs.
 4. Run `scripts/check-push-readiness.sh development` when available so incomplete child session worktrees do not get bypassed.
-5. Resolve stale TODOs that block promotion, or record why they are acceptable to carry forward.
-6. Report whether docs are ready for promotion.
+5. Resolve stale TODOs that block release PRs, or record why they are acceptable to carry forward.
+6. Report whether docs are ready for release PRs.
 
-This skill does not perform the push or promotion by itself.
+This skill does not perform the push or create release PRs by itself.
 
 ## Content Standards
 
@@ -288,4 +288,4 @@ End with:
 - evidence used, including devlog files or commit range when available
 - validation performed or why it was skipped
 - unresolved TODOs or risks
-- whether docs are ready for merge or protected-branch promotion
+- whether docs are ready for merge or protected-branch release PRs

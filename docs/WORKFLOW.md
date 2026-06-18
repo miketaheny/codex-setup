@@ -9,11 +9,12 @@ Use AI coding agents like a disciplined solo engineering team:
 3. Keep scope narrow.
 4. Make the change.
 5. Validate it.
-6. Document the reasoning.
-7. Review before merge.
-8. Ask before merging back to the checked-out parent branch.
-9. Check child session worktrees before pushing a parent branch.
-10. Run formal security review before protected-branch PRs.
+6. Start the repo and review in browser/manual QA when the change needs it.
+7. Document the reasoning.
+8. Review before merge.
+9. Ask before merging back to the checked-out parent branch.
+10. Check child session worktrees before pushing a parent branch.
+11. Run formal security review before protected-branch PRs.
 
 ## Branch Model
 
@@ -58,7 +59,7 @@ Release path:
 | Chat kind | Default behavior |
 |---|---|
 | Chat/read-only | Answer directly; no worktree needed. |
-| File-changing | Create or adopt exactly one AF worktree session, validate, update devlog/docs if needed, ask to merge. |
+| File-changing | Create or adopt exactly one AF worktree session, validate, run app/browser review when applicable, update devlog/docs if needed, ask to merge. |
 | Changed direction | Finish, pause, or abandon the current worktree, then start a new chat/worktree. |
 
 Default merge policy:
@@ -78,6 +79,8 @@ scripts/start-session.sh feat export-csv
 scripts/finish-session.sh
 scripts/finish-session.sh --merge
 ```
+
+Prefer `af-finish-session` at the end of a worktree session so validation, optional browser QA, devlog/docs checks, review, and merge readiness happen together.
 
 Create a named branch only when the user explicitly asks for one:
 
@@ -108,16 +111,16 @@ Open one agent session per worktree.
 |---|---|
 | Tiny typo/config/CSS fix | `af-small-change` |
 | Small bug | `af-small-change` or a brief plan/work pass |
-| Normal feature | plan -> work -> `af-review-gate` |
+| Normal feature | plan -> work -> `af-finish-session` |
 | Risky/broad feature | heavier planning/review workflow |
 | Reusable lesson | project docs update or `af-devlog` |
 | Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
 | Pick up incomplete work | `af-reconcile-worktrees` or `scripts/worktree-manager.py --pickup <id>` |
-| Before merge | `af-review-gate` |
+| Complete a session before merge | `af-finish-session` with `af-review-gate` |
 | Before protected-branch PR | `af-security-review` |
-| Before release promotion | `af-reconcile-worktrees` -> `af-docs` -> `af-push-staging` with `af-security-review` |
+| Before release PR | `af-reconcile-worktrees` -> `af-docs` -> `af-release-pr` with `af-security-review` |
 
 ## Documentation Rules
 
@@ -155,18 +158,18 @@ After `docs/DOCS-STRATEGY.md` exists, `af-docs` should fully manage `docs/` from
 
 Use `af-docs` to decide which visual assets are worth creating: Mermaid or D2 diagrams, screenshots, demo videos, user guides, presentation outlines, product one-pagers, or marketing content.
 
-Run `af-docs` before pushing or promoting `development` through optional `staging` or to `main`.
+Run `af-docs` before pushing `development` or preparing release PRs through optional `staging` or to `main`.
 
 ## Backlog Migration
 
 Use `af-migrate-backlog-devlog` when a repo still has `Backlog.md`, `triage.md`, `backlog/`, or `.backlog/` files. Run its dry-run first, review the generated devlog plan, then write entries before deleting any legacy task store.
 
-## Release Promotion
+## Release PRs
 
-Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing session-parent metadata, local protected branch policy violations, and instruction conflicts.
+Use `af-reconcile-worktrees` before release PRs to find dirty worktrees, unmerged branches, missing session-parent metadata, local protected branch policy violations, and instruction conflicts. Ask the user what to do with open worktrees before continuing.
 
 Run `scripts/check-push-readiness.sh development` before pushing `development`. For an explicitly requested feature parent branch, run the same check against the feature branch before pushing it.
 
-Use `af-push-staging` to promote `development` through the configured release path. With staging enabled, it validates, runs formal security review for `development -> staging`, merges `development` into `staging`, pushes both branches, runs formal security review for `staging -> main`, then offers a `staging` to `main` PR. With staging disabled, it validates and pushes `development`, runs formal security review for `development -> main`, then offers a `development` to `main` PR.
+Use `af-release-pr` to prepare protected release PRs. By default, it validates `development`, checks readiness, pushes `origin development` after approval, runs formal security review for `development -> staging`, and offers or creates a `development -> staging` PR. After that PR is merged and staging contains the release, it runs formal security review for `staging -> main` and offers or creates a `staging -> main` PR. With staging disabled, it validates and pushes `development`, runs formal security review for `development -> main`, then offers or creates a `development -> main` PR.
 
-Run `af-security-review` as a distinct gate before creating any pull request whose base is `staging` or `main`. In the default staging-enabled path, the staging-target review happens before the protected staging promotion, and the main-target review happens before the main PR.
+Run `af-security-review` as a distinct gate before creating any pull request whose base is `staging` or `main`.

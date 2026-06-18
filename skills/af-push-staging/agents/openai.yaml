@@ -1,4 +1,4 @@
 interface:
   display_name: "AF Push Staging"
-  short_description: "Promote development safely"
-  default_prompt: "Use $af-push-staging to promote development through the configured release path safely."
+  short_description: "Legacy alias for release PRs"
+  default_prompt: "Use $af-push-staging as a legacy alias for $af-release-pr."

@@ -7,6 +7,8 @@ description: Pre-merge review gate for Agent-Flow worktree sessions. Checks bran
 
 Use this skill before merging any agent-created session worktree back into its recorded parent branch.
 
+For the full end-of-session workflow, including app start, Codex browser/manual review when applicable, devlog/docs checks, this review gate, and `scripts/finish-session.sh`, use `af-finish-session`.
+
 ## Goal
 
 Act like a disciplined reviewer for a solo developer.
@@ -62,6 +64,7 @@ Prefer existing project commands:
 - lint
 - typecheck
 - build
+- app/browser review for browser-visible or user-facing changes
 - targeted manual test
 
 If validation cannot run, explain why and lower confidence.

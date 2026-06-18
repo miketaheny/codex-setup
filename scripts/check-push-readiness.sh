@@ -53,8 +53,8 @@ if [ "$TARGET" = "$PRODUCTION_BRANCH" ]; then
 fi
 
 if [ "$TARGET" = "$STAGING_BRANCH" ] && [ "${AF_ALLOW_RELEASE_PUSH:-0}" != "1" ]; then
-  echo "NOT_READY: direct push to staging branch '$STAGING_BRANCH' is blocked outside release promotion." >&2
-  echo "Set AF_ALLOW_RELEASE_PUSH=1 only inside the explicit release promotion workflow." >&2
+  echo "NOT_READY: direct push to staging branch '$STAGING_BRANCH' is blocked outside an explicit release exception." >&2
+  echo "Use the release PR workflow by default. Set AF_ALLOW_RELEASE_PUSH=1 only for an approved direct staging push exception." >&2
   exit 1
 fi
 

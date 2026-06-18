@@ -24,7 +24,7 @@ pre_push_hook_installed = false
 # SDLC branch model.
 integration_branch = "development"
 production_branch = "main"
-staging_enabled = false
+staging_enabled = true
 staging_branch = "staging"
 reserved_branch_names = ["master", "production", "prod"]
 protected_branches = ["main", "staging"]
