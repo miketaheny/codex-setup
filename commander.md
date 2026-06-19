@@ -1,18 +1,16 @@
 # AF Agent-Flow Commander Notes
 
-This file is optional scratch guidance for the repo owner.
+Optional scratch guidance for the repo owner.
 
 Recommended flow:
 
-1. Start from `development`.
-2. Create or adopt one detached AF session worktree for each file-changing chat; create a branch only when you explicitly want one.
-3. Use the lightest safe skill.
-4. Add or update the finish-time session devlog entry under `devlog/`.
-5. Update project docs and useful visual assets when behavior, setup, architecture, security, deployment, operations, onboarding, demos, or marketing needs change.
-6. Run docs maintenance before promoting `development` to protected branches.
-7. Use `af-migrate-backlog-devlog` before removing legacy Backlog task files.
-8. Run `af-review-gate`.
-9. Merge into `development`.
-10. Run `af-reconcile-worktrees` or `scripts/worktree-manager.py --interactive` before cleanup or release PR prep.
-11. Run `af-security-review` before protected-branch PRs or any explicitly approved direct staging promotion.
-12. Run `af-release-pr` when ready to promote `development` through the protected release PR path.
+1. Start from `development` or another user-controlled parent branch.
+2. Use `af-flow` for file-changing work.
+3. Keep one chat in one AF session worktree.
+4. Add or update the session devlog entry under `devlog/`.
+5. Use `af-show` when visual or manual proof matters.
+6. Use `af-finish` to validate, review, commit, and ask before merge.
+7. Use `af-reconcile` before cleanup or release.
+8. Use `af-full-review` before release or high-risk merge.
+9. Use `af-security-review` when requested, config-required, or security-sensitive.
+10. Use `af-release` to prepare protected release PRs.

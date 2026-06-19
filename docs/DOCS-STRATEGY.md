@@ -37,10 +37,10 @@ Priority audiences:
 Docs should help readers:
 
 - install the global Agent-Flow setup
-- initialize or bootstrap new repositories
-- choose the correct AF skill for a task
-- understand chat/session classification, branch, worktree, devlog, review, formal security review, merge, push-readiness, and release PR rules
-- migrate legacy backlog/task stores into `devlog/`
+- initialize new repositories
+- choose the correct AF skill for a session
+- understand chat/session classification, branch, worktree, devlog, review, optional security review, merge, push-readiness, and release PR rules
+- migrate legacy Backlog-style stores into `devlog/`
 - understand how the setup stays agent-agnostic
 - visualize architecture, skill routing, and daily workflows
 - create demos, presentations, user guides, and stakeholder-facing material
@@ -53,10 +53,10 @@ Current canonical docs:
 |---|---|---|
 | `CHANGELOG.md` | Current | Keep user-facing workflow, docs, skill, and setup changes summarized. |
 | `README.md` | Current | Keep as the quick entrypoint, install guide, and docs map. |
-| `docs/WORKFLOW.md` | Current | Keep branch, devlog, review, migration, and release PR workflow accurate. |
+| `docs/WORKFLOW.md` | Current | Keep branch, devlog, review, migration, and release workflow accurate. |
 | `docs/AGENT-PROMPTS.md` | Current | Keep prompt examples aligned with current AF skills and workflow rules. |
-| `docs/ARCHITECTURE.md` | Current | Keep system, install, init/bootstrap, and skill-routing diagrams aligned with scripts and files. |
-| `docs/USER-GUIDE.md` | Current | Keep task-based install, init, skill, migration, and release PR guidance accurate. |
+| `docs/ARCHITECTURE.md` | Current | Keep system, install, init, and skill-routing diagrams aligned with scripts and files. |
+| `docs/USER-GUIDE.md` | Current | Keep session-based install, init, skill, migration, and release guidance accurate. |
 | `docs/VISUALS.md` | Current | Keep visual format recommendations, screenshots, demos, decks, and content plans current. |
 | `docs/DEMO.md` | Current | Keep demo and recording flow aligned with the repo's actual commands. |
 | `docs/PITCH.md` | Current | Keep stakeholder and marketing copy grounded in verified repo behavior. |
@@ -74,7 +74,7 @@ Use visual assets when they reduce explanation cost.
 
 - Mermaid is the default for source-accurate workflow, sequence, and architecture diagrams.
 - D2 is recommended when larger topology or dependency diagrams need stronger layout control.
-- Screenshots are recommended for install, init/bootstrap, session lifecycle, skill discovery, and real UI or terminal flows.
+- Screenshots are recommended for install, init, session lifecycle, skill discovery, and real UI or terminal flows.
 - Demo videos are recommended for install-to-init, start-session-to-finish-session, worktree-manager pickup/cleanup, push-readiness, release PR, backlog migration, and docs maintenance walkthroughs.
 - Generated images should be limited to conceptual, marketing, or presentation assets when real product screenshots are not available.
 
@@ -84,12 +84,12 @@ For this repo, prefer efficient, technical, and data-driven visuals in core docs
 
 Run `af-docs` when changes affect:
 
-- installation, init, bootstrap, gitignore, or IDE policy behavior
+- installation, init, gitignore, or IDE policy behavior
 - scripts under `scripts/`
 - skills under `skills/`
 - agent adapters such as `AGENTS.md`, `CLAUDE.md`, or `AGENT-FLOW.md`
 - templates copied into target repos
-- prompt lifecycle, branch, worktree, devlog, review, formal security review, merge, push-readiness, or release PR workflows
+- prompt lifecycle, branch, worktree, devlog, review, optional security review, merge, push-readiness, or release workflows
 - backlog migration behavior
 - visual documentation, demo, presentation, or marketing guidance
 - README navigation or setup commands

@@ -1,210 +1,143 @@
-# Agent-Flow Instructions — AF Solo Developer Workflow
+# Agent-Flow Instructions
 
-These instructions apply to AI coding agent sessions unless a repository-level instruction file gives more specific guidance. `af` means Agent-Flow.
+Agent-Flow (`AF`) is the shared workflow for Claude, Codex, and other coding agents in this repo.
 
-## Purpose
+## Core Lifecycle
 
-Make agent-assisted solo development safe and consistent across Claude, Codex, and other coding agents by enforcing:
-
-- isolated work per file-changing chat/session
-- no direct work on protected or reserved branches
-- named branches only when the user explicitly requests a branch
-- merge-back to the user-controlled parent branch that was checked out for the session
-- devlog files under `devlog/`
-- maintained project documentation and useful visual assets
-- review before merge
-- app/browser review before merge when the change needs visual or manual verification
-- formal security review before protected-branch pull requests
-- first-contact repo initialization or explicit local opt-out
-- push readiness checks before remote pushes
-- heavier multi-step workflows only when the session deserves them
-
-## First-Contact Repo Rules
-
-When an agent first opens a repository:
-
-- Read repo-local `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `.agent-flow/config.toml` when present.
-- If repo-local instructions or `.agent-flow/config.toml` set `mode = "disabled"`, disclose that Agent-Flow is locally disabled and do not enforce AF for that repo.
-- If no repo-local Agent-Flow files or config exist, ask whether to initialize Agent-Flow or disable it locally for the repo.
-- Prefer `~/.agent-flow/scripts/init-repo.sh` for initialization. It records whether enforcement is enabled, whether staging is used, and the local branch model.
-- Pure read-only chat does not need a worktree. Any file edit, commit, push, dependency change, config change, or destructive action must happen inside one AF-owned worktree session.
-- Agent-Flow should not leave untracked, unstaged, or uncommitted files behind. Dirty worktrees must be reviewed, documented with a devlog entry, and committed before starting another session or merging.
-
-## Chat Lifecycle
-
-Use one lifecycle for Codex work:
-
-- Read-only chat: answer directly; do not create a worktree unless the user asks to make changes.
-- File-changing chat: create or adopt exactly one AF worktree session before editing.
-
-Use `scripts/start-session.sh` when available to create session worktrees and record lifecycle metadata. Use `scripts/finish-session.sh` when available to run finish-time devlog, validation, review, commit, and merge readiness checks. `start-task.sh` and `finish-task.sh` may exist as compatibility wrappers or internals.
-
-## Non-Negotiable Branch Rules
-
-- `main` is the production PR target. Do not keep it as a local work branch; if a local `main` branch appears, flag it for deletion after confirming it has no unique work. Do not modify, commit to, or push directly to `main`.
-- `staging` is optional per repo. Keep a local `staging` branch only when `staging_enabled = true`; otherwise flag it for deletion after confirming it has no unique work. When present or enabled, do not modify, commit to, or push directly to `staging` during normal work. Use the release PR workflow by default; allow direct staging pushes only as explicit repo-specific exceptions after review and approval.
-- `master`, `production`, and `prod` are reserved legacy names. Do not use them as mainline branches.
-- Default SDLC integration branch is `development`; it feeds `staging` when enabled and then `main`.
-- The session parent branch is the branch the user has checked out for the work. It is usually `development`, unless the user explicitly checked out or requested another non-protected parent.
-- Use a separate git worktree for every file-changing chat/session.
-- Do not create named branches by default. Use detached session worktrees unless the user explicitly requests a named branch.
-- Merge reviewed session worktrees back to their recorded parent branch, not always to `development`.
-- When the user requests a named session branch, prefer names like:
-  - `fix/<short-description>`
-  - `feat/<short-description>`
-  - `docs/<short-description>`
-  - `chore/<short-description>`
-
-## Worktree Rules
-
-- Create worktrees from the checked-out parent branch unless the user explicitly supplies another non-protected parent branch.
-- Record detached session metadata in worktree-local Git config, including `agentFlow.kind = session`, `agentFlow.parent`, `agentFlow.sessionName`, `agentFlow.state`, `agentFlow.owner`, `agentFlow.devlogPolicy`, and timestamps.
-- For explicit named branches, also record branch metadata, for example `branch.<branch>.agentFlowParent`.
-- Keep each session scoped to one coherent direction.
-- Avoid editing the same shared files across parallel sessions when possible.
-- Add or update one devlog file under `devlog/` before the session commit. The devlog must be committed with the rest of the session changes.
-- Do not rewrite unrelated devlog files from other branches or worktrees.
-- Before merge, update from the parent branch, resolve conflicts, then run review.
-
-Long-running feature work still uses session worktrees by default. Create a feature branch only when the user explicitly asks for one; then use that branch as the checked-out parent for later session worktrees.
-
-## Merge Policy
-
-- Default behavior is `merge_prompt = "always"`: after a session is validated and reviewed, ask before merging back to the parent branch.
-- `auto_merge = "off"` is the default and safest behavior.
-- `auto_merge = "tiny-only"` is retained only for compatibility with older metadata; the default is still to ask before merge.
-- `auto_merge = "always"` is allowed only for repos that explicitly opt into it; agents must still respect protected branch, devlog, docs, and validation gates.
-- Do not merge dirty worktrees. Commit or clean session changes before merge.
-- With `auto_commit = "finish"`, `scripts/finish-session.sh` may commit dirty session work after creating or verifying a devlog entry.
-- Dirty parent branches are different: report them before starting a session and do not hide them in a new worktree.
-
-## Task Intake
-
-Before implementation, the agent should identify:
-
-- the goal
-- affected area of the repo
-- parent branch and session worktree
-- validation command(s)
-- documentation and devlog impact
-- whether a heavier planning/review workflow is needed
-
-Ask a clarifying question only when proceeding would likely cause wrong or destructive work. Otherwise make a reasonable best effort and document assumptions in the session's `devlog/` entry.
-
-## Default Command Decision Model
-
-Use the lightest workflow that still protects quality.
-
-- File-changing request: create or adopt one AF session worktree, implement, finish, review, and ask before merge.
-- Risky/broad request: plan inside the session worktree, then continue only while the direction stays coherent.
-- Reusable lesson discovered: record it in project docs or a solution note.
-
-## Required Documentation
-
-For every finished session, add or update a Markdown file in `devlog/`.
-
-Use one devlog file per session commit or planned squash commit. Suggested filename:
+Use one lifecycle:
 
 ```text
-devlog/YYYY-MM-DD-<commit-subject-slug>.md
+af-flow -> implementation -> af-devlog -> af-finish
 ```
 
-Devlog filenames are based on the date plus the planned commit subject slug, not the commit SHA. Store the short commit SHA inside the devlog entry when it is already known; otherwise use `pending`.
+Release work adds:
 
-Each devlog file should include:
+```text
+af-reconcile -> af-full-review -> af-release
+```
 
-- date
-- branch/worktree
-- commit subject, and commit SHA when already known
-- goal
-- files changed
-- decisions made
-- validation run
-- review result
-- follow-ups or known risks
+Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access.
 
-Update project docs and useful visual assets when the change affects:
+## First Contact
 
-- UI or user-facing behavior
-- public API behavior
-- configuration
-- deployment
-- database/schema behavior
-- security/privacy/compliance behavior
-- operational workflows
-- onboarding, demos, presentations, screenshots, or marketing communication
+When opening a repo:
 
-Run project docs maintenance before pushing `development` or preparing release pull requests to optional `staging` or `main`.
+- Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present.
+- Follow the most specific nested `AGENT-FLOW.md` or adapter file for the path being edited.
+- If config says `mode = "disabled"`, disclose that AF is disabled and do not enforce AF in that repo.
+- If no AF instructions or config exist, ask whether to run `~/.agent-flow/scripts/init-repo.sh` or opt out locally.
+- Read-only chats can answer directly. Any file edit, dependency change, commit, push, config change, or destructive operation must happen in one AF session worktree.
+
+## Branch Rules
+
+- `main` is the production PR target. Do not work, commit, or push directly on it.
+- `staging` is optional and protected when enabled. Use it through release PRs unless an explicit repo exception is approved.
+- `master`, `production`, and `prod` are reserved legacy names.
+- `development` is the default integration branch.
+- A session's parent branch is the user-controlled branch checked out when the session starts, unless the user explicitly chooses another non-protected parent.
+- Create named branches only when the user explicitly asks. Otherwise use detached session worktrees.
+- Merge reviewed sessions back to their recorded parent branch, not blindly to `development`.
+
+## Session Worktrees
+
+Before changing files, use `af-flow` or:
+
+```bash
+scripts/start-session.sh <type> <session-name>
+```
+
+For an explicit branch:
+
+```bash
+scripts/start-session.sh --branch <type>/<session-name> <type> <session-name>
+```
+
+AF metadata should stay small:
+
+```text
+agentFlow.kind = session
+agentFlow.parent = <parent-branch>
+agentFlow.sessionName = <session-name>
+agentFlow.state = started|active|ready|merged
+agentFlow.owner = codex
+agentFlow.devlogPolicy = finish
+agentFlow.startedAt = <timestamp>
+agentFlow.lastTouchedAt = <timestamp>
+agentFlow.branch = <explicit-branch> # only when branch-backed
+```
+
+If the current checkout is dirty before starting, inspect it and create or require a devlog-backed commit for that existing work before opening a new session. Do not hide dirty parent work in a new worktree.
+
+## Finish Policy
+
+Every file-changing session needs a `devlog/` entry before the session commit.
+
+Finish with `af-finish` or:
+
+```bash
+scripts/finish-session.sh
+```
+
+The finish flow validates, checks docs/devlog, uses `af-show` when useful, runs `af-review`, commits dirty session work when configured, and reports readiness. Ready sessions ask before merge:
+
+```bash
+scripts/finish-session.sh --merge
+```
+
+Run that only after explicit approval.
+
+## Docs And Devlog
+
+- `devlog/` is the durable human history for every file-changing session.
+- Metadata is only machine routing.
+- Update project docs when behavior, setup, architecture, security, deployment, operations, onboarding, or user workflows change.
+- Use `af-docs` for docs maintenance, diagrams, guides, demo plans, presentations, and visual communication assets.
+- Use `af-migrate-backlog-devlog` only for preserving old Backlog-style history.
 
 ## Push Readiness
 
-Before pushing any user-controlled branch, verify all child session worktrees recorded against it are complete:
+Before pushing a parent branch:
 
-- no dirty child session worktrees
-- no child session worktrees, detached or branch-backed, with commits missing from the parent branch
-- no unresolved review or validation blockers
+```bash
+scripts/check-push-readiness.sh <branch>
+```
 
-Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install `scripts/install-hooks.sh` to enforce this with a local `pre-push` hook. Direct pushes to `main` are blocked. Direct pushes to `staging` are blocked unless an approved direct staging push exception sets `AF_ALLOW_RELEASE_PUSH=1`; the default release path uses pull requests.
+The check blocks dirty or unmerged child session worktrees. Reconcile with:
 
-## Formal Security Review
+```bash
+scripts/worktree-manager.py
+scripts/worktree-manager.py --interactive
+scripts/worktree-manager.py --pickup <id>
+scripts/worktree-manager.py --cleanup <id> --yes
+```
 
-Before creating a pull request whose base branch is `staging` or `main`, run a distinct formal security review. Use `af-security-review` when available. This gate is separate from `af-review`: session review checks merge readiness, while security review checks the accumulated release diff before protected-branch PRs.
+## Release Flow
 
-Run the formal security review after worktree reconciliation, docs maintenance, and release validation, but before creating or offering the protected-branch pull request. The default release PR path is `development -> staging`, then `staging -> main` after staging contains the release. If `staging_enabled = false`, use `development -> main`. If a repo updates `staging` by direct release push instead of a pull request, run the same security review before that protected release push.
+Default path:
 
-The review must inspect the full protected-branch diff, check security-sensitive changes such as auth, authorization, secret handling, input validation, dependencies, infrastructure, deployment, logging, privacy, and data access, and record findings with security severity. Fix SEC-P1 findings before PR creation. Fix SEC-P2 findings or get explicit user risk acceptance before PR creation.
+```text
+development -> staging -> main
+```
 
-## Review Gate
+Use `development -> main` only when staging is disabled in config or explicitly requested.
 
-Before merging a session worktree back to its parent branch:
+Before release:
 
-- Confirm current branch is not `main`, `staging`, `master`, `production`, or `prod`.
-- Confirm the merge target is the session's recorded parent branch, from worktree-local config or explicit branch metadata.
-- Inspect `git status` and `git diff`.
-- Run available tests, linting, type checks, and builds where practical.
-- Run or simulate code review.
-- Fix P1/blocking findings.
-- Record unresolved P2/P3 findings in the session's `devlog/` file.
-- Summarize final status.
+1. Run `af-reconcile`.
+2. Run `af-full-review`.
+3. Run `af-security-review` if requested, config-required, or security-sensitive.
+4. Run `af-release`.
 
-## Commit Style
+Ask before remote side effects such as `git push` or `gh pr create` unless the user clearly authorized them in the current request.
 
-Use small, meaningful commits.
+## Safety
 
-Preferred prefixes:
+- Keep changes scoped to the user request.
+- Do not delete files, worktrees, branches, or config unless the request requires it and the action is safe.
+- Do not change secrets, production config, DNS, auth, payments, or deployment settings without explicit approval.
+- Preserve existing `.gitignore` rules; append AF policy blocks rather than replacing them.
+- Commit IDE files only when they encode shared project tooling, not personal preferences.
 
-- `feat:`
-- `fix:`
-- `docs:`
-- `refactor:`
-- `test:`
-- `chore:`
+## Done
 
-Do not rely on commit messages as the only project history. `devlog/` is the detailed engineering record.
-
-## Safety and Scope
-
-- Do not delete files unless explicitly required by the session goal.
-- Do not reformat the whole repo unless explicitly requested.
-- Do not change dependencies unless needed and documented.
-- Do not alter environment files, secrets, production config, DNS, auth, payments, or deployment settings without explicit approval.
-- Do not edit `main` or `staging` directly; use release pull requests by default.
-- Keep `.gitignore` valid and non-destructive. Init should create or append an Agent-Flow ignore block, never replace existing repo rules.
-- Treat IDE folders as personal by default. Commit `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, or `.vscode/settings.json` only when they intentionally encode shared project tooling; do not commit themes, window titles, local paths, or UI preferences.
-- Keep changes tightly scoped to the user's request.
-- Flag suspicious, risky, or destructive operations before running them.
-
-## Done Definition
-
-A session is done when:
-
-- changes are implemented in one AF session worktree when Git is already initialized
-- validation has been run or documented as unavailable
-- app/browser review has been run or documented as not applicable when the change needs visual or manual verification
-- a session devlog file exists under `devlog/`
-- affected project docs and visual assets are updated
-- review has been performed for merge-ready work
-- formal security review has passed before protected-branch PRs or an explicitly approved direct staging push exception
-- merge readiness has been reported and the user has been asked whether to merge, unless local config allowed an automatic merge
-- parent branch push readiness has been checked before any remote push
-- the final response includes what changed, validation, docs updated, and merge status
+A session is done when changes are implemented in one AF session worktree, validation is run or explicitly skipped with reason, visual/manual proof is recorded when relevant, devlog and impacted docs are updated, review is complete, merge readiness is reported, and the user has been asked before merge.

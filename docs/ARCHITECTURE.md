@@ -1,6 +1,6 @@
 # Agent-Flow Architecture
 
-Agent-Flow is a portable setup package for solo developers using Claude, Codex, or other coding agents. It provides shared workflow rules, agent-specific adapters, reusable AF skills, repo bootstrap templates, and small safety scripts.
+Agent-Flow is a portable local setup package. It installs shared workflow rules, agent adapters, Codex-compatible skills, templates, and scripts that keep file-changing agent work isolated and reviewable.
 
 ## System Map
 
@@ -11,151 +11,99 @@ flowchart TD
     Install --> CodexHome["~/.codex"]
     Install --> ClaudeHome["~/.claude"]
 
-    AFHome --> SharedRules["AGENT-FLOW.md"]
-    AFHome --> SharedSkills["skills/"]
-    AFHome --> SharedTemplates["templates/"]
-    AFHome --> SharedScripts["scripts/"]
+    AFHome --> Rules["AGENT-FLOW.md"]
+    AFHome --> Skills["skills/"]
+    AFHome --> Scripts["scripts/"]
+    AFHome --> Templates["templates/"]
 
     CodexHome --> CodexAdapter["AGENTS.md"]
-    CodexHome --> CodexSkills["Codex-compatible skills"]
+    CodexHome --> CodexSkills["Codex skills"]
     ClaudeHome --> ClaudeAdapter["CLAUDE.md"]
 
-    SharedScripts --> Init["init-repo.sh"]
-    SharedScripts --> Bootstrap["bootstrap-repo.sh"]
-    Init --> RepoConfig["repo .agent-flow/config.toml"]
-    Init --> Bootstrap
-    Bootstrap --> RepoRules["repo AGENT-FLOW.md"]
-    Bootstrap --> RepoAdapters["repo AGENTS.md + CLAUDE.md"]
-    Bootstrap --> RepoDevlog["repo devlog/"]
-    Bootstrap --> RepoDocs["repo docs/"]
+    Scripts --> Init["init-repo.sh"]
+    Init --> RepoConfig[".agent-flow/config.toml"]
+    Init --> RepoRules["repo AGENT-FLOW.md"]
+    Init --> RepoAdapters["repo AGENTS.md + CLAUDE.md"]
+    Init --> RepoDevlog["repo devlog/"]
+    Init --> RepoDocs["repo docs/"]
 ```
 
 ## Repository Components
 
 | Path | Role |
 |---|---|
-| `AGENT-FLOW.md` | Canonical workflow rules shared across agents. |
-| `AGENTS.md` | Codex-compatible adapter that points to `AGENT-FLOW.md`. |
-| `CLAUDE.md` | Claude-compatible adapter that points to `AGENT-FLOW.md`. |
-| `skills/` | AF workflow skills in Codex-compatible `SKILL.md` format. |
-| `scripts/` | Portable shell helpers for install, init, bootstrap, session lifecycle, push readiness, hooks, worktrees, branch checks, and review snapshots. |
-| `templates/` | Repo-level instruction, devlog, and decision templates. |
-| `docs/` | Project documentation, visual plans, prompts, guides, and communication assets. |
-| `devlog/` | Per-commit engineering history and validation records. |
+| `AGENT-FLOW.md` | Canonical workflow rules. |
+| `AGENTS.md` | Codex-compatible adapter. |
+| `CLAUDE.md` | Claude-compatible adapter. |
+| `skills/` | AF workflows in `SKILL.md` format. |
+| `scripts/` | Install, init, session, readiness, hook, and worktree helpers. |
+| `templates/` | Repo instruction, config, devlog, gitignore, and decision templates. |
+| `docs/` | Workflow, user, architecture, visual, demo, and prompt docs. |
+| `devlog/` | Session engineering history. |
 
-## Install Flow
-
-```mermaid
-sequenceDiagram
-    participant Dev as Developer
-    participant Install as install.sh
-    participant AF as ~/.agent-flow
-    participant Codex as ~/.codex
-    participant Claude as ~/.claude
-
-    Dev->>Install: Run ./scripts/install.sh
-    Install->>AF: Copy canonical rules, skills, templates, scripts, docs
-    Install->>Codex: Copy AGENTS.md, AGENT-FLOW.md, skills, templates, scripts, docs
-    Install->>Claude: Copy CLAUDE.md and AGENT-FLOW.md
-    Install-->>Dev: Print init command
-```
-
-## Repo Init And Bootstrap Flow
-
-```mermaid
-flowchart LR
-    Repo["Target Git repo"] --> Init["~/.agent-flow/scripts/init-repo.sh"]
-    Init --> Config[".agent-flow/config.toml"]
-    Init --> Choices["enforcement + staging choices"]
-    Init --> Gitignore[".gitignore Agent-Flow block"]
-    Init --> Bootstrap["bootstrap-repo.sh"]
-    Bootstrap --> Rules["AGENT-FLOW.md"]
-    Bootstrap --> Adapters["AGENTS.md + CLAUDE.md"]
-    Bootstrap --> Devlog["devlog/README.md"]
-    Bootstrap --> Decision["docs/decisions/000-template.md"]
-    Bootstrap --> Dirs["docs/solutions/ + docs/plans/"]
-    Bootstrap --> VisualDirs["docs/diagrams/ + docs/assets/ + docs/presentations/"]
-```
-
-`init-repo.sh` records first-contact repo choices, including whether Agent-Flow enforcement is enabled, whether staging is used, and whether the local pre-push hook was installed. Enforced repos default to the `development -> staging -> main` PR path unless staging is disabled. It also ensures `.gitignore` has the Agent-Flow local/IDE/env block and notes staging-disabled repos in local agent adapters.
-
-`bootstrap-repo.sh` only copies missing files. Existing repo instructions and docs are left in place.
-
-## Skill Model
+## Skill Flow
 
 ```mermaid
 flowchart TD
-    Request["User request"] --> Choose["Choose lightest safe AF skill"]
-    Choose --> Small["af-small-change"]
-    Choose --> Worktree["af-worktree-task"]
-    Choose --> Finish["af-finish-session"]
-    Choose --> Docs["af-docs"]
-    Choose --> Migration["af-migrate-backlog-devlog"]
-    Choose --> Review["af-review-gate"]
-    Choose --> Security["af-security-review"]
-    Choose --> Release["af-release-pr"]
-    Choose --> Reconcile["af-reconcile-worktrees"]
-    Choose --> Compound["af-compound-mode"]
+    Request["User request"] --> Kind{"File-changing?"}
+    Kind -->|No| Answer["Answer directly"]
+    Kind -->|Yes| Flow["af-flow"]
+    Flow --> Work["Scoped implementation"]
+    Work --> Devlog["af-devlog"]
+    Devlog --> Finish["af-finish"]
+    Finish --> Show["af-show when useful"]
+    Finish --> Review["af-review"]
+    Finish --> Ask["Ask before merge"]
 
-    Small --> Devlog["devlog entry"]
-    Worktree --> Devlog
-    Finish --> BrowserQA["app/browser review when applicable"]
-    Finish --> Review
-    Docs --> ProjectDocs["project docs + visuals"]
-    Migration --> Devlog
-    Review --> MergeDecision["merge readiness"]
-    Security --> ProtectedReview["protected-branch security gate"]
-    Release --> Protected["protected release PRs"]
+    ReleaseStart["Release prep"] --> Reconcile["af-reconcile"]
+    Reconcile --> Full["af-full-review"]
+    Full --> Security{"Sensitive or required?"}
+    Security -->|Yes| Sec["af-security-review"]
+    Security -->|No| Release["af-release"]
+    Sec --> Release
 ```
 
-Skills are written as Markdown workflows. Codex can auto-discover them through its skill format; other agents can still read them directly as reusable process instructions.
-
-## Session Lifecycle Scripts
+## Session Scripts
 
 ```mermaid
 flowchart LR
-    Prompt["File-changing chat"] --> Start["start-session.sh"]
-    Start --> Worktree["detached session worktree + AF metadata"]
+    Parent["parent branch"] --> Start["start-session.sh"]
+    Start --> Worktree["detached or explicit branch worktree"]
     Worktree --> Finish["finish-session.sh"]
-    Finish --> Ask["ASK_USER_MERGE"]
-    Ask --> Merge["finish-session.sh --merge"]
-    Merge --> Parent["parent branch"]
-    Parent --> PushCheck["check-push-readiness.sh"]
-    PushCheck --> Remote["remote push"]
+    Finish --> Ready["ASK_USER_MERGE"]
+    Ready --> Merge["finish-session.sh --merge"]
+    Merge --> Parent
+    Parent --> PushReady["check-push-readiness.sh"]
 ```
 
 ## Worktree Manager
 
 ```mermaid
 flowchart LR
-    Manager["worktree-manager.py"] --> Map["visual worktree map"]
-    Manager --> Details["details view"]
+    Manager["worktree-manager.py"] --> Map["worktree map"]
+    Manager --> Details["details"]
     Manager --> Pickup["pickup incomplete work"]
-    Manager --> Cleanup["cleanup complete worktrees"]
-    Pickup --> Metadata["agentFlow.state / owner / lastTouchedAt"]
-    Cleanup --> Remove["git worktree remove + merged branch delete"]
+    Manager --> Cleanup["cleanup completed work"]
+    Pickup --> Metadata["state / owner / lastTouchedAt"]
+    Cleanup --> Remove["safe git worktree remove"]
 ```
 
-## Data and State
+## State
 
-Agent-Flow has no database or service runtime. State is file-based:
+Agent-Flow has no service runtime. State is local:
 
-- Global setup files under `~/.agent-flow`, `~/.codex`, and `~/.claude`.
-- Repo-level instructions and docs copied into target repositories.
-- Repo-level choices stored in `.agent-flow/config.toml`.
-- Repo-level ignore policy stored in `.gitignore`.
-- Local protected branch policy derived from `.agent-flow/config.toml`: `main` is disallowed locally, and `staging` is local only when staging is enabled.
-- Detached session metadata stored in worktree-local Git config as `agentFlow.kind`, `agentFlow.parent`, `agentFlow.sessionName`, `agentFlow.state`, `agentFlow.owner`, `agentFlow.devlogPolicy`, and timestamps.
-- Explicit named branches, when requested, also store parent metadata in Git config as `branch.<branch>.agentFlowParent`.
-- Git branches, worktrees, and commits managed by the developer.
-- Engineering history stored in repo `devlog/` files.
+- Global files under `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+- Repo choices in `.agent-flow/config.toml`.
+- Session metadata in worktree-local Git config.
+- Optional branch parent metadata for explicit branches.
+- Human history in `devlog/`.
+- Git commits, worktrees, and branches.
 
 ## Trust Boundaries
 
-- Install scripts write to local home directories and should be reviewed before running.
-- Init and bootstrap scripts write into the current Git repository and refuse to run outside a Git repo.
-- Release PR and cleanup skills require explicit approval before remote side effects or destructive actions such as PR creation, branch deletion, or worktree removal.
-- Pull requests to protected branches require a distinct formal security review before PR creation.
-- `main` is a production PR target and direct local agent work is blocked by workflow. `staging` is local only when enabled and protected/reserved when present.
-- Optional local `pre-push` hooks call `check-push-readiness.sh` so parent branches are not pushed while child session worktrees are dirty or unmerged.
-- Generated docs and visuals must be grounded in source files, devlog entries, screenshots, or user-provided context.
+- Install scripts write to local home directories.
+- Init scripts write into the current Git repo and refuse to run outside Git.
+- Worktree cleanup and release side effects require explicit approval.
+- Direct work on `main` is blocked by workflow.
+- Push-readiness blocks parent pushes while child sessions are dirty or unmerged.
+- Security review is distinct from full release review.

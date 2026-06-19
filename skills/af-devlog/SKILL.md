@@ -1,21 +1,17 @@
 ---
 name: af-devlog
-description: Maintain finish-time session Markdown devlog files under devlog/ for Agent-Flow work.
+description: Maintain mandatory session Markdown devlog files under devlog/ for every file-changing Agent-Flow session. Use when starting, finishing, reviewing, reconciling, or documenting AF work so the human history travels with the session commit.
 ---
 
-# AF Devlog Skill
-
-Use this skill whenever a worktree session needs engineering-history documentation, cleanup, or review.
+# AF Devlog
 
 ## Purpose
 
-Keep detailed engineering history close to the commit that introduced it while avoiding shared-file conflicts across branches and worktrees.
+Use `devlog/` as the durable human history for Agent-Flow. Metadata is only lightweight routing; devlog entries explain what happened, why, and how it was validated.
 
-## Devlog folder
+## Requirement
 
-`devlog/` is the detailed engineering journal.
-
-Add one Markdown file for every finished worktree session. If a branch will be squashed before merge, create one file for the planned squash commit.
+Every file-changing AF session must add or update one Markdown file under `devlog/` before the session commit. Do not merge a session without a devlog entry unless the work produced no repository changes.
 
 Suggested filename:
 
@@ -23,24 +19,26 @@ Suggested filename:
 devlog/YYYY-MM-DD-<commit-subject-slug>.md
 ```
 
-Use a concise slug based on the session commit subject or planned squash subject. A branch with multiple meaningful commits may still have multiple devlog files.
+Use the planned commit subject or squash subject for the slug. A branch with multiple meaningful commits may have multiple devlog files.
 
 ## Entry Template
 
 ```md
-# YYYY-MM-DD — <commit subject>
+# YYYY-MM-DD - <commit subject>
 
-- Branch/worktree: `<branch>` / `<path if relevant>`
+- Branch/worktree: `<branch or detached short SHA>` / `<path if relevant>`
 - Commit: `<short SHA>` or `pending`
 - Goal: <what the change tried to accomplish>
 - Summary:
   - <what changed>
 - Files changed:
-  - `<file>` — <reason>
+  - `<file>` - <reason>
 - Decisions:
   - <decision and why>
 - Validation:
-  - `<command>` — <result>
+  - `<command>` - <result>
+- Visual/manual proof:
+  - <not applicable, passed, blocked, or skipped with reason>
 - Review:
   - <review result or not run>
 - Risks / follow-ups:
@@ -49,9 +47,9 @@ Use a concise slug based on the session commit subject or planned squash subject
 
 ## Rules
 
-- Create the devlog file before committing so the file travels with the branch or worktree.
+- Create the devlog file before committing so it travels with the session changes.
 - Do not rewrite unrelated devlog files from other sessions.
-- If the final commit SHA is unknown at commit time, leave `Commit: pending`. A later docs maintenance pass may update it when useful.
-- Do not claim tests passed unless they were run.
-- Keep entries concise but useful for future agent sessions.
-- Record skipped validation and known risks explicitly.
+- Leave `Commit: pending` when the final SHA is unknown at commit time.
+- Do not claim tests, builds, browser checks, or security checks passed unless they ran.
+- Record skipped validation, blocked proof, and known risks explicitly.
+- Keep entries concise but useful for future agents and maintainers.

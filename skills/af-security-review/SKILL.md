@@ -1,29 +1,24 @@
 ---
 name: af-security-review
-description: Formal security review gate before creating pull requests to protected branches such as staging or main, and before explicitly approved direct protected-branch release exceptions.
+description: Deep security-only review for Agent-Flow releases or high-risk diffs. Use when requested, when config requires it, when af-full-review flags security-sensitive areas, or before a protected-branch PR/direct release exception that changes auth, secrets, input validation, dependencies, infrastructure, privacy, or data access.
 ---
 
-# AF Security Review Skill
+# AF Security Review
 
-Use this skill after normal validation and docs checks, but before creating any pull request whose base is `staging` or `main`. If a repo uses an explicitly approved direct release push to `staging` instead of a pull request, run the same review before that protected-branch push.
-
-This is distinct from `af-review-gate`. The normal review gate checks session quality before merging into a parent branch. This security review checks the accumulated release diff before protected-branch PRs or approved direct release exceptions.
+Use this as a distinct security gate. It is not the general release review; run `af-full-review` for broad correctness and release readiness.
 
 ## Inputs
 
 Identify:
 
-- target base branch, usually `staging` or `main`
-- candidate head branch, usually `development` or `staging`
-- whether staging is enabled in `.agent-flow/config.toml`
-- validation already run for the candidate
-- any docs, devlog entries, or known risks that changed since the last protected-branch review
+- base branch and head branch or commit range
+- whether the review was requested, config-required, or triggered by security-sensitive changes
+- validation already run
+- docs, devlog entries, known risks, and accepted risk context
 
-## Required Workflow
+## Workflow
 
-### 1. Confirm protected target
-
-Run:
+### 1. Confirm Context
 
 ```bash
 git rev-parse --show-toplevel
@@ -32,83 +27,48 @@ git status --short
 git branch --show-current
 ```
 
-Stop if the worktree is dirty unless the dirty files are explicitly part of the review evidence and will not be included in the protected-branch PR.
+Stop if the worktree is dirty unless the dirty files are explicit review evidence and will not be included in the release.
 
-### 2. Inspect the release diff
-
-Run:
+### 2. Inspect Full Diff
 
 ```bash
-git log --oneline <base-branch>..<head-branch>
-git diff --name-only <base-branch>...<head-branch>
-git diff --stat <base-branch>...<head-branch>
-git diff <base-branch>...<head-branch>
+git log --oneline <base>..<head>
+git diff --name-only <base>...<head>
+git diff --stat <base>...<head>
+git diff <base>...<head>
 ```
 
-Review the full diff, not only file names or summaries.
+Review the full diff, not only summaries.
 
-### 3. Check security-sensitive areas
+### 3. Security Focus Areas
 
-Look specifically for:
+Look for:
 
-- authentication, authorization, session, token, or permission changes
-- secret handling, environment variables, credentials, API keys, and config defaults
-- input validation, parsing, deserialization, file path, upload, or template rendering behavior
-- subprocess, shell, eval, dynamic import, plugin, extension, or code-generation behavior
-- network clients, webhook handlers, CORS, redirects, SSRF surfaces, and external service trust boundaries
-- database queries, migrations, row-level security, tenant isolation, and data-retention behavior
-- cryptography, signing, hashing, random values, and key rotation behavior
-- dependency, build, CI, deployment, DNS, infrastructure, logging, telemetry, payment, or privacy changes
-- accidental secrets, test credentials, local paths, or sensitive data in committed files
+- authentication, authorization, sessions, tokens, and permissions
+- secrets, environment variables, credentials, API keys, and config defaults
+- input validation, parsing, deserialization, file paths, uploads, and template rendering
+- subprocess, shell, eval, dynamic import, plugin, extension, and generated-code behavior
+- network clients, webhooks, CORS, redirects, SSRF surfaces, and trust boundaries
+- database queries, migrations, row-level security, tenant isolation, and retention behavior
+- cryptography, signing, hashing, random values, and key rotation
+- dependencies, build, CI, deployment, DNS, infrastructure, logging, telemetry, payment, privacy, and accidental sensitive data
 
-### 4. Run practical security checks
+### 4. Practical Checks
 
-Prefer existing project tooling. Examples include:
+Prefer existing project tooling: tests, lint, typecheck, build, dependency audit, secret scanning, static analysis, and targeted manual tests for changed security behavior.
 
-- test, lint, typecheck, and build commands already used for release validation
-- dependency audit commands when lockfiles and package managers are present
-- configured secret scanners such as `gitleaks` or `trufflehog`
-- configured static analysis such as CodeQL, Semgrep, Bandit, or framework-specific analyzers
-- targeted manual tests for changed auth, permission, input-validation, or release-config behavior
+Do not install new security tooling only to satisfy this gate unless the user approves it. If a relevant tool is unavailable, state that and lower confidence.
 
-Do not install new security tooling only to satisfy this gate unless the user explicitly approves it. If a relevant tool is unavailable, state that clearly and lower confidence.
+### 5. Findings
 
-### 5. Findings and disposition
+Use:
 
-Use these severities:
+- SEC-P1: blocks release or protected-branch PR until fixed.
+- SEC-P2: blocks unless fixed or explicitly accepted by the user.
+- SEC-P3: non-blocking hardening recommendation.
 
-- SEC-P1: blocks protected-branch PR or protected release push until fixed.
-- SEC-P2: blocks unless fixed or explicitly accepted by the user and recorded in the PR notes or devlog.
-- SEC-P3: non-blocking hardening recommendation that must be recorded.
+## Output
 
-Do not create a pull request to `main` or `staging` while SEC-P1 findings remain open. Do not create it with SEC-P2 findings unless the user explicitly accepts the risk.
+End with `SECURITY REVIEW PASSED FOR <head> -> <base>`, `SECURITY REVIEW PASSED WITH ACCEPTED RISKS FOR <head> -> <base>`, or `SECURITY REVIEW BLOCKED FOR <head> -> <base>`.
 
-## Required Output
-
-End with one of:
-
-```text
-SECURITY REVIEW PASSED FOR <head-branch> -> <base-branch>
-```
-
-or
-
-```text
-SECURITY REVIEW PASSED WITH ACCEPTED RISKS FOR <head-branch> -> <base-branch>
-```
-
-or
-
-```text
-SECURITY REVIEW BLOCKED FOR <head-branch> -> <base-branch>
-```
-
-Include:
-
-- base branch and head branch
-- changed files and security-sensitive areas reviewed
-- validation and security checks run
-- findings by severity
-- risks accepted or deferred
-- whether a protected-branch PR or protected release push may proceed
-- recommended next command
+Include changed files, sensitive areas reviewed, checks run, findings, accepted risks, and whether the release may proceed from a security standpoint.

@@ -117,7 +117,7 @@ def visual(report: dict[str, Any]) -> str:
             continue
         marker = "*" if wt["dirty_count"] else "-"
         metadata = wt.get("metadata", {})
-        name = metadata.get("agentFlow.sessionName") or metadata.get("agentFlow.taskName") or wt["branch"]
+        name = metadata.get("agentFlow.sessionName") or wt["branch"]
         branch = wt["branch"] if wt["branch"] != "(detached)" else f"detached:{wt['head']}"
         cleanup = " cleanup" if wt["cleanup_eligible"] else ""
         lines.append(

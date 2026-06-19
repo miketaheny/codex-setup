@@ -104,8 +104,30 @@ if [ -f "$CONFIG_FILE" ] && [ "$FORCE" -ne 1 ]; then
   exit 0
 fi
 
-AF_BOOTSTRAP_SUPPRESS_INIT_HINT=1 "$SCRIPT_DIR/bootstrap-repo.sh"
 mkdir -p "$CONFIG_DIR"
+
+mkdir -p docs/decisions docs/solutions docs/plans docs/diagrams docs/assets docs/presentations devlog
+
+copy_if_missing() {
+  local src="$1"
+  local dest="$2"
+  if [ -e "$dest" ]; then
+    echo "Exists: $dest"
+  else
+    cp "$src" "$dest"
+    echo "Created: $dest"
+  fi
+}
+
+copy_if_missing "$AF_HOME/templates/repo-AGENT-FLOW.md" "AGENT-FLOW.md"
+copy_if_missing "$AF_HOME/templates/repo-AGENTS.md" "AGENTS.md"
+copy_if_missing "$AF_HOME/templates/repo-CLAUDE.md" "CLAUDE.md"
+copy_if_missing "$AF_HOME/templates/devlog-README.md" "devlog/README.md"
+
+if [ ! -f "docs/decisions/000-template.md" ]; then
+  cp "$AF_HOME/templates/DECISION.md" "docs/decisions/000-template.md"
+  echo "Created: docs/decisions/000-template.md"
+fi
 
 ensure_gitignore() {
   local gitignore=".gitignore"
@@ -200,10 +222,10 @@ version = 1
 enabled = $ENABLED
 mode = "$MODE"
 
-task_base = "checked-out"
-task_merge_target = "parent"
 worktrees = "required-for-changes"
-task_branch = "explicit-only"
+session_base = "checked-out"
+session_merge_target = "parent"
+session_branch = "explicit-only"
 session_unit = "chat"
 devlog_policy = "finish"
 
@@ -211,8 +233,6 @@ merge_prompt = "always"
 auto_commit = "finish"
 dirty_parent_policy = "review-and-commit"
 devlog_filename = "date-subject"
-auto_merge = "off"
-large_task_parent_branch = "explicit-only"
 pre_push_worktree_check = true
 pre_push_hook_installed = $HOOKS_CHOICE
 
@@ -226,7 +246,8 @@ protected_branches = $PROTECTED
 devlog = "required-for-changes"
 docs = "required-when-impacted"
 
-formal_security_review = "required-before-protected-pr"
+security_review = "optional"
+formal_security_review = "when-configured-or-sensitive"
 security_review_pr_bases = ["staging", "main"]
 EOF
 
@@ -249,7 +270,7 @@ append_local_choices() {
 - Enforcement: $MODE via \`.agent-flow/config.toml\`.
 - Session worktrees are detached by default from the checked-out parent branch and merge back there after review.
 - Create named branches only when the user explicitly requests a branch.
-- Merge behavior: ask before merge by default; auto-merge is off unless config changes.
+- Merge behavior: ask before merge by default.
 - Push behavior: check child session worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.
 - SDLC flow: $FLOW. \`main\` is the production PR target and should not be kept as a local work branch.
