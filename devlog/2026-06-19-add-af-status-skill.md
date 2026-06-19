@@ -1,0 +1,28 @@
+# 2026-06-19 - feat: add af status skill
+
+- Branch/worktree: `development` / `/Users/taheny/vault/teamt/codex-setup`
+- Commit: `pending`
+- Goal: Bring the AF status skill work into `development` while leaving the `brand-guidelines` worktree untouched.
+- Summary:
+  - Added `af-status` as a read-only status dashboard skill.
+  - Documented the skill in README, user guide, workflow docs, prompt examples, and changelog.
+- Files changed:
+  - `skills/af-status/SKILL.md` - read-only status workflow.
+  - `skills/af-status/agents/openai.yaml` - Codex UI metadata.
+  - `README.md` - installed skills and daily-loop status usage.
+  - `docs/USER-GUIDE.md` - skill picker and worktree dashboard guidance.
+  - `docs/WORKFLOW.md` - skill table and worktree manager note.
+  - `docs/AGENT-PROMPTS.md` - reusable status prompt.
+  - `CHANGELOG.md` - user-facing addition.
+- Decisions:
+  - Ported the dirty `af-status-skill` worktree changes into the simplified post-merge docs rather than merging the stale pre-simplification docs directly.
+  - Left `codex-setup-brand-guidelines` unchanged per user instruction.
+- Validation:
+  - `bash -n scripts/*.sh` - passed.
+  - `python3 -m py_compile scripts/worktree-manager.py skills/af-reconcile/scripts/audit_repo.py skills/af-reconcile/scripts/worktree_manager.py skills/af-migrate-backlog-devlog/scripts/migrate_backlog_to_devlog.py` - passed.
+  - `python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py` for every `skills/*` directory - passed.
+  - `git diff --check` - passed.
+- Review:
+  - Self-review checked that `af-status` is read-only and docs use the simplified active skill names.
+- Risks / follow-ups:
+  - Clean up the now-redundant `af-status-skill` worktree after commit confirms the skill is present on `development`.

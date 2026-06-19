@@ -18,6 +18,12 @@ Use af-finish. Run validation, use af-show if visual or manual proof matters, ve
 Use af-review. Review this session worktree against its recorded parent branch and tell me whether it is ready to merge.
 ```
 
+## Status Snapshot
+
+```text
+Use af-status. Summarize current Agent-Flow status, push-readiness blockers, and all worktree states without mutating anything.
+```
+
 ## Visual Proof
 
 ```text

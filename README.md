@@ -8,6 +8,7 @@ Portable Agent-Flow setup for solo development with Codex, Claude, and other cod
 - Agent adapters: `AGENTS.md` for Codex-compatible agents and `CLAUDE.md` for Claude-compatible agents.
 - Compact AF skills:
   - `af-flow`
+  - `af-status`
   - `af-devlog`
   - `af-finish`
   - `af-show`
@@ -70,6 +71,12 @@ For file-changing work:
 
 ```text
 af-flow -> implement -> af-devlog -> af-finish
+```
+
+For read-only repo and worktree status:
+
+```text
+af-status
 ```
 
 Direct helpers:

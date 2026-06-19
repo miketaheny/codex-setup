@@ -51,6 +51,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 | Situation | Skill |
 |---|---|
 | Start or adopt file-changing work | `af-flow` |
+| Overall AF status and worktree state | `af-status` |
 | Record engineering history | `af-devlog` |
 | Finish, validate, review, and ask before merge | `af-finish` |
 | Capture visual/manual proof | `af-show` |
@@ -69,6 +70,8 @@ Every file-changing session needs one `devlog/YYYY-MM-DD-<subject>.md` entry bef
 Update project docs when behavior, setup, architecture, security, deployment, operations, onboarding, or user workflows change.
 
 ## Worktree Manager
+
+Use `af-status` for a read-only summary of AF config, current checkout, all worktrees, and push-readiness blockers.
 
 ```bash
 scripts/worktree-manager.py

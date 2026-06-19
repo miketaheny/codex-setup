@@ -5,6 +5,7 @@
 ### Added
 
 - Added `af-flow` as the entry workflow for file-changing sessions.
+- Added `af-status` for read-only Agent-Flow repo and worktree status snapshots.
 - Added `af-finish` as the end-of-session workflow replacing the previous finish naming.
 - Added `af-show` for visual or manual proof during finish.
 - Added `af-full-review` for release readiness and high-risk exhaustive review.

@@ -52,6 +52,7 @@ If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`
 | Need | Skill |
 |---|---|
 | Start or adopt work | `af-flow` |
+| Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
 | Visual/manual proof | `af-show` |
 | Engineering history | `af-devlog` |
@@ -64,6 +65,12 @@ If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`
 | Backlog history migration | `af-migrate-backlog-devlog` |
 
 ## Manage Worktrees
+
+For a read-only dashboard:
+
+```text
+Use af-status to summarize current Agent-Flow status and all worktree states.
+```
 
 ```bash
 scripts/worktree-manager.py --interactive
