@@ -4,43 +4,44 @@
 
 Use AI coding agents like a disciplined solo engineering team:
 
-1. Classify the prompt.
-2. Isolate file-changing work in a task worktree.
+1. Decide whether the chat is read-only or file-changing.
+2. Isolate every file-changing chat in one AF worktree session.
 3. Keep scope narrow.
 4. Make the change.
 5. Validate it.
-6. Document the reasoning.
-7. Review before merge.
-8. Ask before merging back to the checked-out parent branch.
-9. Check child worktrees before pushing a parent branch.
-10. Run formal security review before protected-branch PRs.
+6. Start the repo and review in browser/manual QA when the change needs it.
+7. Document the reasoning.
+8. Review before merge.
+9. Ask before merging back to the checked-out parent branch.
+10. Check child session worktrees before pushing a parent branch.
+11. Run formal security review before protected-branch PRs.
 
 ## Branch Model
 
 Agent-Flow has two branch concepts:
 
-- Task parent branch: the user-controlled branch that is checked out when the task begins. Task worktrees branch from it and merge back to it.
+- Session parent branch: the user-controlled branch that is checked out when the session begins. Session worktrees are detached from it by default and merge back to it.
 - SDLC integration branch: `development`, which stays open for ongoing fixes and feeds the release path.
 
 Typical routine work:
 
 ```text
 development
-  ├── fix/navbar-spacing
-  ├── fix/contact-form-validation
-  └── docs/devlog-cleanup
+  ├── ../repo-navbar-spacing
+  ├── ../repo-contact-form-validation
+  └── ../repo-devlog-cleanup
 ```
 
 Longer feature work:
 
 ```text
-feat/payments-redesign
-  ├── feat/payment-form
-  ├── fix/payment-validation
-  └── docs/payment-runbook
+development
+  ├── ../repo-payment-form
+  ├── ../repo-payment-validation
+  └── ../repo-payment-runbook
 ```
 
-After the feature branch is ready, the user merges it into `development`.
+Create a feature branch only when the user explicitly asks for one. If that happens, the feature branch becomes the checked-out parent for later session worktrees.
 
 Protected or reserved branches:
 
@@ -53,37 +54,38 @@ Release path:
 - with staging: `development -> staging -> main`
 - without staging: `development -> main` by pull request
 
-## Prompt Lifecycle
+## Chat Lifecycle
 
-| Prompt class | Default behavior |
+| Chat kind | Default behavior |
 |---|---|
 | Chat/read-only | Answer directly; no worktree needed. |
-| Tiny | Create a task worktree, validate, update devlog/docs if needed, ask to merge. |
-| Normal | Create a task worktree, validate, run review, ask to merge. |
-| Large/risky | Ask whether to create a feature parent branch first, then create task worktrees under that parent. |
+| File-changing | Create or adopt exactly one AF worktree session, validate, run app/browser review when applicable, update devlog/docs if needed, ask to merge. |
+| Changed direction | Finish, pause, or abandon the current worktree, then start a new chat/worktree. |
 
 Default merge policy:
 
-- `auto_commit = "finish"` commits dirty task work after devlog checks before merge readiness.
+- `auto_commit = "finish"` commits dirty session work after devlog checks before merge readiness.
 - `merge_prompt = "always"`
 - `auto_merge = "off"`
-- Optional `auto_merge = "tiny-only"` can merge only validated tiny task branches.
+- `auto_merge = "tiny-only"` is retained only for older metadata; the default is still to ask before merge.
 - Agents never auto-merge into `main` or `staging`.
 
-Dirty parent worktrees are handled before task start: review the existing changes, create or update a devlog entry, commit them, then create the new task worktree.
+Dirty parent worktrees are reported before session start. Do not hide parent checkout changes inside a new session worktree.
 
 Lifecycle helpers:
 
 ```bash
-scripts/start-task.sh --class normal feat export-csv
-scripts/finish-task.sh
-scripts/finish-task.sh --merge
+scripts/start-session.sh feat export-csv
+scripts/finish-session.sh
+scripts/finish-session.sh --merge
 ```
 
-For large work:
+Prefer `af-finish-session` at the end of a worktree session so validation, optional browser QA, devlog/docs checks, review, and merge readiness happen together.
+
+Create a named branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --class large --create-parent feat/payments feat payment-form
+scripts/start-session.sh --branch feat/payment-form feat payment-form
 ```
 
 ## Parallel Work Model
@@ -94,11 +96,11 @@ For multiple agent sessions:
 git switch <parent-branch>
 git pull
 
-git worktree add ../repo-navbar -b fix/navbar-spacing <parent-branch>
-git config branch.fix/navbar-spacing.agentFlowParent <parent-branch>
+git worktree add --detach ../repo-navbar <parent-branch>
+git -C ../repo-navbar config --worktree agentFlow.parent <parent-branch>
 
-git worktree add ../repo-contact-form -b fix/contact-form-validation <parent-branch>
-git config branch.fix/contact-form-validation.agentFlowParent <parent-branch>
+git worktree add --detach ../repo-contact-form <parent-branch>
+git -C ../repo-contact-form config --worktree agentFlow.parent <parent-branch>
 ```
 
 Open one agent session per worktree.
@@ -109,25 +111,40 @@ Open one agent session per worktree.
 |---|---|
 | Tiny typo/config/CSS fix | `af-small-change` |
 | Small bug | `af-small-change` or a brief plan/work pass |
-| Normal feature | plan -> work -> `af-review-gate` |
+| Normal feature | plan -> work -> `af-finish-session` |
 | Risky/broad feature | heavier planning/review workflow |
 | Reusable lesson | project docs update or `af-devlog` |
 | Legacy Backlog/task migration | `af-migrate-backlog-devlog` |
 | Visual docs, guides, demos, decks, or marketing | `af-docs` |
 | Worktree or branch cleanup | `af-reconcile-worktrees` |
-| Before merge | `af-review-gate` |
+| Pick up incomplete work | `af-reconcile-worktrees` or `scripts/worktree-manager.py --pickup <id>` |
+| Complete a session before merge | `af-finish-session` with `af-review-gate` |
 | Before protected-branch PR | `af-security-review` |
-| Before release promotion | `af-reconcile-worktrees` -> `af-docs` -> `af-push-staging` with `af-security-review` |
+| Before release PR | `af-reconcile-worktrees` -> `af-docs` -> `af-release-pr` with `af-security-review` |
 
 ## Documentation Rules
 
-Always add a devlog file under `devlog/` for meaningful commits.
+Always add or update a devlog file under `devlog/` before finishing a session with meaningful changes.
 
-Use one Markdown file per commit, or one file for the planned squash commit when the branch will be squashed before merge.
+Use one Markdown file per session commit, or one file for the planned squash commit when the branch will be squashed before merge.
 
 Name devlog files from the date and planned commit subject, such as `devlog/YYYY-MM-DD-fix-navbar-spacing.md`. Do not name them from the commit SHA; record the SHA inside the file when known.
 
 Update project docs when behavior, setup, architecture, security, deployment, or operations change.
+
+## Worktree Manager
+
+Use the manager to visualize, pick up, and clean up worktrees:
+
+```bash
+scripts/worktree-manager.py --interactive
+scripts/worktree-manager.py --details <id>
+scripts/worktree-manager.py --pickup <id>
+scripts/worktree-manager.py --cleanup <id> --yes
+scripts/worktree-manager.py --cleanup-all --yes
+```
+
+Pickup marks incomplete work active in AF metadata and prints a handoff. Prefer a new Codex chat when picking up a different worktree.
 
 ## Gitignore and IDE Policy
 
@@ -141,18 +158,18 @@ After `docs/DOCS-STRATEGY.md` exists, `af-docs` should fully manage `docs/` from
 
 Use `af-docs` to decide which visual assets are worth creating: Mermaid or D2 diagrams, screenshots, demo videos, user guides, presentation outlines, product one-pagers, or marketing content.
 
-Run `af-docs` before pushing or promoting `development` through optional `staging` or to `main`.
+Run `af-docs` before pushing `development` or preparing release PRs through optional `staging` or to `main`.
 
 ## Backlog Migration
 
 Use `af-migrate-backlog-devlog` when a repo still has `Backlog.md`, `triage.md`, `backlog/`, or `.backlog/` files. Run its dry-run first, review the generated devlog plan, then write entries before deleting any legacy task store.
 
-## Release Promotion
+## Release PRs
 
-Use `af-reconcile-worktrees` before release promotion to find dirty worktrees, unmerged branches, missing task-parent metadata, local protected branch policy violations, and instruction conflicts.
+Use `af-reconcile-worktrees` before release PRs to find dirty worktrees, unmerged branches, missing session-parent metadata, local protected branch policy violations, and instruction conflicts. Ask the user what to do with open worktrees before continuing.
 
-Run `scripts/check-push-readiness.sh development` before pushing `development`. For feature parent branches, run the same check against the feature branch before pushing it.
+Run `scripts/check-push-readiness.sh development` before pushing `development`. For an explicitly requested feature parent branch, run the same check against the feature branch before pushing it.
 
-Use `af-push-staging` to promote `development` through the configured release path. With staging enabled, it validates, runs formal security review for `development -> staging`, merges `development` into `staging`, pushes both branches, runs formal security review for `staging -> main`, then offers a `staging` to `main` PR. With staging disabled, it validates and pushes `development`, runs formal security review for `development -> main`, then offers a `development` to `main` PR.
+Use `af-release-pr` to prepare protected release PRs. By default, it validates `development`, checks readiness, pushes `origin development` after approval, runs formal security review for `development -> staging`, and offers or creates a `development -> staging` PR. After that PR is merged and staging contains the release, it runs formal security review for `staging -> main` and offers or creates a `staging -> main` PR. With staging disabled, it validates and pushes `development`, runs formal security review for `development -> main`, then offers or creates a `development -> main` PR.
 
-Run `af-security-review` as a distinct gate before creating any pull request whose base is `staging` or `main`. In the default staging-enabled path, the staging-target review happens before the protected staging promotion, and the main-target review happens before the main PR.
+Run `af-security-review` as a distinct gate before creating any pull request whose base is `staging` or `main`.

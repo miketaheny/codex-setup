@@ -53,8 +53,8 @@ if [ "$TARGET" = "$PRODUCTION_BRANCH" ]; then
 fi
 
 if [ "$TARGET" = "$STAGING_BRANCH" ] && [ "${AF_ALLOW_RELEASE_PUSH:-0}" != "1" ]; then
-  echo "NOT_READY: direct push to staging branch '$STAGING_BRANCH' is blocked outside release promotion." >&2
-  echo "Set AF_ALLOW_RELEASE_PUSH=1 only inside the explicit release promotion workflow." >&2
+  echo "NOT_READY: direct push to staging branch '$STAGING_BRANCH' is blocked outside an explicit release exception." >&2
+  echo "Use the release PR workflow by default. Set AF_ALLOW_RELEASE_PUSH=1 only for an approved direct staging push exception." >&2
   exit 1
 fi
 
@@ -92,21 +92,79 @@ while IFS= read -r line; do
   checked=$((checked + 1))
   wt="$(worktree_for_branch "$branch" || true)"
   if [ -n "$wt" ] && [ -n "$(git -C "$wt" status --short)" ]; then
-    echo "NOT_READY: child task '$branch' has dirty worktree: $wt" >&2
+    echo "NOT_READY: child session '$branch' has dirty worktree: $wt" >&2
     git -C "$wt" status --short >&2
     failures=$((failures + 1))
     continue
   fi
 
   if ! git merge-base --is-ancestor "$branch" "$TARGET"; then
-    echo "NOT_READY: child task '$branch' is not merged into '$TARGET'." >&2
+    echo "NOT_READY: child session '$branch' is not merged into '$TARGET'." >&2
     failures=$((failures + 1))
   fi
 done < <(git config --get-regexp '^branch\..*\.agentflowparent$' || true)
 
+check_worktree_child() {
+  local wt="$1"
+  local head="$2"
+  local parent
+
+  parent="$(git -C "$wt" config --worktree --get agentFlow.parent 2>/dev/null || true)"
+  if [ "$parent" != "$TARGET" ]; then
+    return
+  fi
+
+  checked=$((checked + 1))
+  if [ -z "$head" ]; then
+    echo "NOT_READY: child session worktree has no recorded HEAD: $wt" >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  if [ -n "$(git -C "$wt" status --short)" ]; then
+    echo "NOT_READY: child session worktree has dirty changes: $wt" >&2
+    git -C "$wt" status --short >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  if ! git merge-base --is-ancestor "$head" "$TARGET"; then
+    echo "NOT_READY: child session worktree is not merged into '$TARGET': $wt" >&2
+    echo "  HEAD: $(git -C "$wt" rev-parse --short HEAD)" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+wt_path=""
+wt_head=""
+wt_branch=""
+while IFS= read -r line; do
+  if [ -z "$line" ]; then
+    if [ -n "$wt_path" ] && [ -z "$wt_branch" ]; then
+      check_worktree_child "$wt_path" "$wt_head"
+    fi
+    wt_path=""
+    wt_head=""
+    wt_branch=""
+    continue
+  fi
+
+  key="${line%% *}"
+  value="${line#* }"
+  case "$key" in
+    worktree) wt_path="$value" ;;
+    HEAD) wt_head="$value" ;;
+    branch) wt_branch="$value" ;;
+  esac
+done < <(git worktree list --porcelain)
+
+if [ -n "$wt_path" ] && [ -z "$wt_branch" ]; then
+  check_worktree_child "$wt_path" "$wt_head"
+fi
+
 if [ "$failures" -gt 0 ]; then
-  echo "Push readiness failed for '$TARGET': $failures incomplete child task(s)." >&2
+  echo "Push readiness failed for '$TARGET': $failures incomplete child session(s)." >&2
   exit 1
 fi
 
-echo "PUSH_READY: '$TARGET' has no incomplete child task worktrees. Checked child tasks: $checked."
+echo "PUSH_READY: '$TARGET' has no incomplete child session worktrees. Checked child sessions: $checked."

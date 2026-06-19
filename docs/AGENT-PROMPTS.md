@@ -6,28 +6,34 @@
 Use af-small-change. Fix [issue]. Keep scope narrow. Do not touch main or staging. Add a devlog entry under devlog/.
 ```
 
-## Worktree task
+## Worktree session
 
 ```text
-Use af-worktree-task. Create a worktree from the checked-out parent branch named ../[repo]-[task] with branch [type]/[task]. Implement the task, validate, add a devlog entry under devlog/, and run review before merge.
+Use af-worktree-task. Create or adopt one AF session worktree from the checked-out parent branch. Do not create a named branch unless I explicitly ask for one. Implement the session goal, validate, add or update the devlog under devlog/, and run review before merge.
 ```
 
-## Seamless task lifecycle
+## Seamless session lifecycle
 
 ```text
-Use Agent-Flow for this change. Classify the task, create a task worktree, implement it, run finish-task, and ask me before merging if it is ready.
+Use Agent-Flow for this change. Create one AF session worktree, implement it, then use af-finish-session to validate, review, run browser QA if applicable, and ask me before merging if it is ready.
 ```
 
-## Large feature branch
+## Explicit feature branch
 
 ```text
-This may be large. Ask whether to create a feature parent branch first. If approved, create the feature parent branch, then create task worktrees under it and merge reviewed subtasks back there.
+Create a feature branch for this work only if needed, then create session worktrees under it and merge reviewed sessions back there.
 ```
 
 ## Review branch
 
 ```text
-Use af-review-gate. Review this branch against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
+Use af-review-gate. Review this session worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
+```
+
+## Finish session
+
+```text
+Use af-finish-session. Start the repo and open the Codex browser if the change is user-facing, run validation and review, update devlog/docs, then ask me before merging into the recorded parent branch.
 ```
 
 ## Formal security review
@@ -39,7 +45,7 @@ Use af-security-review. Run the formal security gate for [head branch] against [
 ## Project docs
 
 ```text
-Use af-docs. Update project docs from devlog/ and recent commits before promoting development through the release path.
+Use af-docs. Update project docs from devlog/ and recent commits before preparing release PRs.
 ```
 
 ## Existing docs stewardship
@@ -69,13 +75,13 @@ Use af-migrate-backlog-devlog. Dry-run a migration from Backlog.md, backlog/, or
 ## Reconcile worktrees
 
 ```text
-Use af-reconcile-worktrees. Audit worktrees, local branches, local protected branch policy, and agent instruction conflicts. Do not remove worktrees or delete branches without explicit approval.
+Use af-reconcile-worktrees. Open the worktree manager, show the visual worktree map, identify incomplete or unmerged work, and clean up completed worktrees I have approved.
 ```
 
 ## Push readiness
 
 ```text
-Run scripts/check-push-readiness.sh for the branch I am about to push. Block the push if any child task worktree is dirty or unmerged.
+Run scripts/check-push-readiness.sh for the branch I am about to push. Block the push if any child session worktree is dirty or unmerged.
 ```
 
 ## Gitignore and IDE policy
@@ -84,10 +90,10 @@ Run scripts/check-push-readiness.sh for the branch I am about to push. Block the
 Ensure this repo has the Agent-Flow .gitignore block. Preserve existing ignore rules. Commit IDE files only if they encode shared project tooling, not personal preferences.
 ```
 
-## Promote development
+## Release PR
 
 ```text
-Use af-push-staging. Reconcile worktrees, validate development, run formal security review, and promote through the configured release path. If staging is enabled, review development to staging, merge development into staging, then review staging to main before asking to create a staging-to-main PR. If staging is disabled, review development to main before asking to create a development-to-main PR.
+Use af-release-pr. Ask me about open worktrees, validate development, run docs and security review, push origin development when ready, then prepare the correct release PR. Default to development -> staging, then staging -> main after staging contains the release; use development -> main only when staging is disabled or I explicitly request it.
 ```
 
 ## Workflow decision
@@ -99,5 +105,5 @@ Use af-compound-mode. Decide whether this should use a light Agent-Flow skill or
 ## Parallel session
 
 ```text
-Use a heavier workflow for this task only. You are in an isolated worktree. Keep scope limited to [area]. Add devlog entries under devlog/. Avoid shared files unless required. Do not merge until review passes.
+Use a heavier workflow for this session only. You are in an isolated worktree. Keep scope limited to [area]. Add/update the devlog under devlog/. Avoid shared files unless required. Do not merge until review passes.
 ```

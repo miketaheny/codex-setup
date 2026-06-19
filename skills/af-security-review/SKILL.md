@@ -1,13 +1,13 @@
 ---
 name: af-security-review
-description: Formal security review gate before creating pull requests to protected branches such as staging or main, and before equivalent protected release promotion.
+description: Formal security review gate before creating pull requests to protected branches such as staging or main, and before explicitly approved direct protected-branch release exceptions.
 ---
 
 # AF Security Review Skill
 
-Use this skill after normal validation and docs checks, but before creating any pull request whose base is `staging` or `main`. If a repo promotes to `staging` by direct release push instead of a pull request, run the same review before that protected-branch push.
+Use this skill after normal validation and docs checks, but before creating any pull request whose base is `staging` or `main`. If a repo uses an explicitly approved direct release push to `staging` instead of a pull request, run the same review before that protected-branch push.
 
-This is distinct from `af-review-gate`. The normal review gate checks task quality before merging into a parent branch. This security review checks the accumulated release diff before protected-branch promotion.
+This is distinct from `af-review-gate`. The normal review gate checks session quality before merging into a parent branch. This security review checks the accumulated release diff before protected-branch PRs or approved direct release exceptions.
 
 ## Inputs
 

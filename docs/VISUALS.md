@@ -24,7 +24,8 @@ This plan applies the `af-docs` visual interview to this Agent-Flow setup repo.
 | Repo init and bootstrap flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and what bootstrap creates in a target repo. |
 | Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route to AF skills. |
 | Daily loop | `docs/USER-GUIDE.md` | Mermaid flowchart | Show the expected branch, validation, docs, and review cycle. |
-| Task lifecycle | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show start-task, finish-task, merge prompt, and push readiness. |
+| Session lifecycle | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show start-session, finish-session, merge prompt, and push readiness. |
+| Worktree manager | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show visual map, details, pickup, and cleanup actions. |
 
 ## Recommended Formats
 
@@ -46,7 +47,7 @@ Use screenshots for:
 
 Use demo video for:
 
-- install -> init -> start-task -> devlog -> finish-task -> push-readiness flow
+- install -> init -> start-session -> devlog -> finish-session -> push-readiness flow
 - Backlog migration dry-run -> write flow
 - docs/visual update workflow
 
@@ -66,8 +67,9 @@ Capture these after the next local install test:
 - `~/.agent-flow/scripts/init-repo.sh` output in a sample repo
 - generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `devlog/README.md`
 - generated `.git/hooks/pre-push`
-- `start-task.sh` output showing parent branch and task class
-- `finish-task.sh` output showing `ASK_USER_MERGE`
+- `start-session.sh` output showing detached worktree mode, parent branch, and session metadata
+- `finish-session.sh` output showing `ASK_USER_MERGE`
+- `worktree-manager.py --interactive` or default output showing the visual worktree map
 - `check-push-readiness.sh` output before push
 - `af-migrate-backlog-devlog` dry-run output on a sample task file
 
@@ -78,9 +80,9 @@ Recommended short demo:
 1. Show a clean sample repo on `development`.
 2. Run `~/.agent-flow/scripts/init-repo.sh`.
 3. Open the generated config and instruction files.
-4. Create a worktree with `scripts/start-task.sh`.
+4. Create a worktree with `scripts/start-session.sh`.
 5. Add a small devlog entry.
-6. Run `scripts/finish-task.sh`.
+6. Run `scripts/finish-session.sh`.
 7. Run `scripts/check-push-readiness.sh`.
 8. Show where visual docs and skill docs live.
 

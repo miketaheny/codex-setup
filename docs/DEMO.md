@@ -43,7 +43,7 @@ test -f ~/.claude/CLAUDE.md && echo "Claude adapter installed"
 mkdir /tmp/agent-flow-demo
 cd /tmp/agent-flow-demo
 git init -b development
-~/.agent-flow/scripts/init-repo.sh --yes --no-staging
+~/.agent-flow/scripts/init-repo.sh --yes --staging
 ```
 
 Show:
@@ -63,27 +63,27 @@ Reference the diagram in `docs/USER-GUIDE.md`.
 Narrative:
 
 ```text
-Start from the checked-out parent branch, classify the prompt, create a task worktree, validate, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development promotes to main, with optional staging and a formal security review before protected-branch PRs.
+Start from the checked-out parent branch, create one session worktree for the file-changing chat, validate, start the repo and inspect browser-visible changes when applicable, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development pushes to origin and opens a development-to-staging PR by default, followed by a staging-to-main PR after staging contains the release.
 ```
 
-### 4. Demonstrate Task Lifecycle
+### 4. Demonstrate Session Lifecycle
 
 ```bash
-~/.agent-flow/scripts/start-task.sh --class tiny docs demo-copy
+~/.agent-flow/scripts/start-session.sh docs demo-copy
 cd ../agent-flow-demo-demo-copy
 ```
 
-Show that the task branch has parent metadata:
+Show that the detached session worktree has parent metadata:
 
 ```bash
-git config --get branch.docs/demo-copy.agentFlowParent
-git config --get branch.docs/demo-copy.agentFlowTaskClass
+git config --worktree --get agentFlow.parent
+git config --worktree --get agentFlow.sessionName
 ```
 
-After a small committed change, run:
+After a small committed change, invoke `af-finish-session` in Codex, or run the helper directly:
 
 ```bash
-~/.agent-flow/scripts/finish-task.sh
+~/.agent-flow/scripts/finish-session.sh
 ```
 
 Show the `ASK_USER_MERGE` output.

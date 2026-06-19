@@ -1,130 +1,101 @@
 ---
 name: af-worktree-task
-description: Create and use isolated git worktrees for agent tasks, based from the checked-out parent branch, with safe branch naming, scoped work, docs updates, and review readiness.
+description: Create, adopt, and finish one Agent-Flow worktree session for a file-changing Codex chat. Use when the user asks Codex to change files, continue unfinished work, switch worktrees, or ensure work happens in an isolated AF worktree.
 ---
 
-# AF Worktree Task Skill
+# AF Worktree Session Skill
 
-Use this skill for any prompt that changes files, and when the user wants safe parallel work, multiple agent sessions, or a clean isolated task branch.
+This skill keeps the legacy `af-worktree-task` name for compatibility, but the workflow unit is a worktree session.
 
 ## Goal
 
-Prevent agent sessions from colliding by isolating each implementation task in a separate git worktree and task branch.
+Make one file-changing chat equal one AF-owned worktree. Do not edit parent branches directly. If the chat changes direction, finish, pause, or abandon the current worktree, then start a new chat/worktree.
 
 ## Preconditions
 
 Before changing files:
 
-1. Confirm this is a git repo.
-2. Inspect branches.
-3. Identify the checked-out parent branch.
-4. Confirm current repo status.
-5. If there are uncommitted changes in the current tree, do not overwrite them.
-6. If the current branch is `main`, `staging`, `master`, `production`, or `prod`, stop and ask the user to check out a user-controlled parent branch such as `development` or `feat/<name>`.
-7. Classify the task as `tiny`, `normal`, `large`, or `risky`.
-8. For `large` or `risky` tasks from `development`, ask whether to create a user-controlled feature parent branch first.
+1. Confirm this is a Git repo.
+2. Run `git branch --show-current` and `git status --short`.
+3. If the current checkout is dirty before session start, report it and do not hide it in a new worktree.
+4. If already inside an AF worktree with `agentFlow.parent`, continue only if the request matches that worktree's direction.
+5. If the request changes direction, stop and ask to finish, pause, or abandon the current worktree before opening a new chat/worktree.
+6. If on a parent branch such as `development`, create or adopt a session worktree before editing.
 
-## Worktree naming
+## Create Or Adopt
 
-Use this pattern:
+Prefer the lifecycle helper:
+
+```bash
+scripts/start-session.sh <type> <session-name>
+```
+
+Create a named branch only when the user explicitly asks:
+
+```bash
+scripts/start-session.sh --branch <type>/<session-name> <type> <session-name>
+```
+
+Use the manager to inspect or pick up existing work:
+
+```bash
+scripts/worktree-manager.py --interactive
+scripts/worktree-manager.py --pickup <id>
+```
+
+The created worktree must have worktree-local metadata such as:
 
 ```text
-../<repo-name>-<short-task>
+agentFlow.kind = session
+agentFlow.parent = development
+agentFlow.sessionName = <session-name>
+agentFlow.state = started
+agentFlow.owner = codex
+agentFlow.devlogPolicy = finish
 ```
 
-Branch pattern:
-
-```text
-fix/<short-task>
-feat/<short-task>
-docs/<short-task>
-chore/<short-task>
-```
-
-## Create worktree
-
-Prefer the lifecycle helper when available:
-
-```bash
-scripts/start-task.sh --class <tiny|normal|large|risky> <type> <short-task>
-```
-
-For large feature work, create a feature parent branch first when the user approves:
-
-```bash
-scripts/start-task.sh --class large --create-parent feat/<feature-name> feat <short-task>
-```
-
-Manual equivalent:
-
-```bash
-git fetch --all --prune
-git branch --show-current
-git pull --ff-only
-git worktree add ../<repo-name>-<short-task> -b <type>/<short-task> <checked-out-parent-branch>
-git config branch.<type>/<short-task>.agentFlowParent <checked-out-parent-branch>
-git config branch.<type>/<short-task>.agentFlowTaskClass <tiny|normal|large|risky>
-```
-
-If `git pull --ff-only` is not appropriate because there is no upstream, document that and continue from the local parent branch.
-
-The parent branch is user-controlled. It is usually `development` for fixes and routine work. For larger features, it can be a feature branch the user intentionally checked out so subtask worktrees merge back into that feature branch before later merging into `development`.
-
-## In the worktree
+## In The Session
 
 1. Re-read repo agent instruction files from the worktree.
-2. Implement only the requested task.
-3. Avoid broad shared files unless required.
-4. Add per-commit devlog files under `devlog/`.
+2. Implement only the session's coherent direction.
+3. Update `agentFlow.lastTouchedAt` when adopting or finishing.
+4. Add or update one devlog file under `devlog/` before the session commit.
 5. Update affected project docs when behavior, setup, architecture, security, deployment, or operations change.
 6. Run validation.
-7. Run review gate.
-8. Finish with the lifecycle helper when available:
+7. Use `af-finish-session` when available to complete validation, app/browser review when applicable, docs/devlog checks, review, and merge readiness.
+8. If `af-finish-session` is unavailable, run review gate and finish with:
 
 ```bash
-scripts/finish-task.sh
+scripts/finish-session.sh
 ```
 
-If it reports `ASK_USER_MERGE`, ask whether to merge. After explicit approval, run:
+If it reports `ASK_USER_MERGE`, ask whether to merge. After explicit approval:
 
 ```bash
-scripts/finish-task.sh --merge
+scripts/finish-session.sh --merge
 ```
 
-## Merge readiness
+## Switching Worktrees
 
-Do not merge automatically unless the repo config opts into it and the task meets the configured threshold.
-
-Defaults:
-
-- `merge_prompt = "always"` means ask before merge.
-- `auto_merge = "off"` means no automatic merge.
-- `auto_merge = "tiny-only"` may auto-merge only `tiny` task branches after readiness checks pass.
-- Never auto-merge to `main` or `staging`.
-
-Before suggesting merge:
+Prefer a new Codex chat when switching worktrees. Codex cannot truly clear all previous chat assumptions inside the same conversation. If same-chat switching is unavoidable, first run:
 
 ```bash
-git status
-git diff --stat <parent-branch>...HEAD
-git diff <parent-branch>...HEAD
+scripts/worktree-manager.py --details <id>
 ```
 
-Summarize:
+Then state the new worktree path, parent branch, status, and goal before making changes.
+
+## Summary
+
+Report:
 
 - worktree path
-- branch name
 - parent branch
+- session status
 - changed files
+- devlog file
 - validation
+- app/browser review when applicable
 - docs updated
 - review result
-- merge command if ready
-
-## Merge command template
-
-```bash
-cd <parent-branch-worktree>
-git switch <parent-branch>
-git merge --no-ff <branch-name>
-```
+- merge command or cleanup action if ready

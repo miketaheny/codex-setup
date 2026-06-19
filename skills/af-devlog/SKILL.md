@@ -1,11 +1,11 @@
 ---
 name: af-devlog
-description: Maintain per-commit Markdown devlog files under devlog/ for Agent-Flow work.
+description: Maintain finish-time session Markdown devlog files under devlog/ for Agent-Flow work.
 ---
 
 # AF Devlog Skill
 
-Use this skill whenever a task needs engineering-history documentation, cleanup, or review.
+Use this skill whenever a worktree session needs engineering-history documentation, cleanup, or review.
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Keep detailed engineering history close to the commit that introduced it while a
 
 `devlog/` is the detailed engineering journal.
 
-Add one Markdown file for every meaningful commit. If a branch will be squashed before merge, create one file for the planned squash commit.
+Add one Markdown file for every finished worktree session. If a branch will be squashed before merge, create one file for the planned squash commit.
 
 Suggested filename:
 
@@ -23,7 +23,7 @@ Suggested filename:
 devlog/YYYY-MM-DD-<commit-subject-slug>.md
 ```
 
-Use a concise slug based on the commit subject or planned squash subject. A branch with multiple meaningful commits should have multiple devlog files.
+Use a concise slug based on the session commit subject or planned squash subject. A branch with multiple meaningful commits may still have multiple devlog files.
 
 ## Entry Template
 
@@ -50,7 +50,7 @@ Use a concise slug based on the commit subject or planned squash subject. A bran
 ## Rules
 
 - Create the devlog file before committing so the file travels with the branch or worktree.
-- Do not rewrite unrelated devlog files from other tasks.
+- Do not rewrite unrelated devlog files from other sessions.
 - If the final commit SHA is unknown at commit time, leave `Commit: pending`. A later docs maintenance pass may update it when useful.
 - Do not claim tests passed unless they were run.
 - Keep entries concise but useful for future agent sessions.

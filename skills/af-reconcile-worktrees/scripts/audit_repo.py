@@ -140,6 +140,39 @@ def branch_parent(root: Path, branch: str, config: dict[str, Any]) -> tuple[str,
     return config["integration_branch"], False
 
 
+def worktree_config(path: Path, key: str) -> str | None:
+    code, out, _ = run(["git", "-C", str(path), "config", "--worktree", "--get", key], path)
+    if code == 0 and out:
+        return out
+    return None
+
+
+def worktree_metadata(path: Path) -> dict[str, str]:
+    keys = (
+        "agentFlow.mode",
+        "agentFlow.kind",
+        "agentFlow.sessionKind",
+        "agentFlow.sessionName",
+        "agentFlow.taskType",
+        "agentFlow.taskName",
+        "agentFlow.taskClass",
+        "agentFlow.parent",
+        "agentFlow.state",
+        "agentFlow.owner",
+        "agentFlow.devlogPolicy",
+        "agentFlow.startedAt",
+        "agentFlow.lastTouchedAt",
+        "agentFlow.finishedAt",
+        "agentFlow.lastCommit",
+    )
+    metadata: dict[str, str] = {}
+    for key in keys:
+        value = worktree_config(path, key)
+        if value:
+            metadata[key] = value
+    return metadata
+
+
 def local_branches(root: Path, config: dict[str, Any]) -> list[dict[str, Any]]:
     fmt = "%(refname:short)|%(objectname)|%(upstream:short)|%(HEAD)"
     out = git(["for-each-ref", f"--format={fmt}", "refs/heads"], root)
@@ -178,7 +211,11 @@ def agents_review(root: Path) -> dict[str, Any]:
     global_flow = af_home / "AGENT-FLOW.md"
     global_agents = codex_home / "AGENTS.md"
     global_claude = Path(os.environ.get("CLAUDE_HOME", home / ".claude")) / "CLAUDE.md"
-    af_push_skill = af_home / "skills" / "af-push-staging" / "SKILL.md"
+    af_push_skill = af_home / "skills" / "af-release-pr" / "SKILL.md"
+    if not af_push_skill.exists():
+        af_push_skill = codex_home / "skills" / "af-release-pr" / "SKILL.md"
+    if not af_push_skill.exists():
+        af_push_skill = af_home / "skills" / "af-push-staging" / "SKILL.md"
     if not af_push_skill.exists():
         af_push_skill = codex_home / "skills" / "af-push-staging" / "SKILL.md"
     legacy_push_skill = codex_home / "skills" / "push-staging" / "SKILL.md"
@@ -211,7 +248,7 @@ def agents_review(root: Path) -> dict[str, Any]:
         concerns.append(f"Global CLAUDE.md adapter missing: {global_claude}")
 
     if push_text is None:
-        concerns.append(f"af-push-staging or push-staging skill missing or unreadable: {push_skill}")
+        concerns.append(f"af-release-pr, af-push-staging, or push-staging skill missing or unreadable: {push_skill}")
 
     for path in local_agents:
         text = read_optional(path) or ""
@@ -228,7 +265,7 @@ def agents_review(root: Path) -> dict[str, Any]:
         "global_agents_adapter": str(global_agents),
         "global_claude_adapter": str(global_claude),
         "local_instruction_files": [str(path) for path in local_agents],
-        "push_staging_skill": str(push_skill),
+        "release_pr_skill": str(push_skill),
         "concerns": concerns,
     }
 
@@ -239,10 +276,22 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
     head = item.get("HEAD", "")
     status = status_short(path)
     target = branch if branch != "(detached)" else head
-    merge_target, explicit_parent = branch_parent(root, branch, config) if branch != "(detached)" else (config["integration_branch"], False)
+    metadata = worktree_metadata(path)
+    wt_parent = worktree_config(path, "agentFlow.parent")
+    wt_mode = worktree_config(path, "agentFlow.mode")
+    if wt_parent:
+        merge_target, explicit_parent = wt_parent, True
+    elif branch != "(detached)":
+        merge_target, explicit_parent = branch_parent(root, branch, config)
+    else:
+        merge_target, explicit_parent = config["integration_branch"], False
     merged = is_ancestor(root, target, merge_target) if target else None
 
-    local_policy, local_policy_reason = local_protected_branch_policy(config, branch)
+    local_policy, local_policy_reason = (
+        local_protected_branch_policy(config, branch)
+        if branch != "(detached)"
+        else ("normal", "")
+    )
     if branch == config["integration_branch"]:
         action = "keep integration worktree"
     elif local_policy == "allowed":
@@ -273,6 +322,8 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
         "path": str(path),
         "branch": branch,
         "head": head[:12],
+        "mode": wt_mode or ("branch" if branch != "(detached)" else "detached"),
+        "metadata": metadata,
         "dirty_count": len(status),
         "merge_target": merge_target,
         "explicit_parent": explicit_parent,
@@ -327,7 +378,7 @@ def build_report(path: Path) -> dict[str, Any]:
         elif not branch["explicit_parent"]:
             action = "skip user-controlled branch without AF parent metadata"
         elif branch["merged_to_target"] is True:
-            action = "ask to delete merged task branch"
+            action = "ask to delete merged session branch"
         elif branch["merged_to_target"] is False:
             action = f"skip; not merged to {branch['merge_target']}"
         else:
@@ -358,6 +409,34 @@ def build_report(path: Path) -> dict[str, Any]:
         parent_entry["children"].append(
             {
                 "name": branch["name"],
+                "dirty_count": dirty_count,
+                "merged": merged,
+                "incomplete": incomplete,
+            }
+        )
+
+    for worktree in worktrees:
+        if worktree["branch"] != "(detached)" or not worktree["explicit_parent"]:
+            continue
+        parent = worktree["merge_target"]
+        dirty_count = int(worktree.get("dirty_count", 0) or 0)
+        merged = worktree["merged_to_target"] is True
+        incomplete = dirty_count > 0 or not merged
+        parent_entry = parent_readiness.setdefault(
+            parent,
+            {
+                "child_count": 0,
+                "incomplete_count": 0,
+                "children": [],
+            },
+        )
+        parent_entry["child_count"] += 1
+        if incomplete:
+            parent_entry["incomplete_count"] += 1
+        parent_entry["children"].append(
+            {
+                "name": f"detached:{worktree['head']}",
+                "path": worktree["path"],
                 "dirty_count": dirty_count,
                 "merged": merged,
                 "incomplete": incomplete,
@@ -407,7 +486,7 @@ def markdown(report: dict[str, Any]) -> str:
     lines += ["", "## Worktrees"]
     for wt in report["worktrees"]:
         dirty = "dirty" if wt["dirty_count"] else "clean"
-        lines.append(f"- `{wt['branch']}` at `{wt['path']}`: {dirty}, target=`{wt['merge_target']}`, merged={wt['merged_to_target']}, {wt['action']}")
+        lines.append(f"- `{wt['branch']}` at `{wt['path']}`: {dirty}, mode=`{wt['mode']}`, target=`{wt['merge_target']}`, merged={wt['merged_to_target']}, {wt['action']}")
 
     lines += ["", "## Branches"]
     for branch in report["branches"]:
@@ -420,9 +499,10 @@ def markdown(report: dict[str, Any]) -> str:
             lines.append(f"- `{parent}`: {status}, children={readiness['child_count']}, incomplete={readiness['incomplete_count']}")
             for child in readiness["children"]:
                 if child["incomplete"]:
-                    lines.append(f"  - incomplete child `{child['name']}`: dirty={child['dirty_count']}, merged={child['merged']}")
+                    path = f", path=`{child['path']}`" if child.get("path") else ""
+                    lines.append(f"  - incomplete child `{child['name']}`: dirty={child['dirty_count']}, merged={child['merged']}{path}")
     else:
-        lines.append("- No task child branches with recorded parents found.")
+        lines.append("- No child session worktrees with recorded parents found.")
 
     lines += ["", "## Agent Instruction Review"]
     concerns = report["agents"]["concerns"]

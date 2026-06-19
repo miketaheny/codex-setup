@@ -159,7 +159,7 @@ if [ -z "$STAGING_CHOICE" ]; then
   if [ "$MODE" = "disabled" ]; then
     STAGING_CHOICE="false"
   else
-    staging_answer="$(prompt_yes_no "Does this repo use a staging branch between development and main?" "no")"
+    staging_answer="$(prompt_yes_no "Does this repo use a staging branch between development and main?" "yes")"
     if [ "$staging_answer" = "yes" ]; then
       STAGING_CHOICE="true"
     else
@@ -178,7 +178,7 @@ if [ -z "$HOOKS_CHOICE" ]; then
   if [ "$MODE" = "disabled" ]; then
     HOOKS_CHOICE="false"
   else
-    hooks_answer="$(prompt_yes_no "Install a local pre-push hook to check child task worktrees before push?" "yes")"
+    hooks_answer="$(prompt_yes_no "Install a local pre-push hook to check child session worktrees before push?" "yes")"
     if [ "$hooks_answer" = "yes" ]; then
       HOOKS_CHOICE="true"
     else
@@ -192,7 +192,7 @@ FLOW="development -> main"
 STAGING_NOTE="Staging: disabled. Do not assume a staging branch unless .agent-flow/config.toml changes."
 if [ "$STAGING_CHOICE" = "true" ]; then
   FLOW="development -> staging -> main"
-  STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only for promotion/release flow."
+  STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only through the release PR flow unless an explicit direct-push exception is approved."
 fi
 
 cat > "$CONFIG_FILE" <<EOF
@@ -203,13 +203,16 @@ mode = "$MODE"
 task_base = "checked-out"
 task_merge_target = "parent"
 worktrees = "required-for-changes"
+task_branch = "explicit-only"
+session_unit = "chat"
+devlog_policy = "finish"
 
 merge_prompt = "always"
 auto_commit = "finish"
 dirty_parent_policy = "review-and-commit"
 devlog_filename = "date-subject"
 auto_merge = "off"
-large_task_parent_branch = "ask"
+large_task_parent_branch = "explicit-only"
 pre_push_worktree_check = true
 pre_push_hook_installed = $HOOKS_CHOICE
 
@@ -244,9 +247,10 @@ append_local_choices() {
 ## Agent-Flow Local Repo Choices
 
 - Enforcement: $MODE via \`.agent-flow/config.toml\`.
-- Task worktrees branch from the checked-out parent branch and merge back there after review.
+- Session worktrees are detached by default from the checked-out parent branch and merge back there after review.
+- Create named branches only when the user explicitly requests a branch.
 - Merge behavior: ask before merge by default; auto-merge is off unless config changes.
-- Push behavior: check child task worktrees before pushing a parent branch.
+- Push behavior: check child session worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.
 - SDLC flow: $FLOW. \`main\` is the production PR target and should not be kept as a local work branch.
 - $STAGING_NOTE

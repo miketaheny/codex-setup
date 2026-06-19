@@ -7,13 +7,13 @@ if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
 fi
 
 branch="$(git branch --show-current)"
-configured_parent=""
-if [ -n "$branch" ]; then
+configured_parent="$(git config --worktree --get agentFlow.parent 2>/dev/null || true)"
+if [ -z "$configured_parent" ] && [ -n "$branch" ]; then
   configured_parent="$(git config --get "branch.$branch.agentFlowParent" || true)"
 fi
 BASE="${1:-${configured_parent:-development}}"
 
-echo "Branch: $branch"
+echo "Branch: ${branch:-"(detached session worktree)"}"
 echo "Base: $BASE"
 echo
 

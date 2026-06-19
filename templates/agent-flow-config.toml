@@ -2,10 +2,14 @@ version = 1
 enabled = true
 mode = "enforced"
 
-# Task worktrees branch from the checked-out parent branch and merge back there.
+# Session worktrees are detached from the checked-out parent branch by default.
+# Create named branches only when the user explicitly requests a branch.
 task_base = "checked-out"
 task_merge_target = "parent"
 worktrees = "required-for-changes"
+task_branch = "explicit-only"
+session_unit = "chat"
+devlog_policy = "finish"
 
 # Completion and merge behavior.
 auto_commit = "finish"
@@ -13,14 +17,14 @@ dirty_parent_policy = "review-and-commit"
 devlog_filename = "date-subject"
 merge_prompt = "always"
 auto_merge = "off"
-large_task_parent_branch = "ask"
+large_task_parent_branch = "explicit-only" # compatibility key
 pre_push_worktree_check = true
 pre_push_hook_installed = false
 
 # SDLC branch model.
 integration_branch = "development"
 production_branch = "main"
-staging_enabled = false
+staging_enabled = true
 staging_branch = "staging"
 reserved_branch_names = ["master", "production", "prod"]
 protected_branches = ["main", "staging"]

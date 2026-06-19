@@ -45,7 +45,7 @@ Init creates missing bootstrap files, then records local choices in `.agent-flow
 - `docs/assets/`
 - `docs/presentations/`
 
-The script asks whether to disable Agent-Flow enforcement for this repo, whether the repo uses optional `staging`, and whether to install a local pre-push hook. It also creates or appends a non-destructive Agent-Flow `.gitignore` block. If staging is disabled, the local agent adapters note that agents should not assume a staging branch.
+The script asks whether to disable Agent-Flow enforcement for this repo, whether the repo uses optional `staging`, and whether to install a local pre-push hook. Enforced repos default to the `development -> staging -> main` PR path unless staging is disabled. It also creates or appends a non-destructive Agent-Flow `.gitignore` block. If staging is disabled, the local agent adapters note that agents should not assume a staging branch.
 
 Use `bootstrap-repo.sh` only when you want to copy missing files without recording first-contact repo choices.
 
@@ -55,10 +55,11 @@ Gitignore and IDE defaults:
 - `.vscode/extensions.json`, `.vscode/tasks.json`, `.vscode/launch.json`, and `.vscode/settings.json` may be committed only when they encode shared project tooling.
 - Personal IDE preferences such as themes, window titles, UI layout, local paths, or machine-specific interpreters should stay untracked.
 
-Branch defaults:
+Worktree defaults:
 
-- Task worktrees branch from the checked-out parent branch and merge back there.
-- File-changing prompts use task worktrees.
+- Session worktrees are detached from the checked-out parent branch by default and merge back there.
+- Named branches are created only when the user explicitly requests a branch.
+- File-changing chats use one AF session worktree.
 - Agents ask before merge by default.
 - Formal security review is required before protected-branch pull requests to `staging` or `main`.
 - `development` is the SDLC integration branch.
@@ -70,12 +71,13 @@ Branch defaults:
 
 ```mermaid
 flowchart LR
-    Prompt["User prompt"] --> Classify["Classify chat/tiny/normal/large"]
-    Classify --> Branch["Create task worktree for changes"]
-    Branch --> Skill["Use lightest AF skill"]
+    Prompt["User chat"] --> Decide["Read-only or file-changing"]
+    Decide --> Worktree["Create or adopt one AF session worktree"]
+    Worktree --> Skill["Use lightest AF skill"]
     Skill --> Change["Implement scoped change"]
     Change --> Validate["Run validation"]
-    Validate --> Devlog["Add devlog entry"]
+    Validate --> BrowserQA["Start app + browser/manual review when applicable"]
+    BrowserQA --> Devlog["Add devlog entry"]
     Devlog --> Docs["Update docs and visuals if needed"]
     Docs --> Review["Run af-review-gate"]
     Review --> Ask["Ask whether to merge"]
@@ -89,40 +91,67 @@ flowchart LR
 |---|---|
 | Tiny code or docs fix | `af-small-change` |
 | Parallel isolated work | `af-worktree-task` |
+| Complete a worktree session before merge | `af-finish-session` |
 | Engineering history | `af-devlog` |
 | Project docs, diagrams, guides, demos, decks, or marketing content | `af-docs` |
 | Convert legacy Backlog task files to devlog entries | `af-migrate-backlog-devlog` |
 | Review before merge | `af-review-gate` |
 | Formal security review before protected-branch PRs | `af-security-review` |
 | Audit worktrees, local protected branch policy, and cleanup candidates | `af-reconcile-worktrees` |
-| Promote `development` through release path | `af-push-staging` |
+| Prepare protected release PRs | `af-release-pr` |
 | Decide whether a heavier workflow is needed | `af-compound-mode` |
 
-## Start And Finish A Task
+## Start And Finish A Session
 
 Use the lifecycle helpers directly when working outside a skill:
 
 ```bash
-scripts/start-task.sh --class normal feat export-csv
+scripts/start-session.sh feat export-csv
 ```
 
-At the end of the task worktree:
+At the end of the session worktree:
+
+```text
+Use af-finish-session.
+```
+
+Or run the helper directly:
 
 ```bash
-scripts/finish-task.sh
+scripts/finish-session.sh
 ```
 
 If it reports `ASK_USER_MERGE`, ask before merging. After approval:
 
 ```bash
-scripts/finish-task.sh --merge
+scripts/finish-session.sh --merge
 ```
 
-For large or risky work from `development`, ask whether to create a feature parent branch first:
+Create a named branch only when the user explicitly asks for one:
 
 ```bash
-scripts/start-task.sh --class large --create-parent feat/payments feat payment-form
+scripts/start-session.sh --branch feat/payment-form feat payment-form
 ```
+
+## Manage Worktrees
+
+Open the visual picker:
+
+```bash
+scripts/worktree-manager.py --interactive
+```
+
+Useful non-interactive commands:
+
+```bash
+scripts/worktree-manager.py
+scripts/worktree-manager.py --details <id>
+scripts/worktree-manager.py --pickup <id>
+scripts/worktree-manager.py --cleanup <id> --yes
+scripts/worktree-manager.py --cleanup-all --yes
+```
+
+Use pickup for incomplete or unmerged work. Prefer starting a new Codex chat in the picked-up worktree so prior context does not leak into a different worktree session.
 
 ## Migrate Legacy Backlog Files
 
@@ -152,15 +181,15 @@ Good defaults for Agent-Flow repos:
 - Demo scripts and screenshot lists before recording videos.
 - Generated images only for marketing or conceptual visuals when real product screenshots are not available.
 
-## Promote Development
+## Prepare Release PRs
 
 Use this sequence:
 
 ```text
-af-reconcile-worktrees -> af-docs -> af-push-staging with af-security-review
+af-reconcile-worktrees -> af-docs -> af-release-pr with af-security-review
 ```
 
-The flow checks worktree state, updates docs, validates `development`, and runs formal security review before protected-branch promotion or PR creation. With staging enabled, it reviews `development` to `staging`, merges to `staging`, pushes `development` and `staging`, then reviews `staging` to `main` before asking to create the main pull request. With staging disabled, it pushes `development`, reviews `development` to `main`, and asks before creating a `development` to `main` pull request.
+The flow asks about open worktrees, updates docs, validates `development`, checks push readiness, pushes `origin development` after approval, and runs formal security review before protected-branch PR creation. By default, it prepares a `development -> staging` PR, then prepares a `staging -> main` PR after staging contains the release. With staging disabled, it reviews `development` to `main` and asks before creating a `development -> main` PR.
 
 Before pushing any parent branch, run:
 

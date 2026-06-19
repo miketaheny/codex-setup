@@ -14,7 +14,7 @@ Visual: before/after comparison.
 
 ## Slide 3: The Core Loop
 
-Classify the prompt, create a task worktree, validate, write devlog, update docs, review, ask before merge, then check child worktrees before push.
+For file-changing chats, create one AF session worktree, validate, run app/browser review when applicable, write devlog, update docs, review, ask before merge, then check child worktrees before push.
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 
@@ -26,15 +26,15 @@ Visual: hub-and-spoke diagram.
 
 ## Slide 5: Skills and Scripts
 
-AF skills cover small changes, worktrees, docs, devlogs, review, security review, reconciliation, release promotion, and Backlog migration.
+AF skills cover small changes, worktrees, finishing sessions, docs, devlogs, review, security review, reconciliation, release PRs, and Backlog migration.
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 
-## Slide 6: Task Lifecycle Helpers
+## Slide 6: Session Lifecycle Helpers
 
-`start-task.sh`, `finish-task.sh`, and `check-push-readiness.sh` make the default flow repeatable while keeping merges explicit.
+`start-session.sh`, `finish-session.sh`, `worktree-manager.py`, and `check-push-readiness.sh` make the default flow repeatable while keeping merges explicit.
 
-Visual: task lifecycle diagram from `docs/ARCHITECTURE.md`.
+Visual: session lifecycle diagram from `docs/ARCHITECTURE.md`.
 
 ## Slide 7: Documentation and Visuals
 
@@ -44,7 +44,7 @@ Visual: docs artifact matrix.
 
 ## Slide 8: Demo Flow
 
-Install, initialize a repo, inspect generated config and instruction files, start a task, run finish checks, inspect push readiness.
+Install, initialize a repo, inspect generated config and instruction files, start a session, run finish checks, inspect push readiness.
 
 Visual: terminal screenshot sequence.
 

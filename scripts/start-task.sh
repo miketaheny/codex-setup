@@ -5,18 +5,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: start-task.sh [options] <branch-type> <short-task-name>
+Usage: start-task.sh [options] <type> <session-name>
+
+Compatibility helper for start-session.sh. New workflows should use start-session.sh.
 
 Options:
-  --class <tiny|normal|large|risky>   Task size/risk classification. Default: normal.
-  --parent <branch>                   Parent branch to branch from. Default: checked-out branch.
-  --create-parent <branch>            Create and switch to a user-controlled parent branch first.
-  --use-current-parent                Allow a large/risky task to branch directly from the current parent.
+  --class <tiny|normal|large|risky>   Compatibility metadata. Default: normal.
+  --parent <branch>                   Parent branch to create the session worktree from. Default: checked-out branch.
+  --branch <branch>                   Create a named branch only when the user requested one.
+  --create-parent <branch>            Create and switch to a user-controlled parent branch first. Use only when requested.
+  --use-current-parent                Accepted for compatibility.
 
 Examples:
-  start-task.sh --class tiny fix navbar-spacing
-  start-task.sh --class normal feat export-csv
-  start-task.sh --class large --create-parent feat/payments feat payment-form
+  start-session.sh fix navbar-spacing
+  start-session.sh feat export-csv
+  start-session.sh feat payment-form
+  start-session.sh --branch feat/payment-form feat payment-form
 USAGE
 }
 
@@ -24,6 +28,7 @@ CLASS="normal"
 PARENT=""
 CREATE_PARENT=""
 USE_CURRENT_PARENT=0
+TASK_BRANCH=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -41,6 +46,11 @@ while [ "$#" -gt 0 ]; do
       shift
       [ "$#" -gt 0 ] || { echo "Error: --create-parent requires a branch name." >&2; exit 2; }
       CREATE_PARENT="$1"
+      ;;
+    --branch)
+      shift
+      [ "$#" -gt 0 ] || { echo "Error: --branch requires a branch name." >&2; exit 2; }
+      TASK_BRANCH="$1"
       ;;
     --use-current-parent)
       USE_CURRENT_PARENT=1
@@ -72,7 +82,6 @@ fi
 
 TYPE="$1"
 TASK="$2"
-BRANCH="$TYPE/$TASK"
 
 case "$CLASS" in
   tiny|normal|large|risky) ;;
@@ -132,14 +141,14 @@ if [ -n "$(git status --short)" ]; then
   echo "DIRTY_PARENT_REVIEW_AND_COMMIT_REQUIRED" >&2
   echo "Parent worktree has uncommitted or untracked changes." >&2
   echo "Review the diff, then run: $SCRIPT_DIR/commit-task.sh --message '<type>: <subject>'" >&2
-  echo "Restart start-task after the parent worktree is clean." >&2
+  echo "Restart start-session after the parent worktree is clean." >&2
   exit 1
 fi
 
 if [ -n "$CREATE_PARENT" ]; then
   case "$CREATE_PARENT" in
     main|staging|master|production|prod)
-      echo "Error: '$CREATE_PARENT' is protected or reserved and cannot be a task parent." >&2
+      echo "Error: '$CREATE_PARENT' is protected or reserved and cannot be a session parent." >&2
       exit 1
       ;;
   esac
@@ -153,23 +162,11 @@ elif [ -z "$PARENT" ]; then
   PARENT="$CURRENT_BRANCH"
 fi
 
-INTEGRATION_BRANCH="$(config_value integration_branch development)"
-if [ "$USE_CURRENT_PARENT" -ne 1 ] && [ "$PARENT" = "$INTEGRATION_BRANCH" ]; then
-  case "$CLASS" in
-    large|risky)
-      echo "ASK_USER_LARGE_TASK_PARENT" >&2
-      echo "Large/risky task requested from '$INTEGRATION_BRANCH'." >&2
-      echo "Ask whether to create a feature parent branch first, then rerun with --create-parent feat/<name>." >&2
-      echo "Use --use-current-parent only if the user wants this task to branch directly from '$INTEGRATION_BRANCH'." >&2
-      exit 3
-      ;;
-  esac
+if [ -n "$TASK_BRANCH" ]; then
+  "$SCRIPT_DIR/new-worktree.sh" --class "$CLASS" --branch "$TASK_BRANCH" "$TYPE" "$TASK" "$PARENT"
+else
+  "$SCRIPT_DIR/new-worktree.sh" --class "$CLASS" "$TYPE" "$TASK" "$PARENT"
 fi
 
-"$SCRIPT_DIR/new-worktree.sh" "$TYPE" "$TASK" "$PARENT"
-git config "branch.$BRANCH.agentFlowTaskClass" "$CLASS"
-git config "branch.$BRANCH.agentFlowState" "started"
-git config "branch.$BRANCH.agentFlowStartedAt" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-
-echo "Task class: $CLASS"
-echo "Lifecycle: finish with $SCRIPT_DIR/finish-task.sh from the task worktree."
+echo "Session metadata class: $CLASS"
+echo "Lifecycle: finish with $SCRIPT_DIR/finish-session.sh from the session worktree."
