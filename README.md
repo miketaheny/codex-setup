@@ -1,6 +1,22 @@
-# AF Agent-Flow Global Setup
+<p align="center">
+  <img src="docs/assets/agent-flow-logo.svg" alt="Agent-Flow logo" width="760">
+</p>
 
-Portable Agent-Flow setup for solo development with Codex, Claude, and other coding agents.
+# Agent-Flow
+
+Structured workflow rules for AI coding agents.
+
+Agent-Flow is a portable setup for solo development with Codex, Claude, and other coding agents. It gives file-changing agent work a repeatable lifecycle: create one session worktree, make a scoped change, write the devlog, finish with review, ask before merge, and check readiness before release.
+
+It exists because capable agents still need reliable rails. Without a shared workflow, parallel sessions can drift across branches, skip documentation, overwrite work, or leave weak handoff records. Agent-Flow makes the development loop inspectable, portable, and easier to trust.
+
+## Why It Matters
+
+- **Control parallel work:** keep agent sessions isolated in worktrees instead of letting them collide on the parent branch.
+- **Preserve engineering memory:** write finish-time `devlog/` entries instead of burying decisions in chat history.
+- **Keep docs current:** update user, architecture, workflow, visual, and marketing docs when behavior changes.
+- **Protect release paths:** use review, release readiness, optional security review, and push-readiness checks.
+- **Stay agent-agnostic:** use one canonical `AGENT-FLOW.md`, with adapters for Codex-compatible agents and Claude-compatible agents.
 
 ## What It Installs
 
@@ -21,6 +37,7 @@ Portable Agent-Flow setup for solo development with Codex, Claude, and other cod
   - `af-migrate-backlog-devlog`
 - Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
+- Brand and launch assets under `docs/BRAND-GUIDELINES.md` and `docs/assets/`.
 
 ## Install
 
@@ -107,6 +124,7 @@ Default release path is `development -> staging -> main`. With staging disabled 
 
 ## Documentation
 
+- [Brand Guidelines](docs/BRAND-GUIDELINES.md)
 - [Workflow](docs/WORKFLOW.md)
 - [User Guide](docs/USER-GUIDE.md)
 - [Architecture](docs/ARCHITECTURE.md)
@@ -116,6 +134,20 @@ Default release path is `development -> staging -> main`. With staging disabled 
 - [Demo Plan](docs/DEMO.md)
 - [Pitch](docs/PITCH.md)
 - [Changelog](CHANGELOG.md)
+
+## Public Repo Goals
+
+Agent-Flow should make a visitor understand the project within one minute:
+
+1. AI coding agents need shared operating rules, not just stronger prompts.
+2. Worktree sessions, devlogs, review, and push checks are the core behavior.
+3. The workflow is agent-agnostic, with Codex and Claude support included.
+4. The repo is useful today as an installable local workflow kit.
+5. The documentation and brand assets are part of the product, not an afterthought.
+
+## Brand Direction
+
+Use Agent-Flow's own brand system rather than copying another company's design language. OpenAI-style restraint is a better influence than a broad Google-style consumer palette because Agent-Flow is an engineering workflow product: it should feel precise, calm, credible, and operational. See [Brand Guidelines](docs/BRAND-GUIDELINES.md) for the full system.
 
 ## Key Rule
 

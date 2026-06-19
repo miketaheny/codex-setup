@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Agent-Flow social card</title>
+  <desc id="desc">A launch card for Agent-Flow showing the workflow from agent chat through worktree, devlog, review, and protected merge.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#182027"/>
+      <stop offset="1" stop-color="#101418"/>
+    </linearGradient>
+    <linearGradient id="path" x1="128" y1="412" x2="1110" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#168AAD"/>
+      <stop offset="0.5" stop-color="#1F9D63"/>
+      <stop offset="1" stop-color="#B7791F"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#D8DEE5" stroke-opacity="0.055" stroke-width="1"/>
+    </pattern>
+    <filter id="cardGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.098 0 0 0 0 0.541 0 0 0 0 0.678 0 0 0 0.42 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#grid)"/>
+  <path d="M88 520C188 430 256 430 368 458C480 486 514 388 624 388C734 388 758 474 864 430C970 386 996 268 1148 246" fill="none" stroke="url(#path)" stroke-width="18" stroke-linecap="round" filter="url(#cardGlow)"/>
+
+  <g transform="translate(82 76)">
+    <rect width="128" height="128" rx="34" fill="#F7F8FA"/>
+    <path d="M30 92L58 30L86 92" fill="none" stroke="#168AAD" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M44 64H72" stroke="#101418" stroke-width="8" stroke-linecap="round"/>
+    <path d="M98 34V94" stroke="#101418" stroke-width="10" stroke-linecap="round"/>
+    <path d="M98 34H116" stroke="#1F9D63" stroke-width="10" stroke-linecap="round"/>
+    <path d="M98 64H112" stroke="#B7791F" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <g font-family="Inter, Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="246" y="148" fill="#F7F8FA" font-size="78" font-weight="780" letter-spacing="-1">Agent-Flow</text>
+    <text x="248" y="204" fill="#D8DEE5" font-size="31" font-weight="520">Structured workflow rules for AI coding agents.</text>
+    <text x="88" y="582" fill="#D8DEE5" font-size="24" font-weight="560" text-anchor="middle">one chat</text>
+    <text x="368" y="504" fill="#D8DEE5" font-size="24" font-weight="560" text-anchor="middle">worktree</text>
+    <text x="624" y="348" fill="#D8DEE5" font-size="24" font-weight="560" text-anchor="middle">devlog</text>
+    <text x="864" y="390" fill="#D8DEE5" font-size="24" font-weight="560" text-anchor="middle">review</text>
+    <text x="1138" y="168" fill="#F7F8FA" font-size="24" font-weight="700" text-anchor="middle">guarded merge</text>
+  </g>
+
+  <g>
+    <circle cx="88" cy="520" r="24" fill="#101418" stroke="#168AAD" stroke-width="10"/>
+    <circle cx="368" cy="458" r="24" fill="#101418" stroke="#168AAD" stroke-width="10"/>
+    <circle cx="624" cy="388" r="24" fill="#101418" stroke="#1F9D63" stroke-width="10"/>
+    <circle cx="864" cy="430" r="24" fill="#101418" stroke="#6D5BD0" stroke-width="10"/>
+    <g transform="translate(1102 190)">
+      <rect x="0" y="26" width="72" height="62" rx="18" fill="#B7791F"/>
+      <path d="M17 28V18C17 7 25 0 36 0C47 0 55 7 55 18V28" fill="none" stroke="#F7F8FA" stroke-width="9" stroke-linecap="round"/>
+      <path d="M36 50V66" stroke="#101418" stroke-width="8" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(248 258)" font-family="Inter, Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="26" font-weight="650">
+    <rect x="0" y="0" width="900" height="74" rx="22" fill="#F7F8FA" fill-opacity="0.08" stroke="#D8DEE5" stroke-opacity="0.14"/>
+    <text x="28" y="47" fill="#F7F8FA">Turn file-changing agent chats into reviewable development sessions.</text>
+  </g>
+</svg>

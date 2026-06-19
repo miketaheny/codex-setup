@@ -44,6 +44,7 @@ Docs should help readers:
 - understand how the setup stays agent-agnostic
 - visualize architecture, skill routing, and daily workflows
 - create demos, presentations, user guides, and stakeholder-facing material
+- keep public-facing brand, README, launch copy, and visual recommendations consistent
 
 ## Docs Map
 
@@ -54,6 +55,7 @@ Current canonical docs:
 | `CHANGELOG.md` | Current | Keep user-facing workflow, docs, skill, and setup changes summarized. |
 | `README.md` | Current | Keep as the quick entrypoint, install guide, and docs map. |
 | `docs/WORKFLOW.md` | Current | Keep branch, devlog, review, migration, and release workflow accurate. |
+| `docs/BRAND-GUIDELINES.md` | Current | Keep positioning, messaging, voice, visual identity, launch surfaces, and public repo presentation guidance aligned with the product direction. |
 | `docs/AGENT-PROMPTS.md` | Current | Keep prompt examples aligned with current AF skills and workflow rules. |
 | `docs/ARCHITECTURE.md` | Current | Keep system, install, init, and skill-routing diagrams aligned with scripts and files. |
 | `docs/USER-GUIDE.md` | Current | Keep session-based install, init, skill, migration, and release guidance accurate. |
@@ -80,6 +82,8 @@ Use visual assets when they reduce explanation cost.
 
 For this repo, prefer efficient, technical, and data-driven visuals in core docs. Use polished but restrained visuals for presentations and stakeholder-facing content.
 
+Use `docs/BRAND-GUIDELINES.md` as the source of truth for public-facing voice, visual identity, launch copy, social cards, README hierarchy, and whether a future `design.md` is needed.
+
 ## Maintenance Triggers
 
 Run `af-docs` when changes affect:
@@ -92,6 +96,7 @@ Run `af-docs` when changes affect:
 - prompt lifecycle, branch, worktree, devlog, review, optional security review, merge, push-readiness, or release workflows
 - backlog migration behavior
 - visual documentation, demo, presentation, or marketing guidance
+- public brand, README positioning, launch copy, or repo traction content
 - README navigation or setup commands
 - user-facing workflow, setup, skill, or docs behavior that belongs in `CHANGELOG.md`
 
