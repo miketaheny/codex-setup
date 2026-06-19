@@ -1,4 +1,4 @@
 interface:
-  display_name: "AF Release PR"
+  display_name: "AF Release"
   short_description: "Prepare protected release PRs"
-  default_prompt: "Use $af-release to push development when ready and prepare the correct staging or main release PR."
+  default_prompt: "Use $af-release after $af-reconcile and $af-full-review to prepare the correct release PR."

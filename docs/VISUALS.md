@@ -21,9 +21,9 @@ This plan applies the `af-docs` visual interview to this Agent-Flow setup repo.
 |---|---|---|---|
 | System map | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how global files, adapters, skills, scripts, and templates connect. |
 | Install flow | `docs/ARCHITECTURE.md` | Mermaid sequence | Show where files are copied during install. |
-| Repo init and bootstrap flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and what bootstrap creates in a target repo. |
-| Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route to AF skills. |
-| Daily loop | `docs/USER-GUIDE.md` | Mermaid flowchart | Show the expected branch, validation, docs, and review cycle. |
+| Repo init flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and creates missing AF files in a target repo. |
+| Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route through compact AF skills. |
+| Core flow | `docs/WORKFLOW.md` | Text lifecycle | Show the expected branch, validation, docs, and review cycle. |
 | Session lifecycle | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show start-session, finish-session, merge prompt, and push readiness. |
 | Worktree manager | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show visual map, details, pickup, and cleanup actions. |
 
@@ -71,7 +71,7 @@ Capture these after the next local install test:
 - `finish-session.sh` output showing `ASK_USER_MERGE`
 - `worktree-manager.py --interactive` or default output showing the visual worktree map
 - `check-push-readiness.sh` output before push
-- `af-migrate-backlog-devlog` dry-run output on a sample task file
+- `af-migrate-backlog-devlog` dry-run output on a sample legacy Backlog file
 
 ## Demo Video Plan
 

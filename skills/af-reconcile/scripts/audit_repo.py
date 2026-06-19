@@ -149,13 +149,8 @@ def worktree_config(path: Path, key: str) -> str | None:
 
 def worktree_metadata(path: Path) -> dict[str, str]:
     keys = (
-        "agentFlow.mode",
         "agentFlow.kind",
-        "agentFlow.sessionKind",
         "agentFlow.sessionName",
-        "agentFlow.taskType",
-        "agentFlow.taskName",
-        "agentFlow.taskClass",
         "agentFlow.parent",
         "agentFlow.state",
         "agentFlow.owner",
@@ -214,16 +209,7 @@ def agents_review(root: Path) -> dict[str, Any]:
     af_push_skill = af_home / "skills" / "af-release" / "SKILL.md"
     if not af_push_skill.exists():
         af_push_skill = codex_home / "skills" / "af-release" / "SKILL.md"
-    if not af_push_skill.exists():
-        af_push_skill = af_home / "skills" / "af-release-pr" / "SKILL.md"
-    if not af_push_skill.exists():
-        af_push_skill = codex_home / "skills" / "af-release-pr" / "SKILL.md"
-    if not af_push_skill.exists():
-        af_push_skill = af_home / "skills" / "af-push-staging" / "SKILL.md"
-    if not af_push_skill.exists():
-        af_push_skill = codex_home / "skills" / "af-push-staging" / "SKILL.md"
-    legacy_push_skill = codex_home / "skills" / "push-staging" / "SKILL.md"
-    push_skill = af_push_skill if af_push_skill.exists() else legacy_push_skill
+    push_skill = af_push_skill
     instruction_names = {"AGENT-FLOW.md", "AGENTS.md", "CLAUDE.md"}
     local_agents = sorted(path for path in root.rglob("*.md") if path.name in instruction_names)
     local_agents = [
@@ -252,7 +238,7 @@ def agents_review(root: Path) -> dict[str, Any]:
         concerns.append(f"Global CLAUDE.md adapter missing: {global_claude}")
 
     if push_text is None:
-        concerns.append(f"af-release, af-release-pr, af-push-staging, or push-staging skill missing or unreadable: {push_skill}")
+        concerns.append(f"af-release skill missing or unreadable: {push_skill}")
 
     for path in local_agents:
         text = read_optional(path) or ""
@@ -269,7 +255,7 @@ def agents_review(root: Path) -> dict[str, Any]:
         "global_agents_adapter": str(global_agents),
         "global_claude_adapter": str(global_claude),
         "local_instruction_files": [str(path) for path in local_agents],
-        "release_pr_skill": str(push_skill),
+        "release_skill": str(push_skill),
         "concerns": concerns,
     }
 
@@ -282,7 +268,6 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
     target = branch if branch != "(detached)" else head
     metadata = worktree_metadata(path)
     wt_parent = worktree_config(path, "agentFlow.parent")
-    wt_mode = worktree_config(path, "agentFlow.mode")
     if wt_parent:
         merge_target, explicit_parent = wt_parent, True
     elif branch != "(detached)":
@@ -326,7 +311,7 @@ def classify_worktree(root: Path, item: dict[str, str], config: dict[str, Any]) 
         "path": str(path),
         "branch": branch,
         "head": head[:12],
-        "mode": wt_mode or ("branch" if branch != "(detached)" else "detached"),
+        "mode": "branch" if branch != "(detached)" else "detached",
         "metadata": metadata,
         "dirty_count": len(status),
         "merge_target": merge_target,

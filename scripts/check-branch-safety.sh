@@ -11,10 +11,9 @@ cd "$ROOT"
 
 branch="$(git branch --show-current)"
 parent="$(git config --worktree --get agentFlow.parent 2>/dev/null || true)"
-worktree_mode="$(git config --worktree --get agentFlow.mode 2>/dev/null || true)"
 
 if [ -n "$parent" ]; then
-  echo "OK: Agent-Flow worktree session for parent '$parent' (mode: ${worktree_mode:-unknown})."
+  echo "OK: Agent-Flow worktree session for parent '$parent'."
   exit 0
 fi
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Show"
+  short_description: "Capture visual session proof"
+  default_prompt: "Use $af-show to start the app or artifact and record visual proof for this Agent-Flow session."

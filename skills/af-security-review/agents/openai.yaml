@@ -1,4 +1,4 @@
 interface:
   display_name: "AF Security Review"
-  short_description: "Formal protected-branch security gate"
-  default_prompt: "Use $af-security-review before creating a PR to staging or main."
+  short_description: "Run deep security-only review"
+  default_prompt: "Use $af-security-review to run a deep security-only review for this sensitive Agent-Flow diff."

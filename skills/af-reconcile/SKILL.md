@@ -3,7 +3,7 @@ name: af-reconcile
 description: Audit, visualize, pick up, finish, and clean up Agent-Flow worktree sessions. Use when the user asks to review worktrees, find dirty or unmerged work, continue incomplete Codex work, clean up merged worktrees or branches, inspect development/staging/main state, or check push readiness.
 ---
 
-# AF Reconcile Worktrees Skill
+# AF Reconcile
 
 ## Overview
 
@@ -86,7 +86,7 @@ scripts/worktree-manager.py --cleanup <id> --yes
 scripts/worktree-manager.py --cleanup-all --yes
 ```
 
-Cleanup may remove the worktree and delete a merged explicit task/session branch. It must not remove dirty, unmerged, unmanaged, protected, or parent worktrees.
+Cleanup may remove the worktree and delete a merged explicit session branch. It must not remove dirty, unmerged, unmanaged, protected, or parent worktrees.
 
 ### 6. Recheck
 

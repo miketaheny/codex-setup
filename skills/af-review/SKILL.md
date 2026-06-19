@@ -1,34 +1,27 @@
 ---
 name: af-review
-description: Pre-merge review gate for Agent-Flow worktree sessions. Checks branch safety, scope, diffs, docs, tests, risk, and readiness to merge back into the recorded parent branch.
+description: Normal pre-merge review gate for Agent-Flow worktree sessions. Checks branch safety, scope, diffs, docs, devlog, validation, risk, and readiness to merge back into the recorded parent branch.
 ---
 
-# AF Review Gate Skill
+# AF Review
 
-Use this skill before merging any agent-created session worktree back into its recorded parent branch.
+Use this before merging an AF session worktree into its recorded parent branch. For the full finish workflow, including visual/manual proof, devlog/docs checks, this review, commit readiness, and ask-before-merge, use `af-finish`.
 
-For the full end-of-session workflow, including app start, Codex browser/manual review when applicable, devlog/docs checks, this review gate, and `scripts/finish-session.sh`, use `af-flow-finish`.
+## Checklist
 
-## Goal
+### 1. Branch Safety
 
-Act like a disciplined reviewer for a solo developer.
+- Current checkout is not `main`, `staging`, `master`, `production`, or `prod`.
+- Merge target is the recorded parent from worktree-local `agentFlow.parent` or explicit branch metadata.
+- Work is isolated to one AF session worktree.
 
-## Review checklist
-
-### 1. Branch safety
-
-- Current branch is not `main`, `staging`, `master`, `production`, or `prod`.
-- Merge target is the session worktree's recorded parent branch, usually from worktree-local `agentFlow.parent`; explicit named branches may also use `branch.<branch>.agentFlowParent`.
-- Work is isolated to one AF worktree session. A named branch is optional and should exist only when explicitly requested.
-
-### 2. Scope control
+### 2. Scope Control
 
 - Changes match the user request.
-- No unrelated rewrites.
-- No broad formatting-only churn unless requested.
-- No unexpected dependency, config, auth, payment, or deployment changes.
+- No unrelated rewrites or broad formatting churn.
+- No unexpected dependency, config, auth, payment, deployment, or generated-file changes.
 
-### 3. Diff review
+### 3. Diff Review
 
 Inspect:
 
@@ -39,78 +32,29 @@ git diff --stat <parent-branch>...HEAD
 git diff <parent-branch>...HEAD
 ```
 
-Look for:
+Look for logic bugs, missing edge cases, security/privacy issues, broken imports/types, missing error handling, accidental secrets, and untracked files that should or should not be committed.
 
-- logic bugs
-- missing edge cases
-- security/privacy issues
-- broken imports/types
-- missing error handling
-- accidental secrets
-- untracked files that should/should not be committed
+### 4. Docs And Devlog
 
-### 4. Docs review
+- `devlog/` contains one entry for the session commit or planned squash commit.
+- Project docs are updated when behavior, setup, architecture, security, deployment, operations, onboarding, or user workflows changed.
+- Docs and devlog do not exaggerate validation.
+- Follow-ups and known risks are recorded.
 
-- `devlog/` contains one entry file for the session commit or planned squash commit.
-- Project docs are updated when behavior, setup, architecture, security, deployment, or operations changed.
-- Docs do not exaggerate validation.
-- Follow-ups/known risks recorded.
+### 5. Validation
 
-### 5. Validation review
+Prefer existing project commands: tests, lint, typecheck, build, targeted manual tests, and app/browser review for user-facing changes. If validation cannot run, explain why and lower confidence.
 
-Prefer existing project commands:
+### 6. Findings
 
-- tests
-- lint
-- typecheck
-- build
-- app/browser review for browser-visible or user-facing changes
-- targeted manual test
-
-If validation cannot run, explain why and lower confidence.
-
-### 6. Findings format
-
-Use severity:
+Use:
 
 - P1: must fix before merge
 - P2: should fix or explicitly accept before merge
 - P3: minor improvement
 
-### 7. Merge policy
+## Output
 
-Read `.agent-flow/config.toml` when present.
+End with `READY TO MERGE INTO <parent-branch>`, `READY BUT ASK USER BEFORE MERGE`, or `NOT READY TO MERGE`.
 
-- If `merge_prompt = "always"`, report ready state and ask the user before merge.
-- `auto_merge = "tiny-only"` is compatibility-only for older metadata; default behavior is to ask before merge.
-- Never approve automatic merge into `main` or `staging`.
-- Run `scripts/check-push-readiness.sh <parent-branch>` before pushing a parent branch.
-
-## Required output
-
-End with one of:
-
-```text
-READY TO MERGE INTO <parent-branch>
-```
-
-or
-
-```text
-READY BUT ASK USER BEFORE MERGE
-```
-
-or
-
-```text
-NOT READY TO MERGE
-```
-
-Include:
-
-- branch or detached session commit
-- changed files summary
-- validation results
-- docs status
-- findings
-- recommended next command
+Include the session branch or detached commit, changed files, validation results, docs/devlog status, findings, and recommended next command.

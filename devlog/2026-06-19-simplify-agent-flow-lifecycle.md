@@ -1,0 +1,37 @@
+# 2026-06-19 - chore: simplify Agent-Flow lifecycle
+
+- Branch/worktree: `detached:a7f7148` / `/Users/taheny/vault/teamt/codex-setup-af-simplify-flow`
+- Commit: `pending`
+- Goal: Simplify Agent-Flow around the compact session lifecycle and update skills, scripts, docs, templates, and prompts to match.
+- Summary:
+  - Added `af-flow`, `af-finish`, `af-show`, and `af-full-review`.
+  - Reworked current lifecycle scripts around session worktrees and minimal AF metadata.
+  - Folded repo bootstrap behavior into `init-repo.sh`.
+  - Removed task-named lifecycle scripts and stale public workflow names from active docs.
+  - Updated release guidance to run reconcile, full review, then release, with security review only when requested, configured, or sensitive.
+- Files changed:
+  - `AGENT-FLOW.md`, `README.md`, `commander.md`, `CHANGELOG.md` - compact lifecycle documentation.
+  - `docs/` - workflow, user, architecture, prompt, demo, pitch, visual, and strategy updates.
+  - `scripts/start-session.sh`, `scripts/finish-session.sh` - self-contained session lifecycle helpers.
+  - `scripts/install.sh`, `scripts/init-repo.sh`, `scripts/check-branch-safety.sh` - install cleanup, config, and metadata updates.
+  - retired lifecycle helper scripts - removed old compatibility entrypoints.
+  - `skills/` - added and updated compact AF skill set.
+  - `templates/` - updated config, repo instructions, and devlog templates.
+- Decisions:
+  - Keep only lightweight AF metadata for machine routing; use `devlog/` for durable human history.
+  - Make `af-full-review` the broad release readiness gate and keep `af-security-review` security-only.
+  - Keep installer cleanup references to retired names so reinstalling removes stale installed files.
+- Validation:
+  - `bash -n scripts/*.sh` - passed.
+  - `python3 -m py_compile scripts/worktree-manager.py skills/af-reconcile/scripts/audit_repo.py skills/af-reconcile/scripts/worktree_manager.py skills/af-migrate-backlog-devlog/scripts/migrate_backlog_to_devlog.py` - passed.
+  - `python3 /Users/taheny/.codex/skills/.system/skill-creator/scripts/quick_validate.py <each skills/*>` - passed for 11 skill folders.
+  - Stale-name scans excluding historical `devlog/`, installer cleanup, and the Backlog migration skill - passed.
+  - Temporary repo smoke test for init, start session, finish readiness, push-readiness block before merge, merge, push-readiness pass, and reconcile audit - passed after bootstrap behavior was folded into init.
+  - `python3 skills/af-reconcile/scripts/audit_repo.py .` and `python3 skills/af-reconcile/scripts/worktree_manager.py . --json` - passed against this live dirty session.
+  - `git diff --check` - passed.
+- Visual/manual proof:
+  - Not applicable; this is a local workflow/docs/script change with shell smoke validation.
+- Review:
+  - Final self-review completed; no blocking findings found.
+- Risks / follow-ups:
+  - Existing installed copies should rerun `scripts/install.sh` so cleanup removes retired skill and script names.
