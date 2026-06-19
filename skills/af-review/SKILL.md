@@ -1,5 +1,5 @@
 ---
-name: af-review-gate
+name: af-review
 description: Pre-merge review gate for Agent-Flow worktree sessions. Checks branch safety, scope, diffs, docs, tests, risk, and readiness to merge back into the recorded parent branch.
 ---
 
@@ -7,7 +7,7 @@ description: Pre-merge review gate for Agent-Flow worktree sessions. Checks bran
 
 Use this skill before merging any agent-created session worktree back into its recorded parent branch.
 
-For the full end-of-session workflow, including app start, Codex browser/manual review when applicable, devlog/docs checks, this review gate, and `scripts/finish-session.sh`, use `af-finish-session`.
+For the full end-of-session workflow, including app start, Codex browser/manual review when applicable, devlog/docs checks, this review gate, and `scripts/finish-session.sh`, use `af-flow-finish`.
 
 ## Goal
 

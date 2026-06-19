@@ -1,5 +1,5 @@
 ---
-name: af-finish-session
+name: af-flow-finish
 description: Complete an Agent-Flow worktree session after implementation. Use when the user asks to finish a session, review and merge a worktree, run final validation, start the repo for manual QA, open the Codex browser to inspect browser-visible changes, commit finish-time devlog work, or ask for merge approval.
 ---
 
@@ -7,9 +7,9 @@ description: Complete an Agent-Flow worktree session after implementation. Use w
 
 ## Overview
 
-Use this skill as the end-to-end completion workflow for one AF session worktree. It orchestrates validation, docs and devlog checks, optional app/browser QA, `af-review-gate`, `scripts/finish-session.sh`, and the final ask-before-merge step.
+Use this skill as the end-to-end completion workflow for one AF session worktree. It orchestrates validation, docs and devlog checks, optional app/browser QA, `af-review`, `scripts/finish-session.sh`, and the final ask-before-merge step.
 
-This skill answers the session question: "Is this implemented work ready to merge into its recorded parent branch?" It does not promote `development` to protected branches; use `af-release-pr` for release pull requests.
+This skill answers the session question: "Is this implemented work ready to merge into its recorded parent branch?" It does not promote `development` to protected branches; use `af-release` for release pull requests.
 
 ## Workflow
 
@@ -73,7 +73,7 @@ Update project docs when behavior, setup, architecture, security, deployment, op
 
 ### 6. Run the review gate
 
-Use `af-review-gate` or perform its checklist directly:
+Use `af-review` or perform its checklist directly:
 
 - branch safety and merge target
 - scope control

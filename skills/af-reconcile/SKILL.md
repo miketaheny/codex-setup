@@ -1,5 +1,5 @@
 ---
-name: af-reconcile-worktrees
+name: af-reconcile
 description: Audit, visualize, pick up, finish, and clean up Agent-Flow worktree sessions. Use when the user asks to review worktrees, find dirty or unmerged work, continue incomplete Codex work, clean up merged worktrees or branches, inspect development/staging/main state, or check push readiness.
 ---
 

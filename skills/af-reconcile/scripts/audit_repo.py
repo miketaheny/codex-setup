@@ -211,7 +211,11 @@ def agents_review(root: Path) -> dict[str, Any]:
     global_flow = af_home / "AGENT-FLOW.md"
     global_agents = codex_home / "AGENTS.md"
     global_claude = Path(os.environ.get("CLAUDE_HOME", home / ".claude")) / "CLAUDE.md"
-    af_push_skill = af_home / "skills" / "af-release-pr" / "SKILL.md"
+    af_push_skill = af_home / "skills" / "af-release" / "SKILL.md"
+    if not af_push_skill.exists():
+        af_push_skill = codex_home / "skills" / "af-release" / "SKILL.md"
+    if not af_push_skill.exists():
+        af_push_skill = af_home / "skills" / "af-release-pr" / "SKILL.md"
     if not af_push_skill.exists():
         af_push_skill = codex_home / "skills" / "af-release-pr" / "SKILL.md"
     if not af_push_skill.exists():
@@ -248,7 +252,7 @@ def agents_review(root: Path) -> dict[str, Any]:
         concerns.append(f"Global CLAUDE.md adapter missing: {global_claude}")
 
     if push_text is None:
-        concerns.append(f"af-release-pr, af-push-staging, or push-staging skill missing or unreadable: {push_skill}")
+        concerns.append(f"af-release, af-release-pr, af-push-staging, or push-staging skill missing or unreadable: {push_skill}")
 
     for path in local_agents:
         text = read_optional(path) or ""

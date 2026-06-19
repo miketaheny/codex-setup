@@ -1,5 +1,5 @@
 ---
-name: af-release-pr
+name: af-release
 description: Prepare and create Agent-Flow release pull requests. Use when the user asks to push staging, promote development, create a development-to-staging PR, create a staging-to-main PR, promote staging to main, reconcile worktrees before release, verify development push readiness, or decide whether the default release path should be development to staging to main or development to main.
 ---
 
@@ -58,7 +58,7 @@ Use a clean worktree for the integration branch. If the current worktree is dirt
 
 ### 2. Ask about open worktrees
 
-Use `af-reconcile-worktrees` when available. Otherwise audit manually:
+Use `af-reconcile` when available. Otherwise audit manually:
 
 ```bash
 git worktree list --porcelain

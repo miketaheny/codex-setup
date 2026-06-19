@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the Agent-Flow worktree manager bundled with af-reconcile-worktrees."""
+"""Run the Agent-Flow worktree manager bundled with af-reconcile."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 SCRIPT = (
     Path(__file__).resolve().parents[1]
     / "skills"
-    / "af-reconcile-worktrees"
+    / "af-reconcile"
     / "scripts"
     / "worktree_manager.py"
 )

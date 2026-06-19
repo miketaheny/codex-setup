@@ -10,7 +10,7 @@ Make agent-assisted solo development safe and consistent across Claude, Codex, a
 - no direct work on protected or reserved branches
 - named branches only when the user explicitly requests a branch
 - merge-back to the user-controlled parent branch that was checked out for the session
-- finish-time devlog files under `devlog/`
+- devlog files under `devlog/`
 - maintained project documentation and useful visual assets
 - review before merge
 - app/browser review before merge when the change needs visual or manual verification
@@ -36,7 +36,6 @@ Use one lifecycle for Codex work:
 
 - Read-only chat: answer directly; do not create a worktree unless the user asks to make changes.
 - File-changing chat: create or adopt exactly one AF worktree session before editing.
-- Change of direction: stop and leave the current worktree clean, ready, paused, or explicitly abandoned, then start a new chat/worktree for the new direction. Do not mix unrelated directions in one worktree.
 
 Use `scripts/start-session.sh` when available to create session worktrees and record lifecycle metadata. Use `scripts/finish-session.sh` when available to run finish-time devlog, validation, review, commit, and merge readiness checks. `start-task.sh` and `finish-task.sh` may exist as compatibility wrappers or internals.
 
@@ -58,7 +57,6 @@ Use `scripts/start-session.sh` when available to create session worktrees and re
 
 ## Worktree Rules
 
-- Use one git worktree per file-changing chat/session.
 - Create worktrees from the checked-out parent branch unless the user explicitly supplies another non-protected parent branch.
 - Record detached session metadata in worktree-local Git config, including `agentFlow.kind = session`, `agentFlow.parent`, `agentFlow.sessionName`, `agentFlow.state`, `agentFlow.owner`, `agentFlow.devlogPolicy`, and timestamps.
 - For explicit named branches, also record branch metadata, for example `branch.<branch>.agentFlowParent`.
@@ -150,7 +148,7 @@ Use `scripts/check-push-readiness.sh <branch>` when available. Repos may install
 
 ## Formal Security Review
 
-Before creating a pull request whose base branch is `staging` or `main`, run a distinct formal security review. Use `af-security-review` when available. This gate is separate from `af-review-gate`: session review checks merge readiness, while security review checks the accumulated release diff before protected-branch PRs.
+Before creating a pull request whose base branch is `staging` or `main`, run a distinct formal security review. Use `af-security-review` when available. This gate is separate from `af-review`: session review checks merge readiness, while security review checks the accumulated release diff before protected-branch PRs.
 
 Run the formal security review after worktree reconciliation, docs maintenance, and release validation, but before creating or offering the protected-branch pull request. The default release PR path is `development -> staging`, then `staging -> main` after staging contains the release. If `staging_enabled = false`, use `development -> main`. If a repo updates `staging` by direct release push instead of a pull request, run the same security review before that protected release push.
 

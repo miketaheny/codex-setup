@@ -1,39 +1,21 @@
 # Useful Agent-Flow Prompts
 
-## Small change
-
-```text
-Use af-small-change. Fix [issue]. Keep scope narrow. Do not touch main or staging. Add a devlog entry under devlog/.
-```
-
-## Worktree session
-
-```text
-Use af-worktree-task. Create or adopt one AF session worktree from the checked-out parent branch. Do not create a named branch unless I explicitly ask for one. Implement the session goal, validate, add or update the devlog under devlog/, and run review before merge.
-```
-
 ## Seamless session lifecycle
 
 ```text
-Use Agent-Flow for this change. Create one AF session worktree, implement it, then use af-finish-session to validate, review, run browser QA if applicable, and ask me before merging if it is ready.
-```
-
-## Explicit feature branch
-
-```text
-Create a feature branch for this work only if needed, then create session worktrees under it and merge reviewed sessions back there.
+Use Agent-Flow for this session. Create a worktree from this branch if not on a worktree, implement it, then use af-flow-finish to validate, review with af-review, and ask me before merging if it is ready.
 ```
 
 ## Review branch
 
 ```text
-Use af-review-gate. Review this session worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
+Use af-review. Review this session worktree against AGENT-FLOW.md, agent adapter files, devlog/, project docs, tests, and merge safety. Tell me if it is ready to merge into its recorded parent branch.
 ```
 
 ## Finish session
 
 ```text
-Use af-finish-session. Start the repo and open the Codex browser if the change is user-facing, run validation and review, update devlog/docs, then ask me before merging into the recorded parent branch.
+Use af-flow-finish. Start the repo and open the browser if the change is user-facing, run validation and review, update devlog/docs, then ask me before merging into the recorded parent branch.
 ```
 
 ## Formal security review
@@ -75,7 +57,7 @@ Use af-migrate-backlog-devlog. Dry-run a migration from Backlog.md, backlog/, or
 ## Reconcile worktrees
 
 ```text
-Use af-reconcile-worktrees. Open the worktree manager, show the visual worktree map, identify incomplete or unmerged work, and clean up completed worktrees I have approved.
+Use af-reconcile. Open the worktree manager, show the visual worktree map, identify incomplete or unmerged work, and clean up completed worktrees I have approved.
 ```
 
 ## Push readiness
@@ -93,17 +75,5 @@ Ensure this repo has the Agent-Flow .gitignore block. Preserve existing ignore r
 ## Release PR
 
 ```text
-Use af-release-pr. Ask me about open worktrees, validate development, run docs and security review, push origin development when ready, then prepare the correct release PR. Default to development -> staging, then staging -> main after staging contains the release; use development -> main only when staging is disabled or I explicitly request it.
-```
-
-## Workflow decision
-
-```text
-Use af-compound-mode. Decide whether this should use a light Agent-Flow skill or a heavier planning/review workflow, then proceed with the lightest safe option.
-```
-
-## Parallel session
-
-```text
-Use a heavier workflow for this session only. You are in an isolated worktree. Keep scope limited to [area]. Add/update the devlog under devlog/. Avoid shared files unless required. Do not merge until review passes.
+Use af-release. Ask me about open worktrees, validate development, run docs and security review, push origin development when ready, then prepare the correct release PR. Default to development -> staging, then staging -> main after staging contains the release; use development -> main only when origin/staging is disabled or I explicitly request it.
 ```

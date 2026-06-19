@@ -1,4 +1,0 @@
-interface:
-  display_name: "AF Finish Session"
-  short_description: "Finish, review, and merge an AF session"
-  default_prompt: "Use $af-finish-session to finish this worktree session with validation, review, browser QA when needed, and merge readiness."
