@@ -8,6 +8,8 @@
 - Added AF skills for small changes, worktree tasks, session finishing, review gates, formal protected-branch security review, devlog entries, docs maintenance, backlog migration, worktree reconciliation, release PRs, and compound-mode selection.
 - Added `af-migrate-backlog-devlog` to convert `Backlog.md`, `triage.md`, `backlog/`, and `.backlog/` task stores into `devlog/` entries.
 - Added visual documentation coverage: architecture diagrams, user guide, demo plan, pitch copy, visual plan, and presentation outline.
+- Added Agent-Flow brand guidelines covering positioning, messaging, voice, visual identity, launch surfaces, README hierarchy, and public repo presentation.
+- Added an Agent-Flow SVG logo suite with a README wordmark, standalone mark, and social-card asset.
 - Added `docs/DOCS-STRATEGY.md` so `af-docs` can own ongoing docs maintenance without repeating the full stewardship interview for routine changes.
 - Added `init-repo.sh` and `.agent-flow/config.toml` defaults for first-contact Agent-Flow enforcement choices, checked-out parent branch worktrees, optional staging, and `main` as production.
 - Added lifecycle and safety helpers for `start-session.sh`, `finish-session.sh`, `worktree-manager.py`, `check-push-readiness.sh`, and `install-hooks.sh`, with `start-task.sh` and `finish-task.sh` retained as compatibility wrappers.
@@ -22,6 +24,7 @@
 - Tightened local protected branch policy so `main` is flagged for local cleanup, and `staging` is allowed locally only when staging is enabled.
 - Expanded `af-docs` from basic docs maintenance into a docs stewardship workflow for existing docs, visual assets, user guides, demos, presentations, and marketing content.
 - Updated bootstrap and install behavior to create/copy Agent-Flow docs, skills, scripts, templates, and adapter files consistently.
+- Refreshed the README as a sharper public entrypoint with purpose, goals, included components, daily loop, docs navigation, and brand direction.
 - Changed worktree workflow guidance so session worktrees are detached from and merge back to the checked-out parent branch by default. Named branches are created only when explicitly requested. `development` remains the SDLC integration branch, optional `staging` is protected when configured, and `main` is always production.
 - Changed completion guidance so agents ask before merge by default, can auto-merge only when repo config opts in, and check child session worktrees before pushing parent branches.
 - Changed Agent-Flow guidance so a file-changing Codex chat maps to one AF session worktree, with finish-time devlog, metadata, review, and merge readiness.

@@ -60,3 +60,4 @@ Visual: concise outcome list.
 - Convert to PPTX only after the audience and visual style are confirmed.
 - Use real terminal screenshots for credibility.
 - Add generated imagery only for a marketing version, not for the technical overview.
+- Follow `docs/BRAND-GUIDELINES.md` for tagline, voice, color, and public-facing visual direction.

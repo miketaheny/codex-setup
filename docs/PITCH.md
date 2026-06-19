@@ -4,6 +4,8 @@
 
 Agent-Flow is a lightweight workflow kit for solo developers using AI coding agents. It standardizes branch safety, worktree isolation, devlog history, documentation maintenance, review gates, and formal protected-branch security review across Claude, Codex, and other agents.
 
+Public-facing brand guidance lives in `docs/BRAND-GUIDELINES.md`. The brand should feel original, technical, calm, and operational: closer to restrained developer infrastructure than consumer product design.
+
 ## Audience
 
 - solo developers running many agent threads
@@ -36,11 +38,17 @@ Agent-Flow provides:
 
 ## Short Pitch
 
-Agent-Flow gives every AI coding agent the same operating system for solo development: safe branches, isolated work, devlog history, documentation updates, review before merge, formal security review before protected-branch PRs, and push checks before release PRs.
+Agent-Flow gives AI coding agents a shared operating model for solo development: isolated worktree sessions, devlog history, documentation updates, review before merge, formal security review before protected-branch PRs, and push checks before release PRs.
 
 ## Longer Pitch
 
 Agent-Flow is a portable setup for developers who use multiple AI coding agents across multiple repos. It defines one canonical workflow, installs adapters for agent-specific instruction files, adds reusable AF skills, and provides scripts that make safe branch and worktree habits repeatable. The result is a lower-friction development loop where every task leaves a readable history, every merge gets a review gate, and protected-branch PRs get a distinct security gate.
+
+## Launch Angle
+
+Lead with the workflow problem: AI coding agents are useful, but unstructured file-changing chats are hard to trust later. Agent-Flow turns those chats into scoped sessions with a visible lifecycle: worktree, validation, devlog, docs, review, merge prompt, and push readiness.
+
+Use commands, diagrams, and real terminal output as proof. Do not lead with model-vendor logos, productivity metrics, or broad autonomy claims.
 
 ## Objections and Responses
 
@@ -57,3 +65,4 @@ Agent-Flow is a portable setup for developers who use multiple AI coding agents 
 - Use terminal screenshots for credibility.
 - Use a generated hero image only if creating a website or launch announcement.
 - Avoid claiming measured productivity gains until metrics exist.
+- Follow `docs/BRAND-GUIDELINES.md` for color, tone, tagline, launch copy, and social-card direction.
