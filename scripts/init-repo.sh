@@ -72,6 +72,57 @@ cd "$ROOT"
 
 CONFIG_DIR=".agent-flow"
 CONFIG_FILE="$CONFIG_DIR/config.toml"
+REPO_HELPER_SCRIPTS=(
+  "check-branch-safety.sh"
+  "check-push-readiness.sh"
+  "finish-session.sh"
+  "install-hooks.sh"
+  "start-session.sh"
+  "worktree-manager.py"
+)
+
+copy_if_missing() {
+  local src="$1"
+  local dest="$2"
+  if [ -e "$dest" ]; then
+    echo "Exists: $dest"
+  else
+    cp "$src" "$dest"
+    echo "Created: $dest"
+  fi
+}
+
+ensure_repo_helpers() {
+  local helper src dest verb
+
+  mkdir -p scripts
+
+  for helper in "${REPO_HELPER_SCRIPTS[@]}"; do
+    src="$AF_HOME/scripts/$helper"
+    if [ ! -f "$src" ]; then
+      src="$SCRIPT_HOME/scripts/$helper"
+    fi
+    if [ ! -f "$src" ]; then
+      echo "Warning: Agent-Flow helper missing; skipped scripts/$helper" >&2
+      continue
+    fi
+
+    dest="scripts/$helper"
+    if [ -e "$dest" ] && [ "$FORCE" -ne 1 ]; then
+      echo "Exists: $dest"
+      continue
+    fi
+
+    if [ -e "$dest" ]; then
+      verb="Updated"
+    else
+      verb="Created"
+    fi
+    cp "$src" "$dest"
+    chmod +x "$dest" 2>/dev/null || true
+    echo "$verb: $dest"
+  done
+}
 
 prompt_yes_no() {
   local question="$1"
@@ -99,8 +150,10 @@ prompt_yes_no() {
 }
 
 if [ -f "$CONFIG_FILE" ] && [ "$FORCE" -ne 1 ]; then
+  ensure_repo_helpers
   echo "Agent-Flow already initialized: $CONFIG_FILE"
-  echo "Use --force to rewrite repo choices."
+  echo "Repo helper scripts checked."
+  echo "Use --force to rewrite repo choices and refresh Agent-Flow-owned helpers."
   exit 0
 fi
 
@@ -108,21 +161,11 @@ mkdir -p "$CONFIG_DIR"
 
 mkdir -p docs/decisions docs/solutions docs/plans docs/diagrams docs/assets docs/presentations devlog
 
-copy_if_missing() {
-  local src="$1"
-  local dest="$2"
-  if [ -e "$dest" ]; then
-    echo "Exists: $dest"
-  else
-    cp "$src" "$dest"
-    echo "Created: $dest"
-  fi
-}
-
 copy_if_missing "$AF_HOME/templates/repo-AGENT-FLOW.md" "AGENT-FLOW.md"
 copy_if_missing "$AF_HOME/templates/repo-AGENTS.md" "AGENTS.md"
 copy_if_missing "$AF_HOME/templates/repo-CLAUDE.md" "CLAUDE.md"
 copy_if_missing "$AF_HOME/templates/devlog-README.md" "devlog/README.md"
+ensure_repo_helpers
 
 if [ ! -f "docs/decisions/000-template.md" ]; then
   cp "$AF_HOME/templates/DECISION.md" "docs/decisions/000-template.md"
