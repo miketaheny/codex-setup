@@ -81,6 +81,7 @@ Init creates missing AF files and writes `.agent-flow/config.toml` with local ch
 - optional `staging` between `development` and `main`
 - protected/reserved branch policy
 - optional pre-push hook for child session readiness
+- repo-local helper scripts under `scripts/` for session start, finish, push readiness, hook install, branch safety, and worktree management
 
 ## Daily Loop
 
