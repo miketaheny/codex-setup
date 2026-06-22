@@ -47,6 +47,14 @@ scripts/finish-session.sh --merge
 
 If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`.
 
+By default, new session worktrees are grouped next to the repo in a clearly named directory:
+
+```text
+../<repo>.worktrees/<session-slug>
+```
+
+Example: starting `docs isms-structure` from `core12-isms` creates `../core12-isms.worktrees/isms-structure`, not another sibling that looks like a separate repo. Use `AF_WORKTREE_ROOT=/path/to/worktrees` before `scripts/start-session.sh` to choose a different root.
+
 ## Choose A Skill
 
 | Need | Skill |

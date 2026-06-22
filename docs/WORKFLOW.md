@@ -31,6 +31,14 @@ scripts/finish-session.sh --merge
 
 `finish-session.sh` checks readiness and reports `ASK_USER_MERGE`; use `--merge` only after explicit approval.
 
+New session worktrees are created under a sibling worktree root so they are visually distinct from normal repositories:
+
+```text
+../<repo>.worktrees/<session-slug>
+```
+
+For example, `scripts/start-session.sh docs isms-structure` in `core12-isms` creates `../core12-isms.worktrees/isms-structure`. Set `AF_WORKTREE_ROOT=/path/to/worktrees` when a repo needs a custom location.
+
 ## Session Metadata
 
 Keep metadata minimal:

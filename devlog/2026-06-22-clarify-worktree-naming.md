@@ -1,0 +1,28 @@
+# 2026-06-22 - Clarify worktree naming
+
+- Branch/worktree: `development` / `/Users/taheny/vault/teamt/codex-setup`
+- Commit: `pending`
+- Goal: Make new Agent-Flow session worktrees clearly identifiable as worktrees instead of sibling repositories.
+- Summary:
+  - Changed `scripts/start-session.sh` to create session worktrees under `../<repo>.worktrees/<session-slug>` by default.
+  - Added `AF_WORKTREE_ROOT` as an override for repos that need a custom worktree directory.
+  - Recorded `agentFlow.worktreeRoot` in session worktree metadata.
+  - Updated workflow and user-guide docs with the new path convention.
+- Files changed:
+  - `scripts/start-session.sh` - grouped worktree path creation and metadata.
+  - `docs/WORKFLOW.md` - documented default and override worktree locations.
+  - `docs/USER-GUIDE.md` - documented the user-facing convention.
+  - `devlog/2026-06-22-clarify-worktree-naming.md` - session history.
+- Decisions:
+  - Use a sibling root named `<repo>.worktrees` instead of `<repo>-<session>` so worktrees do not look like independent project checkouts.
+  - Keep the session slug as the leaf directory for readable manager output and shell navigation.
+- Validation:
+  - `bash -n scripts/start-session.sh scripts/finish-session.sh scripts/check-push-readiness.sh scripts/init-repo.sh scripts/install.sh` - passed.
+  - Disposable Git repo test - passed; default session path was created as `../repo.worktrees/sample-work`.
+  - Disposable Git repo test with `AF_WORKTREE_ROOT` - passed; session path was created under the custom worktree root.
+- Visual/manual proof:
+  - `scripts/start-session.sh` output showed `Created worktree` and `Worktree root` with the new grouped path convention.
+- Review:
+  - Diff inspected for scope; no P1/P2 issues found.
+- Risks / follow-ups:
+  - Existing worktrees keep their current paths until cleaned up; the new convention applies to newly created sessions.

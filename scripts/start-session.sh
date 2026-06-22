@@ -9,6 +9,9 @@ Options:
   --parent <branch>       Parent branch to create the session worktree from. Default: checked-out branch.
   --branch <branch>       Create a named branch only when explicitly requested.
 
+Environment:
+  AF_WORKTREE_ROOT         Optional directory for new session worktrees. Default: ../<repo>.worktrees
+
 Examples:
   start-session.sh feat checkout-flow
   start-session.sh docs workflow-refresh
@@ -149,12 +152,20 @@ fi
 
 REPO="$(basename "$ROOT")"
 PARENT_DIR="$(dirname "$ROOT")"
-WORKTREE="$PARENT_DIR/$REPO-$SESSION_SLUG"
+WORKTREE_ROOT="${AF_WORKTREE_ROOT:-$PARENT_DIR/$REPO.worktrees}"
+WORKTREE="$WORKTREE_ROOT/$SESSION_SLUG"
 
 if [ -e "$WORKTREE" ]; then
   echo "Error: worktree path already exists: $WORKTREE" >&2
   exit 1
 fi
+
+if [ -e "$WORKTREE_ROOT" ] && [ ! -d "$WORKTREE_ROOT" ]; then
+  echo "Error: worktree root exists and is not a directory: $WORKTREE_ROOT" >&2
+  exit 1
+fi
+
+mkdir -p "$WORKTREE_ROOT"
 
 git config extensions.worktreeConfig true
 
@@ -174,6 +185,7 @@ git -C "$WORKTREE" config --worktree agentFlow.sessionName "$SESSION_NAME"
 git -C "$WORKTREE" config --worktree agentFlow.state "started"
 git -C "$WORKTREE" config --worktree agentFlow.owner "codex"
 git -C "$WORKTREE" config --worktree agentFlow.devlogPolicy "finish"
+git -C "$WORKTREE" config --worktree agentFlow.worktreeRoot "$WORKTREE_ROOT"
 git -C "$WORKTREE" config --worktree agentFlow.startedAt "$STARTED_AT"
 git -C "$WORKTREE" config --worktree agentFlow.lastTouchedAt "$STARTED_AT"
 if [ -n "$BRANCH" ]; then
@@ -181,6 +193,7 @@ if [ -n "$BRANCH" ]; then
 fi
 
 echo "Created worktree: $WORKTREE"
+echo "Worktree root: $WORKTREE_ROOT"
 if [ -n "$BRANCH" ]; then
   echo "Branch: $BRANCH"
 else
