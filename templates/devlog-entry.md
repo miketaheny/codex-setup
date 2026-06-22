@@ -11,6 +11,8 @@
   - <decision and why>
 - Validation:
   - `<command>` - <result>
+- Visual/manual proof:
+  - <not applicable, passed, blocked, or skipped with reason>
 - Review:
   - <review result or not run>
 - Risks / follow-ups:

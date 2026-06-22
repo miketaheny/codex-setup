@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Reconcile Worktrees"
+  short_description: "Manage AF worktree sessions"
+  default_prompt: "Use $af-reconcile to show the worktree manager, pick up incomplete work, and clean up completed worktrees."

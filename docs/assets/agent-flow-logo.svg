@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360" role="img" aria-labelledby="title desc">
+  <title id="title">Agent-Flow logo</title>
+  <desc id="desc">Agent-Flow wordmark with a structured flow mark and the tagline Structured workflow rules for AI coding agents.</desc>
+  <defs>
+    <linearGradient id="flowStroke" x1="72" y1="72" x2="272" y2="288" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#168AAD"/>
+      <stop offset="0.52" stop-color="#1F9D63"/>
+      <stop offset="1" stop-color="#B7791F"/>
+    </linearGradient>
+    <linearGradient id="panelFill" x1="40" y1="28" x2="312" y2="332" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#182027"/>
+      <stop offset="1" stop-color="#101418"/>
+    </linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#D8DEE5" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+    <filter id="logoGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.098 0 0 0 0 0.541 0 0 0 0 0.678 0 0 0 0.28 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="360" rx="36" fill="#F7F8FA"/>
+  <path d="M392 270H1280" stroke="#D8DEE5" stroke-width="2" stroke-dasharray="4 16" stroke-linecap="round"/>
+
+  <g transform="translate(48 48)">
+    <rect width="264" height="264" rx="62" fill="url(#panelFill)"/>
+    <rect x="20" y="20" width="224" height="224" rx="48" fill="url(#grid)" opacity="0.95"/>
+    <rect x="34" y="34" width="196" height="196" rx="40" fill="none" stroke="#D8DEE5" stroke-opacity="0.14" stroke-width="1.5"/>
+    <g filter="url(#logoGlow)">
+      <path d="M56 192L112 66L168 192" fill="none" stroke="url(#flowStroke)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M82 136H144" fill="none" stroke="#F7F8FA" stroke-opacity="0.88" stroke-width="13" stroke-linecap="round"/>
+      <path d="M190 72V196" fill="none" stroke="#F7F8FA" stroke-opacity="0.9" stroke-width="18" stroke-linecap="round"/>
+      <path d="M190 72H226" fill="none" stroke="#168AAD" stroke-width="18" stroke-linecap="round"/>
+      <path d="M190 134H218" fill="none" stroke="#1F9D63" stroke-width="18" stroke-linecap="round"/>
+    </g>
+    <circle cx="56" cy="192" r="10" fill="#101418" stroke="#168AAD" stroke-width="5"/>
+    <circle cx="112" cy="66" r="10" fill="#101418" stroke="#1F9D63" stroke-width="5"/>
+    <circle cx="168" cy="192" r="10" fill="#101418" stroke="#B7791F" stroke-width="5"/>
+    <g transform="translate(202 170)">
+      <rect x="0" y="13" width="34" height="30" rx="9" fill="#B7791F"/>
+      <path d="M8 14V10C8 4 12 0 17 0C22 0 26 4 26 10V14" fill="none" stroke="#F7F8FA" stroke-width="5" stroke-linecap="round"/>
+      <path d="M17 25V32" stroke="#101418" stroke-width="4.5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(392 82)">
+    <text x="0" y="92" fill="#101418" font-family="Inter, Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="88" font-weight="760" letter-spacing="-1">Agent-Flow</text>
+    <text x="4" y="148" fill="#59636E" font-family="Inter, Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30" font-weight="520">Structured workflow rules for AI coding agents.</text>
+    <g transform="translate(4 192)" font-family="Inter, Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="19" font-weight="650">
+      <rect x="0" y="0" width="166" height="42" rx="21" fill="#FFFFFF" stroke="#D8DEE5"/>
+      <circle cx="24" cy="21" r="6" fill="#168AAD"/>
+      <text x="40" y="28" fill="#2D333A">worktrees</text>
+      <rect x="184" y="0" width="128" height="42" rx="21" fill="#FFFFFF" stroke="#D8DEE5"/>
+      <circle cx="208" cy="21" r="6" fill="#1F9D63"/>
+      <text x="224" y="28" fill="#2D333A">devlogs</text>
+      <rect x="330" y="0" width="130" height="42" rx="21" fill="#FFFFFF" stroke="#D8DEE5"/>
+      <circle cx="354" cy="21" r="6" fill="#6D5BD0"/>
+      <text x="370" y="28" fill="#2D333A">reviews</text>
+      <rect x="478" y="0" width="178" height="42" rx="21" fill="#FFFFFF" stroke="#D8DEE5"/>
+      <circle cx="502" cy="21" r="6" fill="#B7791F"/>
+      <text x="518" y="28" fill="#2D333A">guarded merge</text>
+    </g>
+  </g>
+</svg>

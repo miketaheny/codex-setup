@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Flow"
+  short_description: "Start or adopt an AF session"
+  default_prompt: "Use $af-flow to start or adopt one Agent-Flow worktree session before changing files."

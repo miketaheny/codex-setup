@@ -2,34 +2,27 @@
 
 Use this as a script for a live demo, screen recording, or annotated walkthrough.
 
-## Demo Goal
+## Goal
 
-Show how Agent-Flow turns a new Git repo into a safer agent-ready workspace with shared instructions, agent adapters, devlog conventions, and repeatable skills.
-
-## Audience
-
-- solo developers adopting AI coding agents
-- maintainers reviewing the workflow
-- stakeholders evaluating whether Agent-Flow is worth standardizing
+Show how Agent-Flow turns a Git repo into an agent-ready workspace with shared instructions, isolated session worktrees, mandatory devlog history, review, and release readiness.
 
 ## Setup
 
 Prepare:
 
-- this Agent-Flow setup repo
+- this setup repo
 - a temporary sample Git repo on `development`
-- terminal with enough font size for recording
-- optional second pane showing generated files
+- terminal with readable font size
 
 ## Script
 
-### 1. Install Agent-Flow
+### 1. Install
 
 ```bash
 ./scripts/install.sh
 ```
 
-Show the resulting locations:
+Show:
 
 ```bash
 find ~/.agent-flow -maxdepth 2 -type f | sort
@@ -37,7 +30,7 @@ find ~/.codex/skills -maxdepth 2 -name SKILL.md | sort
 test -f ~/.claude/CLAUDE.md && echo "Claude adapter installed"
 ```
 
-### 2. Initialize a Sample Repo
+### 2. Initialize A Sample Repo
 
 ```bash
 mkdir /tmp/agent-flow-demo
@@ -46,58 +39,57 @@ git init -b development
 ~/.agent-flow/scripts/init-repo.sh --yes --staging
 ```
 
-Show:
+Show `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, `.agent-flow/config.toml`, `.git/hooks/pre-push`, `devlog/README.md`, and `docs/decisions/000-template.md`.
 
-- `AGENT-FLOW.md`
-- `AGENTS.md`
-- `CLAUDE.md`
-- `.agent-flow/config.toml`
-- `.git/hooks/pre-push`
-- `devlog/README.md`
-- `docs/decisions/000-template.md`
-
-### 3. Explain the Daily Loop
-
-Reference the diagram in `docs/USER-GUIDE.md`.
-
-Narrative:
+### 3. Explain The Lifecycle
 
 ```text
-Start from the checked-out parent branch, create one session worktree for the file-changing chat, validate, start the repo and inspect browser-visible changes when applicable, write devlog, update docs, run review, ask before merge, and check child worktrees before pushing. Later, development pushes to origin and opens a development-to-staging PR by default, followed by a staging-to-main PR after staging contains the release.
+af-flow -> implementation -> af-devlog -> af-finish
 ```
 
-### 4. Demonstrate Session Lifecycle
+Release:
+
+```text
+af-reconcile -> af-full-review -> af-release
+```
+
+Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates.
+
+### 4. Demonstrate A Session
 
 ```bash
 ~/.agent-flow/scripts/start-session.sh docs demo-copy
 cd ../agent-flow-demo-demo-copy
 ```
 
-Show that the detached session worktree has parent metadata:
+Show metadata:
 
 ```bash
 git config --worktree --get agentFlow.parent
 git config --worktree --get agentFlow.sessionName
+git config --worktree --get agentFlow.state
 ```
 
-After a small committed change, invoke `af-finish-session` in Codex, or run the helper directly:
+Make a small docs change and devlog entry, then run:
 
 ```bash
 ~/.agent-flow/scripts/finish-session.sh
 ```
 
-Show the `ASK_USER_MERGE` output.
+Show `ASK_USER_MERGE`.
 
-### 5. Demonstrate Backlog Migration
-
-Create a sample legacy task:
+### 5. Demonstrate Worktree Readiness
 
 ```bash
-mkdir -p backlog/tasks
-$EDITOR backlog/tasks/task-1-demo.md
+~/.agent-flow/scripts/worktree-manager.py
+~/.agent-flow/scripts/check-push-readiness.sh development
 ```
 
-Run:
+Show how open child sessions block parent pushes until merged or explicitly handled.
+
+### 6. Demonstrate Backlog Migration
+
+Create a sample legacy Backlog file, then run:
 
 ```bash
 python3 ~/.agent-flow/skills/af-migrate-backlog-devlog/scripts/migrate_backlog_to_devlog.py .
@@ -106,31 +98,18 @@ python3 ~/.agent-flow/skills/af-migrate-backlog-devlog/scripts/migrate_backlog_t
 
 Show the generated devlog entry.
 
-### 6. Close With Review
-
-Run:
-
-```bash
-~/.agent-flow/scripts/review-snapshot.sh
-~/.agent-flow/scripts/check-push-readiness.sh development
-```
-
-Show how the snapshot supports `af-review-gate`.
-
 ## Screenshot List
 
 - install output
 - generated home directories
-- init output
-- generated repo instruction files
-- generated `.agent-flow/config.toml`
-- migration dry-run output
-- generated devlog entry
-- review snapshot output
+- initialized repo files
+- generated config
+- session start output
+- finish output with `ASK_USER_MERGE`
+- worktree manager output
 - push-readiness output
+- backlog migration output
 
 ## Recording Notes
 
-- Keep the first demo under three minutes.
-- Use real terminal output rather than generated imagery for the primary walkthrough.
-- Add a polished title card or generated visual only for external marketing versions.
+Keep the first demo under three minutes. Use real terminal output as the primary visual.

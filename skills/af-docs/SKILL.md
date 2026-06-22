@@ -36,7 +36,7 @@ Recommended baseline:
 - `docs/ARCHITECTURE.md` - major components, boundaries, data flow, storage, and integrations
 - `docs/RUNBOOK.md` - local setup, environment variables, deploy, rollback, logs, and operations
 - `docs/SECURITY.md` - authentication, authorization, secret handling, trust boundaries, and reporting
-- `docs/USER-GUIDE.md` - task-based user instructions and walkthroughs
+- `docs/USER-GUIDE.md` - workflow-based user instructions and walkthroughs
 - `docs/VISUALS.md` - visual asset plan, diagram inventory, screenshots, demos, and presentation recommendations
 - `docs/DOCS-STRATEGY.md` - one-time documentation stewardship decisions, audiences, doc map, visual style, and ongoing maintenance rules
 - `docs/decisions/` - durable architecture or workflow decisions
@@ -128,7 +128,7 @@ Choose visual formats by purpose:
 | Explain request/data flow | sequence diagram or data-flow diagram | Mermaid sequence/flowchart |
 | Explain state machines or lifecycle | state diagram | Mermaid state diagram |
 | Explain dependencies or platform topology | architecture graph | D2 or Mermaid |
-| Explain user journey | journey map or task walkthrough | Markdown plus Mermaid |
+| Explain user journey | journey map or workflow walkthrough | Markdown plus Mermaid |
 | Teach product usage | user guide with screenshots | Markdown plus screenshots |
 | Demonstrate UI behavior | short demo video or GIF | live capture when app runs |
 | Explain before/after changes | comparison table plus annotated screenshots | Markdown plus images |
@@ -162,7 +162,7 @@ Read enough evidence to make factual updates:
 - app entry points, routes, APIs, CLIs, and tests
 - environment examples, scripts, CI workflows, and deployment config
 - auth, authorization, secret handling, external service clients, and validation code
-- task files or planning notes when they explain intent that code alone does not show
+- planning notes when they explain intent that code alone does not show
 
 If Git is unavailable, use the available filesystem state and devlog files, then document the limitation.
 
@@ -171,7 +171,7 @@ If Git is unavailable, use the available filesystem state and devlog files, then
 1. Inspect branch safety and the current working tree.
 2. Identify the docs that already exist and whether they are established or placeholder-only.
 3. Identify the change range:
-   - for branch work, compare against the task's recorded parent branch or intended merge base
+   - for session work, compare against the recorded parent branch or intended merge base
    - for pre-release work, compare `development` against optional `staging` or `main` when available
    - when no range is available, read recent devlog files and representative project files
 4. Decide whether this is stewardship setup, backfill, or ongoing maintenance.
@@ -239,7 +239,7 @@ Use this mode when the audience includes users, buyers, executives, stakeholders
 Recommended outputs:
 
 - `docs/PITCH.md` - positioning, audience, value props, proof points, and objections
-- `docs/USER-GUIDE.md` - task-based guide with screenshots or screenshot placeholders
+- `docs/USER-GUIDE.md` - workflow-based guide with screenshots or screenshot placeholders
 - `docs/DEMO.md` - live demo script, screenshot list, and video capture plan
 - `docs/presentations/<topic>.md` - slide outline that can be converted to a deck
 - `docs/assets/` - screenshots, generated imagery, and supporting media when available

@@ -18,6 +18,7 @@ Each entry should include:
 - files changed
 - decisions made
 - validation run
+- visual/manual proof status when relevant
 - review result
 - follow-ups or known risks
 

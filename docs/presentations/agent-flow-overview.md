@@ -14,7 +14,7 @@ Visual: before/after comparison.
 
 ## Slide 3: The Core Loop
 
-For file-changing chats, create one AF session worktree, validate, run app/browser review when applicable, write devlog, update docs, review, ask before merge, then check child worktrees before push.
+For file-changing chats, use `af-flow`, implement in one AF session worktree, write devlog, use `af-finish`, ask before merge, then check child worktrees before push.
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 
@@ -26,7 +26,7 @@ Visual: hub-and-spoke diagram.
 
 ## Slide 5: Skills and Scripts
 
-AF skills cover small changes, worktrees, finishing sessions, docs, devlogs, review, security review, reconciliation, release PRs, and Backlog migration.
+AF skills cover session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, security review, and Backlog migration.
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 
@@ -60,3 +60,4 @@ Visual: concise outcome list.
 - Convert to PPTX only after the audience and visual style are confirmed.
 - Use real terminal screenshots for credibility.
 - Add generated imagery only for a marketing version, not for the technical overview.
+- Follow `docs/BRAND-GUIDELINES.md` for tagline, voice, color, and public-facing visual direction.

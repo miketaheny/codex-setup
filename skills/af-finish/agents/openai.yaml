@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Finish"
+  short_description: "Finish and review an AF session"
+  default_prompt: "Use $af-finish to validate, review, record devlog proof, and ask before merging this AF session."

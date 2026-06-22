@@ -15,17 +15,21 @@ This plan applies the `af-docs` visual interview to this Agent-Flow setup repo.
 | Fidelity | Accurate implementation diagrams now; screenshots/videos later after install flows are exercised on a real machine. |
 | Source of truth | Repo files, scripts, skills, templates, and devlog entries. |
 
+Public-facing brand, voice, color, launch copy, and social-card rules live in `docs/BRAND-GUIDELINES.md`.
+
 ## Current Visual Inventory
 
 | Visual | Location | Format | Purpose |
 |---|---|---|---|
 | System map | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how global files, adapters, skills, scripts, and templates connect. |
 | Install flow | `docs/ARCHITECTURE.md` | Mermaid sequence | Show where files are copied during install. |
-| Repo init and bootstrap flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and what bootstrap creates in a target repo. |
-| Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route to AF skills. |
-| Daily loop | `docs/USER-GUIDE.md` | Mermaid flowchart | Show the expected branch, validation, docs, and review cycle. |
+| Repo init flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and creates missing AF files in a target repo. |
+| Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route through compact AF skills. |
+| Core flow | `docs/WORKFLOW.md` | Text lifecycle | Show the expected branch, validation, docs, and review cycle. |
 | Session lifecycle | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show start-session, finish-session, merge prompt, and push readiness. |
 | Worktree manager | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show visual map, details, pickup, and cleanup actions. |
+| Brand system | `docs/BRAND-GUIDELINES.md` | Markdown reference | Define positioning, voice, visual identity, README hierarchy, and launch surfaces. |
+| Logo suite | `docs/assets/agent-flow-logo.svg`, `docs/assets/agent-flow-mark.svg`, `docs/assets/agent-flow-social-card.svg` | SVG | Provide README, icon, and social-card assets using the same flow-mark system. |
 
 ## Recommended Formats
 
@@ -71,7 +75,7 @@ Capture these after the next local install test:
 - `finish-session.sh` output showing `ASK_USER_MERGE`
 - `worktree-manager.py --interactive` or default output showing the visual worktree map
 - `check-push-readiness.sh` output before push
-- `af-migrate-backlog-devlog` dry-run output on a sample task file
+- `af-migrate-backlog-devlog` dry-run output on a sample legacy Backlog file
 
 ## Demo Video Plan
 
@@ -107,5 +111,8 @@ Use `docs/PITCH.md` for launch or stakeholder copy. Keep claims grounded:
 - Agent-Flow standardizes branch safety, devlogs, docs, and review.
 - It works across Claude, Codex, and other agents through shared instructions and adapters.
 - Codex skills are included, but the core workflow is agent-agnostic.
+- Use `docs/assets/agent-flow-social-card.svg` for social sharing or title cards.
 
 Avoid unsupported claims about speed, reliability, or compatibility until measured.
+
+For visual identity, use the brand guide's neutral technical palette and functional accents. Do not base the identity on Google-style multicolor product design or on OpenAI brand assets; use the restraint of developer infrastructure as the design baseline.

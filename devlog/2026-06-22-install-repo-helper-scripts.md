@@ -1,0 +1,28 @@
+# 2026-06-22 - install repo helper scripts
+
+- Branch/worktree: `detached:5a3dd8c` / `/Users/taheny/vault/teamt/codex-setup.worktrees/repo-helper-install`
+- Commit: `pending`
+- Goal: Keep initialized Agent-Flow repos self-consistent when docs/config reference repo-local lifecycle helpers.
+- Summary:
+  - Updated repo initialization to copy the AF helper scripts into initialized repositories without overwriting existing scripts unless `--force` is used.
+  - Made the repo-local worktree manager wrapper fall back to installed Agent-Flow or Codex skill locations.
+  - Documented that repo initialization installs helper scripts.
+- Files changed:
+  - `scripts/init-repo.sh` - ensures repo-local lifecycle, readiness, hook, branch safety, and manager helpers exist.
+  - `scripts/worktree-manager.py` - locates the real manager from local, `AF_HOME`, `AGENT_FLOW_HOME`, `CODEX_HOME`, `~/.agent-flow`, or `~/.codex` roots.
+  - `README.md` - records helper script installation in the init behavior.
+- Decisions:
+  - Preserve existing app scripts by default and refresh AF-owned helper names only with `--force`.
+  - Keep global installer/init scripts out of initialized app repos because they depend on the full Agent-Flow setup tree.
+- Validation:
+  - `bash -n scripts/init-repo.sh scripts/start-session.sh scripts/finish-session.sh scripts/check-push-readiness.sh scripts/check-branch-safety.sh scripts/install-hooks.sh` - passed.
+  - `python3 -m py_compile scripts/worktree-manager.py skills/af-reconcile/scripts/worktree_manager.py` - passed.
+  - Temporary Git repo init with `AF_HOME=<session> scripts/init-repo.sh --yes --no-hooks` - passed; created all repo helper scripts.
+  - Existing initialized temp repo rerun after deleting `scripts/start-session.sh` - passed; restored the missing helper without rewriting config.
+  - `AF_HOME=<session> python3 scripts/worktree-manager.py --help` from the initialized temp repo - passed; copied wrapper found the manager implementation.
+- Visual/manual proof:
+  - Not applicable; this change affects shell/Python helpers and documentation.
+- Review:
+  - Self-review completed; diff is scoped to helper installation, manager lookup, README, and this devlog.
+- Risks / follow-ups:
+  - Existing repos still need `init-repo.sh` rerun or the helper files copied once to repair past initialization drift.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Full Review"
+  short_description: "Run exhaustive release review"
+  default_prompt: "Use $af-full-review to run an exhaustive Agent-Flow review before release or high-risk merge."

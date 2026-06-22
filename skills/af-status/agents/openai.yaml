@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Status"
+  short_description: "Summarize AF repo and worktree state"
+  default_prompt: "Use $af-status to summarize Agent-Flow status and list all current worktrees."
