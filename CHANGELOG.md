@@ -17,7 +17,7 @@
 
 - Simplified Agent-Flow around one lifecycle: `af-flow -> af-devlog -> af-finish`.
 - Simplified release readiness to `af-reconcile -> af-full-review -> af-release`.
-- Kept `af-security-review` as an optional deep security-only gate when requested, configured, or security-sensitive.
+- Updated `af-security-review` to prefer Codex Security diff scans for Git-backed release diffs when available, with the manual AF checklist as fallback.
 - Reworked session scripts so `start-session.sh` and `finish-session.sh` own the lifecycle directly.
 - Reduced AF metadata to parent branch, session name, state, owner, devlog policy, timestamps, and optional explicit branch pointer.
 - Updated docs, templates, prompts, and skill metadata to use folder names as the source of truth.

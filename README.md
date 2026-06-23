@@ -15,7 +15,7 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - **Control parallel work:** keep agent sessions isolated in worktrees instead of letting them collide on the parent branch.
 - **Preserve engineering memory:** write finish-time `devlog/` entries instead of burying decisions in chat history.
 - **Keep docs current:** update user, architecture, workflow, visual, and marketing docs when behavior changes.
-- **Protect release paths:** use review, release readiness, optional security review, and push-readiness checks.
+- **Protect release paths:** use review, release readiness, optional Codex Security-aware security review, and push-readiness checks.
 - **Stay agent-agnostic:** use one canonical `AGENT-FLOW.md`, with adapters for Codex-compatible agents and Claude-compatible agents.
 
 ## What It Installs
@@ -119,7 +119,7 @@ scripts/start-session.sh --branch feat/export-csv feat export-csv
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-security-review` when requested, config-required, or security-sensitive.
+Run `af-security-review` when requested, config-required, or security-sensitive. When the Codex Security plugin is available, AF prefers its diff-scan workflow for Git-backed release diffs and records the plugin result or fallback reason.
 
 Default release path is `development -> staging -> main`. With staging disabled or explicitly skipped, use `development -> main`.
 

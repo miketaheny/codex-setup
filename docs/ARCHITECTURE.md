@@ -58,7 +58,7 @@ flowchart TD
     ReleaseStart["Release prep"] --> Reconcile["af-reconcile"]
     Reconcile --> Full["af-full-review"]
     Full --> Security{"Sensitive or required?"}
-    Security -->|Yes| Sec["af-security-review"]
+    Security -->|Yes| Sec["af-security-review with Codex Security when available"]
     Security -->|No| Release["af-release"]
     Sec --> Release
 ```

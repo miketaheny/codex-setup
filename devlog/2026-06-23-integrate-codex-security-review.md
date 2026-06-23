@@ -1,0 +1,28 @@
+# 2026-06-23 - Integrate Codex Security review
+
+- Branch/worktree: `detached session` / `/Users/taheny/vault/teamt/codex-setup.worktrees/codex-security-review-integration`
+- Commit: `pending`
+- Goal: Make Agent-Flow security review prefer the Codex Security plugin workflow when available, and update Agent-Flow docs to reflect the behavior.
+- Summary:
+  - Updated `af-security-review` so Git-backed release diffs prefer `$codex-security:security-diff-scan` and fall back to the manual AF checklist when the plugin is unavailable or blocked.
+  - Updated release, full-review, workflow, prompt, README, demo, pitch, architecture, presentation, commander, and repo-template docs to describe the Codex Security-aware gate.
+- Files changed:
+  - `skills/af-security-review/SKILL.md` - added Codex Security scan-path selection and final-output requirements.
+  - `skills/af-security-review/agents/openai.yaml` - refreshed the Codex-facing prompt metadata.
+  - `skills/af-release/SKILL.md` and `skills/af-full-review/SKILL.md` - aligned release/full-review expectations with the plugin-aware security gate.
+  - `AGENT-FLOW.md`, `README.md`, `commander.md`, `templates/repo-AGENT-FLOW.md`, and `docs/` - updated user-facing workflow guidance.
+- Decisions:
+  - Keep `af-security-review` as the AF orchestration and final verdict gate rather than replacing it with the plugin directly.
+  - Use `$codex-security:security-diff-scan` by default only for Git-backed diffs; repository-wide and deep scans remain explicit user requests.
+- Validation:
+  - `git diff --check` - passed.
+  - `ruby -e 'require "yaml"; ...'` over changed skill front matter and `agents/openai.yaml` - passed.
+  - `rg -n 'security-diff-scan|Codex Security plugin|Codex Security-aware|fallback reason' AGENT-FLOW.md README.md docs skills templates commander.md CHANGELOG.md` - passed; confirmed updated guidance is present.
+  - `scripts/install.sh` - passed; refreshed installed AF/Codex/Claude copies and created backups for existing top-level instruction files.
+  - `rg -n 'security-diff-scan|Codex Security plugin|Codex Security-aware|fallback reason' /Users/taheny/.codex/skills/af-security-review /Users/taheny/.codex/AGENT-FLOW.md /Users/taheny/.agent-flow/skills/af-security-review /Users/taheny/.agent-flow/AGENT-FLOW.md` - passed; confirmed installed copies include the new behavior.
+- Visual/manual proof:
+  - Not applicable; docs and skill metadata only.
+- Review:
+  - Manual AF finish review of the scoped diff found no unrelated rewrites, secrets, generated files, or dependency/config changes.
+- Risks / follow-ups:
+  - None currently identified.

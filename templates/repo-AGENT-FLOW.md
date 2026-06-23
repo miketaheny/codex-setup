@@ -76,7 +76,7 @@ Before release:
 
 - run `af-reconcile`
 - run `af-full-review`
-- run `af-security-review` if requested, configured, or security-sensitive
+- run `af-security-review` if requested, configured, or security-sensitive; prefer the Codex Security diff-scan path when available
 - run `af-release`
 
 ## Gitignore And IDE Files

@@ -53,7 +53,7 @@ Release:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates.
+Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates, including Codex Security diff scans when available.
 
 ### 4. Demonstrate A Session
 

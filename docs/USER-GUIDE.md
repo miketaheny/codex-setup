@@ -68,7 +68,7 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Worktree cleanup or pickup | `af-reconcile` |
 | Release readiness review | `af-full-review` |
 | Release PRs | `af-release` |
-| Security-only review | `af-security-review` |
+| Codex Security-aware security review | `af-security-review` |
 | Docs, diagrams, demos, guides | `af-docs` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
 
@@ -101,7 +101,7 @@ Use:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-security-review` when requested, config-required, or security-sensitive.
+Run `af-security-review` when requested, config-required, or security-sensitive. If the Codex Security plugin is available, AF prefers its diff-scan workflow for Git-backed release diffs and reports the plugin result or fallback reason.
 
 Default release path is `development -> staging -> main`. With staging disabled, use `development -> main`.
 
