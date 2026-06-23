@@ -33,13 +33,13 @@ Use af-show. Start or open the relevant app, page, artifact, or command output, 
 ## Release Prep
 
 ```text
-Use af-reconcile, then af-full-review, then af-release. Run af-security-review only if requested, config-required, or security-sensitive.
+Use af-reconcile, then af-full-review, then af-release. Run af-security-review only if requested, config-required, or security-sensitive. If Codex Security is available, prefer its diff-scan path for the release diff.
 ```
 
 ## Security Review
 
 ```text
-Use af-security-review for [head] against [base]. Focus only on security-sensitive behavior, checks, findings, and accepted risks.
+Use af-security-review for [head] against [base]. Prefer Codex Security diff scan when available, then report security-sensitive behavior, checks, findings, accepted risks, and any fallback reason.
 ```
 
 ## Project Docs

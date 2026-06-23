@@ -16,7 +16,7 @@ Release work adds:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access.
+Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. When the Codex Security plugin is available, `af-security-review` prefers `$codex-security:security-diff-scan` for Git-backed release diffs and falls back to the manual AF checklist when the plugin is unavailable or blocked.
 
 ## First Contact
 
@@ -125,7 +125,7 @@ Before release:
 
 1. Run `af-reconcile`.
 2. Run `af-full-review`.
-3. Run `af-security-review` if requested, config-required, or security-sensitive.
+3. Run `af-security-review` if requested, config-required, or security-sensitive. Prefer the Codex Security diff-scan path when available.
 4. Run `af-release`.
 
 Ask before remote side effects such as `git push` or `gh pr create` unless the user clearly authorized them in the current request.

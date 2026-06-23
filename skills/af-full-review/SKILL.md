@@ -48,7 +48,7 @@ Confirm:
 
 ### 6. Review Security-Relevant Areas
 
-Flag security-sensitive changes such as auth, authorization, secrets, input validation, dependency upgrades, infrastructure, logging, privacy, and data access. If the release touches these areas or config requires it, run `af-security-review` as a distinct security-only gate.
+Flag security-sensitive changes such as auth, authorization, secrets, input validation, dependency upgrades, infrastructure, logging, privacy, and data access. If the release touches these areas or config requires it, run `af-security-review` as a distinct security-only gate. When Codex Security is available, expect that gate to prefer `$codex-security:security-diff-scan` for Git-backed release diffs and to report any fallback reason.
 
 ### 7. Findings
 

@@ -12,5 +12,5 @@ Recommended flow:
 6. Use `af-finish` to validate, review, commit, and ask before merge.
 7. Use `af-reconcile` before cleanup or release.
 8. Use `af-full-review` before release or high-risk merge.
-9. Use `af-security-review` when requested, config-required, or security-sensitive.
+9. Use `af-security-review` when requested, config-required, or security-sensitive; prefer Codex Security diff scans when available.
 10. Use `af-release` to prepare protected release PRs.

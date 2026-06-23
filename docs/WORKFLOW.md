@@ -8,7 +8,7 @@ File-changing chat: af-flow -> implementation -> af-devlog -> af-finish.
 Release: af-reconcile -> af-full-review -> af-release.
 ```
 
-Use `af-show` during finish when seeing the app, rendered docs, CLI output, or another artifact would materially improve confidence. Use `af-security-review` only when requested, config-required, or security-sensitive.
+Use `af-show` during finish when seeing the app, rendered docs, CLI output, or another artifact would materially improve confidence. Use `af-security-review` only when requested, config-required, or security-sensitive. When the Codex Security plugin is available, AF prefers `$codex-security:security-diff-scan` for Git-backed release diffs and records the plugin result or fallback reason.
 
 ## Branch Model
 
@@ -67,7 +67,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 | Worktree audit, pickup, cleanup | `af-reconcile` |
 | Exhaustive release or high-risk review | `af-full-review` |
 | Prepare release PRs | `af-release` |
-| Security-only deep review | `af-security-review` |
+| Codex Security-aware security review | `af-security-review` |
 | Project docs and visual assets | `af-docs` |
 | Legacy Backlog history migration | `af-migrate-backlog-devlog` |
 
