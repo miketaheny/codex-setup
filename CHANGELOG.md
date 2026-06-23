@@ -5,11 +5,14 @@
 ### Added
 
 - Added `af-flow` as the entry workflow for file-changing sessions.
+- Added `af-help` for read-only Agent-Flow command help and usage-guide routing.
 - Added `af-status` for read-only Agent-Flow repo and worktree status snapshots.
 - Added `af-finish` as the end-of-session workflow replacing the previous finish naming.
 - Added `af-show` for visual or manual proof during finish.
 - Added `af-full-review` for release readiness and high-risk exhaustive review.
+- Added `af-feature-audit` as a manual-only app-wide feature register, user-story, test, fix, and retest campaign.
 - Added installer cleanup for retired AF skill and script names.
+- Added `docs/AGENT-FLOW-USAGE.md` and a `templates/feature-register.csv` starting schema.
 - Added Agent-Flow brand guidelines covering positioning, messaging, voice, visual identity, launch surfaces, README hierarchy, and public repo presentation.
 - Added an Agent-Flow SVG logo suite with a README wordmark, standalone mark, and social-card asset.
 

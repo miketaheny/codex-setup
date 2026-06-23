@@ -47,6 +47,12 @@ scripts/finish-session.sh --merge
 
 If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`.
 
+For command help:
+
+```text
+Use af-help and show me the Agent-Flow commands.
+```
+
 By default, new session worktrees are grouped next to the repo in a clearly named directory:
 
 ```text
@@ -59,6 +65,7 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 
 | Need | Skill |
 |---|---|
+| Command help and usage guide | `af-help` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
@@ -70,7 +77,26 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Release PRs | `af-release` |
 | Security-only review | `af-security-review` |
 | Docs, diagrams, demos, guides | `af-docs` |
+| Whole-app feature/user-story QA campaign | `af-feature-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
+
+## Feature Audit
+
+Use `af-feature-audit` only when you explicitly want an app-wide product/QA campaign:
+
+```text
+Use af-feature-audit on this app. Create one canonical feature register, test every user story, fix UX/logistical errors, and retest.
+```
+
+Default canonical register:
+
+```text
+docs/product/feature-register.csv
+```
+
+The register is spreadsheet-compatible and tracks source paths, user stories, expected behavior, acceptance criteria, test results, fix sessions, retest results, and status.
+
+See [Agent-Flow Usage Guide](AGENT-FLOW-USAGE.md) for the full command map.
 
 ## Manage Worktrees
 

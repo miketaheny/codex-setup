@@ -1,5 +1,11 @@
 # Useful Agent-Flow Prompts
 
+## Help
+
+```text
+Use af-help. Show me the Agent-Flow command map, skill choices, and usage-guide path.
+```
+
 ## Start And Finish Work
 
 ```text
@@ -46,6 +52,12 @@ Use af-security-review for [head] against [base]. Focus only on security-sensiti
 
 ```text
 Use af-docs. Update project docs from devlog entries, commits, changed scripts, skills, templates, screenshots, and config.
+```
+
+## Feature Audit
+
+```text
+Use af-feature-audit on this app. Go over every feature, create a user story with expected behavior from the code, keep one canonical feature register, test every story, fix UX/logistical errors in scoped AF sessions, and retest after fixes.
 ```
 
 ## Existing Docs Stewardship

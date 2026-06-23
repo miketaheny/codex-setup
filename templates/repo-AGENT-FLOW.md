@@ -59,6 +59,7 @@ TODO
 - Update docs when behavior, setup, architecture, security, deployment, operations, onboarding, or user workflows change.
 - Add reusable patterns to `docs/solutions/`.
 - Add durable decisions to `docs/decisions/`.
+- Use `af-feature-audit` only when explicitly requested for app-wide feature/user-story QA work; keep its canonical register at `docs/product/feature-register.csv` unless this repo config says otherwise.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
 ## Review Expectations

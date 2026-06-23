@@ -55,6 +55,8 @@ af-reconcile -> af-full-review -> af-release
 
 Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates.
 
+Show `af-help` as the read-only command map and mention `af-feature-audit` as a manual-only app-wide feature/user-story QA campaign.
+
 ### 4. Demonstrate A Session
 
 ```bash

@@ -6,9 +6,12 @@
 Read-only chat: answer directly.
 File-changing chat: af-flow -> implementation -> af-devlog -> af-finish.
 Release: af-reconcile -> af-full-review -> af-release.
+Manual feature audit: af-feature-audit.
 ```
 
 Use `af-show` during finish when seeing the app, rendered docs, CLI output, or another artifact would materially improve confidence. Use `af-security-review` only when requested, config-required, or security-sensitive.
+
+Use `af-help` for command help and usage-guide routing. `af-feature-audit` is manual-only and should not run as part of ordinary finish or release gates.
 
 ## Branch Model
 
@@ -58,6 +61,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 
 | Situation | Skill |
 |---|---|
+| Command help and usage guide | `af-help` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Record engineering history | `af-devlog` |
@@ -69,7 +73,24 @@ Use `devlog/` for decisions, validation, review, and risks.
 | Prepare release PRs | `af-release` |
 | Security-only deep review | `af-security-review` |
 | Project docs and visual assets | `af-docs` |
+| Whole-app feature/user-story QA campaign | `af-feature-audit` |
 | Legacy Backlog history migration | `af-migrate-backlog-devlog` |
+
+## Feature Audit Campaigns
+
+Run `af-feature-audit` only when explicitly requested. It creates or updates one canonical spreadsheet-compatible register, normally:
+
+```text
+docs/product/feature-register.csv
+```
+
+The campaign flow is:
+
+```text
+discover features -> draft user stories and expected behavior -> test every story -> fix UX/logistical errors in scoped AF sessions -> retest
+```
+
+Feature-audit fixes still use normal file-changing session rules, including devlog, validation, review, and ask-before-merge.
 
 ## Devlog And Docs
 

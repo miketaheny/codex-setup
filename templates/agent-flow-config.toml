@@ -35,3 +35,7 @@ docs = "required-when-impacted"
 security_review = "optional"
 formal_security_review = "when-configured-or-sensitive"
 security_review_pr_bases = ["staging", "main"]
+
+# Manual product/QA campaigns.
+feature_audit = "manual"
+feature_register = "docs/product/feature-register.csv"
