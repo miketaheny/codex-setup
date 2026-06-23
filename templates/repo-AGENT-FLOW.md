@@ -59,6 +59,9 @@ TODO
 - Update docs when behavior, setup, architecture, security, deployment, operations, onboarding, or user workflows change.
 - Add reusable patterns to `docs/solutions/`.
 - Add durable decisions to `docs/decisions/`.
+- Use `af-feature-audit` only when explicitly requested for app-wide feature/user-story QA work; keep its canonical register at `docs/product/feature-register.csv` unless this repo config says otherwise.
+- Use `af-brand-guidelines` to create or ingest brand/design rules before broad UI work when no guideline exists.
+- Use `af-ui-audit` only when explicitly requested for responsive UI/UX audit work; keep its canonical register at `docs/product/ui-audit-register.csv` unless this repo config says otherwise.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
 ## Review Expectations
@@ -76,7 +79,7 @@ Before release:
 
 - run `af-reconcile`
 - run `af-full-review`
-- run `af-security-review` if requested, configured, or security-sensitive
+- run `af-security-review` if requested, configured, or security-sensitive; prefer the Codex Security diff-scan path when available
 - run `af-release`
 
 ## Gitignore And IDE Files

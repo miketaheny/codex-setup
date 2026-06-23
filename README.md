@@ -15,7 +15,7 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - **Control parallel work:** keep agent sessions isolated in worktrees instead of letting them collide on the parent branch.
 - **Preserve engineering memory:** write finish-time `devlog/` entries instead of burying decisions in chat history.
 - **Keep docs current:** update user, architecture, workflow, visual, and marketing docs when behavior changes.
-- **Protect release paths:** use review, release readiness, optional security review, and push-readiness checks.
+- **Protect release paths:** use review, release readiness, optional Codex Security-aware security review, and push-readiness checks.
 - **Stay agent-agnostic:** use one canonical `AGENT-FLOW.md`, with adapters for Codex-compatible agents and Claude-compatible agents.
 
 ## What It Installs
@@ -23,6 +23,8 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - Canonical workflow rules in `AGENT-FLOW.md`.
 - Agent adapters: `AGENTS.md` for Codex-compatible agents and `CLAUDE.md` for Claude-compatible agents.
 - Compact AF skills:
+  - `af-help`
+  - `af-brand-guidelines`
   - `af-flow`
   - `af-status`
   - `af-devlog`
@@ -34,6 +36,8 @@ It exists because capable agents still need reliable rails. Without a shared wor
   - `af-release`
   - `af-security-review`
   - `af-docs`
+  - `af-feature-audit`
+  - `af-ui-audit`
   - `af-migrate-backlog-devlog`
 - Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
@@ -97,6 +101,30 @@ For read-only repo and worktree status:
 af-status
 ```
 
+For command help:
+
+```text
+af-help
+```
+
+For explicit app-wide feature/user-story QA campaigns:
+
+```text
+af-feature-audit
+```
+
+For brand/design guideline setup:
+
+```text
+af-brand-guidelines
+```
+
+For explicit responsive UI/UX audit campaigns:
+
+```text
+af-ui-audit
+```
+
 Direct helpers:
 
 ```bash
@@ -119,12 +147,13 @@ scripts/start-session.sh --branch feat/export-csv feat export-csv
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-security-review` when requested, config-required, or security-sensitive.
+Run `af-security-review` when requested, config-required, or security-sensitive. When the Codex Security plugin is available, AF prefers its diff-scan workflow for Git-backed release diffs and records the plugin result or fallback reason.
 
 Default release path is `development -> staging -> main`. With staging disabled or explicitly skipped, use `development -> main`.
 
 ## Documentation
 
+- [Agent-Flow Usage Guide](docs/AGENT-FLOW-USAGE.md)
 - [Brand Guidelines](docs/BRAND-GUIDELINES.md)
 - [Workflow](docs/WORKFLOW.md)
 - [User Guide](docs/USER-GUIDE.md)

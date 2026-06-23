@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF UI Audit"
+  short_description: "Full UI/UX and responsive audit"
+  default_prompt: "Use $af-ui-audit to review the app UI, record issues, fix responsive and UX problems, and retest."

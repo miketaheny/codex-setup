@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Brand Guidelines"
+  short_description: "Create or ingest repo brand guidelines"
+  default_prompt: "Use $af-brand-guidelines to create or ingest this repo brand guideline before UI work."
