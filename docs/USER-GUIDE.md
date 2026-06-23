@@ -66,6 +66,7 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Need | Skill |
 |---|---|
 | Command help and usage guide | `af-help` |
+| Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
@@ -78,6 +79,7 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Security-only review | `af-security-review` |
 | Docs, diagrams, demos, guides | `af-docs` |
 | Whole-app feature/user-story QA campaign | `af-feature-audit` |
+| Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
 
 ## Feature Audit
@@ -95,6 +97,32 @@ docs/product/feature-register.csv
 ```
 
 The register is spreadsheet-compatible and tracks source paths, user stories, expected behavior, acceptance criteria, test results, fix sessions, retest results, and status.
+
+## UI Audit And Brand Guidelines
+
+Use `af-brand-guidelines` first when a repo lacks brand/design rules:
+
+```text
+Use af-brand-guidelines to create or ingest this repo's brand guideline for UI work.
+```
+
+Default guideline path:
+
+```text
+docs/BRAND-GUIDELINES.md
+```
+
+Use `af-ui-audit` when you explicitly want a full responsive UI/UX campaign:
+
+```text
+Use af-ui-audit on this app. Audit responsive behavior, visual consistency, accessibility, brand conformance, UX issues, fixes, and retests.
+```
+
+Default canonical register:
+
+```text
+docs/product/ui-audit-register.csv
+```
 
 See [Agent-Flow Usage Guide](AGENT-FLOW-USAGE.md) for the full command map.
 

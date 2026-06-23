@@ -32,7 +32,7 @@ Agent-Flow provides:
 
 - Agent-neutral canonical instructions exist in `AGENT-FLOW.md`.
 - Codex and Claude adapters point to the same rules.
-- Skills cover help, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, security review, manual feature audits, and Backlog migration.
+- Skills cover help, brand guidelines, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, security review, manual feature audits, manual UI audits, and Backlog migration.
 - Bootstrap scripts create consistent repo instruction and documentation scaffolding.
 - Visual docs now include architecture diagrams, a user guide, demo plan, and presentation outline.
 

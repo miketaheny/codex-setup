@@ -79,6 +79,7 @@ Use this table when the user asks what to run:
 | Need | Skill |
 |---|---|
 | Command help and usage guide | `af-help` |
+| Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish, validate, review, and ask before merge | `af-finish` |
@@ -91,6 +92,7 @@ Use this table when the user asks what to run:
 | Security-only review | `af-security-review` |
 | Docs, diagrams, demos, guides | `af-docs` |
 | Whole-app feature/user-story QA campaign | `af-feature-audit` |
+| Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
 
 ## Prompt Examples
@@ -105,6 +107,14 @@ Use af-flow for this file-changing request, then af-finish when done.
 
 ```text
 Use af-feature-audit on this app and keep one canonical feature register.
+```
+
+```text
+Use af-brand-guidelines to create or ingest this repo brand guideline before UI work.
+```
+
+```text
+Use af-ui-audit on this app and keep one canonical UI audit register.
 ```
 
 ```text

@@ -18,7 +18,7 @@ af-reconcile -> af-full-review -> af-release
 
 Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access.
 
-Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign.
+Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
 
 ## First Contact
 
@@ -95,6 +95,8 @@ Run that only after explicit approval.
 - Update project docs when behavior, setup, architecture, security, deployment, operations, onboarding, or user workflows change.
 - Use `af-docs` for docs maintenance, diagrams, guides, demo plans, presentations, and visual communication assets.
 - Use `af-feature-audit` only for explicit app-wide feature/user-story QA campaigns; it is not part of the default finish or release gates.
+- Use `af-brand-guidelines` before broad UI work when a repo lacks a usable brand/design source of truth.
+- Use `af-ui-audit` only for explicit responsive UI/UX review, issue-register, fix, and retest campaigns; it is not part of the default finish or release gates.
 - Use `af-migrate-backlog-devlog` only for preserving old Backlog-style history.
 
 ## Push Readiness

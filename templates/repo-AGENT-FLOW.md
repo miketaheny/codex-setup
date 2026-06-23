@@ -60,6 +60,8 @@ TODO
 - Add reusable patterns to `docs/solutions/`.
 - Add durable decisions to `docs/decisions/`.
 - Use `af-feature-audit` only when explicitly requested for app-wide feature/user-story QA work; keep its canonical register at `docs/product/feature-register.csv` unless this repo config says otherwise.
+- Use `af-brand-guidelines` to create or ingest brand/design rules before broad UI work when no guideline exists.
+- Use `af-ui-audit` only when explicitly requested for responsive UI/UX audit work; keep its canonical register at `docs/product/ui-audit-register.csv` unless this repo config says otherwise.
 - Run `scripts/check-push-readiness.sh <branch>` before pushing a parent branch.
 
 ## Review Expectations

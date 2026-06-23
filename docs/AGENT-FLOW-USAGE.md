@@ -85,6 +85,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Need | Skill |
 |---|---|
 | Command help and this usage guide | `af-help` |
+| Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
@@ -97,6 +98,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Security-only review | `af-security-review` |
 | Docs, diagrams, demos, guides | `af-docs` |
 | Whole-app feature/user-story QA campaign | `af-feature-audit` |
+| Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
 
 ## Feature Audit
@@ -119,6 +121,30 @@ Fixes discovered during an audit still use normal AF sessions:
 
 ```text
 af-flow -> implementation -> af-devlog -> af-finish
+```
+
+## UI Audit And Brand Guidelines
+
+Use `af-brand-guidelines` to create, ingest, or update the repo brand/design source of truth.
+
+Default guideline:
+
+```text
+docs/BRAND-GUIDELINES.md
+```
+
+Use `af-ui-audit` only when explicitly starting a responsive UI/UX review and fix campaign.
+
+Default UI audit register:
+
+```text
+docs/product/ui-audit-register.csv
+```
+
+The audit loop is:
+
+```text
+establish brand/design baseline -> inspect routes and viewports -> record issues -> fix responsive/UI/UX problems -> retest
 ```
 
 ## Release

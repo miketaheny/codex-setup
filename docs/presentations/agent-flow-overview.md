@@ -26,7 +26,7 @@ Visual: hub-and-spoke diagram.
 
 ## Slide 5: Skills and Scripts
 
-AF skills cover help, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, security review, manual feature audits, and Backlog migration.
+AF skills cover help, brand guidelines, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, security review, manual feature audits, manual UI audits, and Backlog migration.
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 

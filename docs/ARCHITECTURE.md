@@ -67,6 +67,11 @@ flowchart TD
     AuditStart["Explicit feature audit"] --> Audit["af-feature-audit"]
     Audit --> Register["docs/product/feature-register.csv"]
     Audit --> AuditFix["Scoped AF fix sessions"]
+
+    UIStart["Explicit UI audit"] --> Brand["af-brand-guidelines when needed"]
+    Brand --> UIAudit["af-ui-audit"]
+    UIAudit --> UIRegister["docs/product/ui-audit-register.csv"]
+    UIAudit --> UIFix["Scoped AF fix sessions"]
 ```
 
 ## Session Scripts

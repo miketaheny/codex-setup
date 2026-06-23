@@ -39,3 +39,7 @@ security_review_pr_bases = ["staging", "main"]
 # Manual product/QA campaigns.
 feature_audit = "manual"
 feature_register = "docs/product/feature-register.csv"
+ui_audit = "manual"
+ui_audit_register = "docs/product/ui-audit-register.csv"
+brand_guidelines = "docs/BRAND-GUIDELINES.md"
+brand_guidelines_mode = "ingest-or-create"

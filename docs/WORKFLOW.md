@@ -7,11 +7,12 @@ Read-only chat: answer directly.
 File-changing chat: af-flow -> implementation -> af-devlog -> af-finish.
 Release: af-reconcile -> af-full-review -> af-release.
 Manual feature audit: af-feature-audit.
+Manual UI audit: af-brand-guidelines -> af-ui-audit.
 ```
 
 Use `af-show` during finish when seeing the app, rendered docs, CLI output, or another artifact would materially improve confidence. Use `af-security-review` only when requested, config-required, or security-sensitive.
 
-Use `af-help` for command help and usage-guide routing. `af-feature-audit` is manual-only and should not run as part of ordinary finish or release gates.
+Use `af-help` for command help and usage-guide routing. `af-feature-audit` and `af-ui-audit` are manual-only and should not run as part of ordinary finish or release gates.
 
 ## Branch Model
 
@@ -62,6 +63,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 | Situation | Skill |
 |---|---|
 | Command help and usage guide | `af-help` |
+| Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Record engineering history | `af-devlog` |
@@ -74,6 +76,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 | Security-only deep review | `af-security-review` |
 | Project docs and visual assets | `af-docs` |
 | Whole-app feature/user-story QA campaign | `af-feature-audit` |
+| Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Legacy Backlog history migration | `af-migrate-backlog-devlog` |
 
 ## Feature Audit Campaigns
@@ -91,6 +94,28 @@ discover features -> draft user stories and expected behavior -> test every stor
 ```
 
 Feature-audit fixes still use normal file-changing session rules, including devlog, validation, review, and ask-before-merge.
+
+## UI Audit Campaigns
+
+Run `af-brand-guidelines` when the repo lacks a usable brand/design source of truth. It creates or updates:
+
+```text
+docs/BRAND-GUIDELINES.md
+```
+
+Run `af-ui-audit` only when explicitly requested. It creates or updates one canonical spreadsheet-compatible register, normally:
+
+```text
+docs/product/ui-audit-register.csv
+```
+
+The campaign flow is:
+
+```text
+establish brand/design baseline -> inspect routes and viewports -> record UI/UX issues -> fix scoped batches -> retest
+```
+
+UI-audit fixes still use normal file-changing session rules, including devlog, validation, visual/manual proof, review, and ask-before-merge.
 
 ## Devlog And Docs
 

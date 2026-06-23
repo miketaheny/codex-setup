@@ -6,6 +6,12 @@
 Use af-help. Show me the Agent-Flow command map, skill choices, and usage-guide path.
 ```
 
+## Brand Guidelines
+
+```text
+Use af-brand-guidelines. Create or ingest this repo's brand/design guideline for UI work, mark whether it is canonical or provisional, and record open questions.
+```
+
 ## Start And Finish Work
 
 ```text
@@ -58,6 +64,12 @@ Use af-docs. Update project docs from devlog entries, commits, changed scripts, 
 
 ```text
 Use af-feature-audit on this app. Go over every feature, create a user story with expected behavior from the code, keep one canonical feature register, test every story, fix UX/logistical errors in scoped AF sessions, and retest after fixes.
+```
+
+## UI Audit
+
+```text
+Use af-ui-audit on this app. Audit responsive design, visual consistency, accessibility, brand conformance, UX issues, and layout defects across routes and viewports; keep one canonical UI audit register, fix scoped batches, and retest.
 ```
 
 ## Existing Docs Stewardship

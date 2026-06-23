@@ -24,6 +24,7 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - Agent adapters: `AGENTS.md` for Codex-compatible agents and `CLAUDE.md` for Claude-compatible agents.
 - Compact AF skills:
   - `af-help`
+  - `af-brand-guidelines`
   - `af-flow`
   - `af-status`
   - `af-devlog`
@@ -36,6 +37,7 @@ It exists because capable agents still need reliable rails. Without a shared wor
   - `af-security-review`
   - `af-docs`
   - `af-feature-audit`
+  - `af-ui-audit`
   - `af-migrate-backlog-devlog`
 - Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
@@ -109,6 +111,18 @@ For explicit app-wide feature/user-story QA campaigns:
 
 ```text
 af-feature-audit
+```
+
+For brand/design guideline setup:
+
+```text
+af-brand-guidelines
+```
+
+For explicit responsive UI/UX audit campaigns:
+
+```text
+af-ui-audit
 ```
 
 Direct helpers:
