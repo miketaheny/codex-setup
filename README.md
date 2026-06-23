@@ -23,6 +23,8 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - Canonical workflow rules in `AGENT-FLOW.md`.
 - Agent adapters: `AGENTS.md` for Codex-compatible agents and `CLAUDE.md` for Claude-compatible agents.
 - Compact AF skills:
+  - `af-help`
+  - `af-brand-guidelines`
   - `af-flow`
   - `af-status`
   - `af-devlog`
@@ -34,6 +36,8 @@ It exists because capable agents still need reliable rails. Without a shared wor
   - `af-release`
   - `af-security-review`
   - `af-docs`
+  - `af-feature-audit`
+  - `af-ui-audit`
   - `af-migrate-backlog-devlog`
 - Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
@@ -97,6 +101,30 @@ For read-only repo and worktree status:
 af-status
 ```
 
+For command help:
+
+```text
+af-help
+```
+
+For explicit app-wide feature/user-story QA campaigns:
+
+```text
+af-feature-audit
+```
+
+For brand/design guideline setup:
+
+```text
+af-brand-guidelines
+```
+
+For explicit responsive UI/UX audit campaigns:
+
+```text
+af-ui-audit
+```
+
 Direct helpers:
 
 ```bash
@@ -125,6 +153,7 @@ Default release path is `development -> staging -> main`. With staging disabled 
 
 ## Documentation
 
+- [Agent-Flow Usage Guide](docs/AGENT-FLOW-USAGE.md)
 - [Brand Guidelines](docs/BRAND-GUIDELINES.md)
 - [Workflow](docs/WORKFLOW.md)
 - [User Guide](docs/USER-GUIDE.md)

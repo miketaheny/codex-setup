@@ -1,0 +1,34 @@
+# 2026-06-23 - Add UI audit and brand guideline skills
+
+- Branch/worktree: `detached session` / `/Users/taheny/vault/teamt/codex-setup.worktrees/feature-audit-help`
+- Commit: `pending`
+- Goal: Add a manual UI/UX audit workflow and a companion brand-guideline workflow.
+- Summary:
+  - Added `af-ui-audit` for responsive UI/UX review, visual consistency checks, brand conformance, issue tracking, fixes, and retesting.
+  - Added `af-brand-guidelines` for creating, ingesting, interviewing for, or updating a repo brand/design source of truth.
+  - Added `templates/ui-audit-register.csv` and `templates/brand-guidelines.md`.
+  - Updated Agent-Flow docs, prompts, config templates, command maps, and `af-help` discovery.
+- Files changed:
+  - `skills/af-ui-audit/` - new UI/UX audit skill and UI metadata.
+  - `skills/af-brand-guidelines/` - new brand guideline skill and UI metadata.
+  - `templates/ui-audit-register.csv` - UI issue register schema.
+  - `templates/brand-guidelines.md` - starting guideline structure.
+  - `AGENT-FLOW.md`, `README.md`, `docs/*`, `templates/*`, `CHANGELOG.md`, `skills/af-help/SKILL.md` - discovery and workflow updates.
+- Decisions:
+  - Keep brand guideline creation/ingestion as a separate skill from UI audit so UI audit can depend on a clear baseline without bundling a full interview into every run.
+  - Keep `af-ui-audit` manual-only because it is a broad UI/UX campaign, not a default finish or release gate.
+  - Use CSV as the default audit register because it is spreadsheet-compatible and diffable.
+- Validation:
+  - `git diff --check` - passed.
+  - `bash -n scripts/install.sh scripts/init-repo.sh scripts/install-hooks.sh scripts/check-branch-safety.sh scripts/check-push-readiness.sh scripts/start-session.sh scripts/finish-session.sh` - passed.
+  - `python3 -m py_compile scripts/worktree-manager.py` - passed.
+  - Structural frontmatter/UI metadata validation for `skills/af-ui-audit` and `skills/af-brand-guidelines` - passed.
+  - CSV template validation for `templates/ui-audit-register.csv` and `templates/feature-register.csv` - passed.
+  - `./scripts/install.sh` - passed; refreshed `/Users/taheny/.agent-flow`, `/Users/taheny/.codex`, and `/Users/taheny/.claude`.
+  - Installed surface checks for `/Users/taheny/.codex` and `/Users/taheny/.agent-flow` - passed.
+- Visual/manual proof:
+  - Not applicable; this is docs, skills, templates, and install-surface work.
+- Review:
+  - Pending `af-finish`.
+- Risks / follow-ups:
+  - None known.

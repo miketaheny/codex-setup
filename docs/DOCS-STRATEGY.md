@@ -54,8 +54,9 @@ Current canonical docs:
 |---|---|---|
 | `CHANGELOG.md` | Current | Keep user-facing workflow, docs, skill, and setup changes summarized. |
 | `README.md` | Current | Keep as the quick entrypoint, install guide, and docs map. |
+| `docs/AGENT-FLOW-USAGE.md` | Current | Keep as the command cheat sheet and skill-selection guide used by `af-help`. |
 | `docs/WORKFLOW.md` | Current | Keep branch, devlog, review, migration, and release workflow accurate. |
-| `docs/BRAND-GUIDELINES.md` | Current | Keep positioning, messaging, voice, visual identity, launch surfaces, and public repo presentation guidance aligned with the product direction. |
+| `docs/BRAND-GUIDELINES.md` | Current | Keep positioning, messaging, voice, visual identity, UI rules, launch surfaces, and public repo presentation guidance aligned with the product direction. |
 | `docs/AGENT-PROMPTS.md` | Current | Keep prompt examples aligned with current AF skills and workflow rules. |
 | `docs/ARCHITECTURE.md` | Current | Keep system, install, init, and skill-routing diagrams aligned with scripts and files. |
 | `docs/USER-GUIDE.md` | Current | Keep session-based install, init, skill, migration, and release guidance accurate. |
@@ -91,6 +92,7 @@ Run `af-docs` when changes affect:
 - installation, init, gitignore, or IDE policy behavior
 - scripts under `scripts/`
 - skills under `skills/`
+- command help, usage-guide, feature-audit, brand-guideline, or UI-audit behavior
 - agent adapters such as `AGENTS.md`, `CLAUDE.md`, or `AGENT-FLOW.md`
 - templates copied into target repos
 - prompt lifecycle, branch, worktree, devlog, review, optional security review, merge, push-readiness, or release workflows

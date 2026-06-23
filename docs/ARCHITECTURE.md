@@ -45,7 +45,9 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Request["User request"] --> Kind{"File-changing?"}
+    Request --> Help{"Command help?"}
+    Help -->|Yes| AFHelp["af-help"]
+    Help -->|No| Kind
     Kind -->|No| Answer["Answer directly"]
     Kind -->|Yes| Flow["af-flow"]
     Flow --> Work["Scoped implementation"]
@@ -61,6 +63,15 @@ flowchart TD
     Security -->|Yes| Sec["af-security-review with Codex Security when available"]
     Security -->|No| Release["af-release"]
     Sec --> Release
+
+    AuditStart["Explicit feature audit"] --> Audit["af-feature-audit"]
+    Audit --> Register["docs/product/feature-register.csv"]
+    Audit --> AuditFix["Scoped AF fix sessions"]
+
+    UIStart["Explicit UI audit"] --> Brand["af-brand-guidelines when needed"]
+    Brand --> UIAudit["af-ui-audit"]
+    UIAudit --> UIRegister["docs/product/ui-audit-register.csv"]
+    UIAudit --> UIFix["Scoped AF fix sessions"]
 ```
 
 ## Session Scripts

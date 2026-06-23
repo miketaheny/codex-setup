@@ -1,0 +1,34 @@
+# 2026-06-23 - Add feature audit and help skills
+
+- Branch/worktree: `detached session` / `/Users/taheny/vault/teamt/codex-setup.worktrees/feature-audit-help`
+- Commit: `pending`
+- Goal: Add a manual `af-feature-audit` workflow and an `af-help` command/usage-guide surface.
+- Summary:
+  - Added `af-feature-audit` for explicit whole-app feature discovery, user-story generation, canonical register tracking, testing, fix sessions, and retesting.
+  - Added `af-help` for read-only Agent-Flow command help and usage-guide routing.
+  - Added `docs/AGENT-FLOW-USAGE.md` and `templates/feature-register.csv`.
+  - Updated README, workflow docs, prompts, config template, repo template, pitch/demo/presentation docs, architecture, changelog, and docs strategy.
+- Files changed:
+  - `skills/af-feature-audit/SKILL.md` - new manual-only feature audit workflow.
+  - `skills/af-help/SKILL.md` - new read-only command help workflow.
+  - `docs/AGENT-FLOW-USAGE.md` - Markdown usage guide for command and skill selection.
+  - `templates/feature-register.csv` - canonical register schema template.
+  - `templates/agent-flow-config.toml` - manual feature-audit defaults.
+  - `AGENT-FLOW.md`, `README.md`, `docs/*`, `templates/repo-AGENT-FLOW.md`, `CHANGELOG.md` - discovery and documentation updates.
+- Decisions:
+  - `af-feature-audit` is manual-only and not part of normal finish or release gates because it is a broad product/QA campaign.
+  - CSV is the default canonical feature register because it is spreadsheet-compatible and diffable.
+  - `af-help` is read-only by default; writing a repo-local guide still requires normal AF session handling.
+- Validation:
+  - `git diff --check` - passed.
+  - `bash -n scripts/install.sh scripts/init-repo.sh scripts/install-hooks.sh scripts/check-branch-safety.sh scripts/check-push-readiness.sh scripts/start-session.sh scripts/finish-session.sh` - passed.
+  - `python3 -m py_compile scripts/worktree-manager.py` - passed.
+  - `python3` skill/docs/template presence check - passed.
+  - `./scripts/install.sh` - passed; refreshed `/Users/taheny/.agent-flow`, `/Users/taheny/.codex`, and `/Users/taheny/.claude`.
+  - Installed surface checks for `/Users/taheny/.codex` and `/Users/taheny/.agent-flow` - passed.
+- Visual/manual proof:
+  - Not applicable; this is docs, skills, templates, and install-surface work.
+- Review:
+  - Pending `af-finish`.
+- Risks / follow-ups:
+  - Existing install behavior backs up global adapter files on each run; this run created timestamped backups as expected.
