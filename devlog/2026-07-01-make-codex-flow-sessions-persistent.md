@@ -1,0 +1,38 @@
+# 2026-07-01 - Make Codex flow sessions persistent
+
+- Branch/worktree: `fa2e7e4` / `/Users/taheny/vault/teamt/agent-flow.worktrees/persistent-codex-flow`
+- Commit: pending
+- Goal: Make Agent-Flow sessions feel natural in Codex by keeping related work in one active worktree until the user explicitly wraps up, reviews, reconciles, merges, or switches direction.
+- Summary:
+  - Changed AF's session contract from prompt/chat-oriented language to user-ended persistent worktree sessions.
+  - Updated start-session metadata to create sessions in `active` state with `agentFlow.sessionUnit = user-ended`.
+  - Added explicit end triggers for finish, review, reconcile, merge, and switch-direction.
+  - Updated `af-flow`, `af-finish`, `af-help`, docs, templates, and public copy to avoid finishing after every prompt.
+  - Refreshed global installs under `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+- Files changed:
+  - `AGENT-FLOW.md` - documents persistent Codex/AF session behavior.
+  - `scripts/start-session.sh` - marks new sessions active and records persistent-session metadata.
+  - `scripts/init-repo.sh` and `templates/agent-flow-config.toml` - generate `session_unit = "user-ended"` config.
+  - `skills/af-flow/SKILL.md` - adopts/continues active sessions and routes finish/review/reconcile requests appropriately.
+  - `skills/af-finish/SKILL.md` - clarifies finish is explicit wrap-up, not automatic after each prompt.
+  - `skills/af-reconcile/scripts/worktree_manager.py` - pickup now restores persistent active-session metadata.
+  - Docs/templates/brand copy - replaced one-chat wording with one related working session.
+- Decisions:
+  - Kept one worktree per related working session rather than one worktree per prompt.
+  - Kept `af-finish` as an explicit user-controlled end action so flow/vibe sessions can continue naturally.
+  - Used metadata keys instead of adding a new service or daemon; persistence stays local and Git/worktree-backed.
+- Validation:
+  - `bash -n scripts/start-session.sh scripts/finish-session.sh scripts/init-repo.sh scripts/install.sh scripts/check-push-readiness.sh` - passed.
+  - `python3 -m py_compile skills/af-reconcile/scripts/worktree_manager.py skills/af-reconcile/scripts/audit_repo.py` - passed.
+  - TOML parse for `templates/agent-flow-config.toml` - passed.
+  - Temporary repo `init-repo.sh --yes --no-hooks --no-staging --no-pnpm` smoke test - passed and generated `session_unit = "user-ended"`.
+  - Temporary repo `scripts/start-session.sh feat fluid-session` smoke test - passed and created an active worktree with persistent-session metadata.
+  - `./scripts/install.sh` - passed and refreshed global AF/Codex/Claude install surfaces.
+  - Installed copy validation for persistent wording and script syntax - passed.
+  - `git diff --check` - passed.
+- Visual/manual proof:
+  - Not applicable.
+- Review:
+  - Not run; release review remains separate.
+- Risks / follow-ups:
+  - Codex app behavior still depends on the agent staying attached to or navigating back into the session worktree; AF now documents and scripts that expectation but does not control Codex UI handoff automatically.

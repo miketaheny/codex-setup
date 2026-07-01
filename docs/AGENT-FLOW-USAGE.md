@@ -5,9 +5,9 @@ This guide is the quick reference for using Agent-Flow from a repo that has been
 ## Core Rules
 
 - Read-only questions can be answered directly.
-- File-changing work uses one AF session worktree.
+- File-changing work uses one active AF session worktree until the user asks to finish, review, reconcile, merge, or switch direction.
 - Every file-changing session gets a `devlog/` entry before commit.
-- `af-finish` validates, reviews, commits when configured, and asks before merge.
+- `af-finish` validates, commits when configured, and asks before merge; it is a wrap-up action, not an every-prompt action.
 - Parent branches should pass push-readiness checks before pushing.
 - Release work uses `af-reconcile -> af-full-review -> af-release`.
 
@@ -55,7 +55,7 @@ For repos with a root `package.json`, init also offers pnpm onboarding. It skips
 Ask the agent:
 
 ```text
-Use af-flow for this file-changing request, keep it in one AF session, add the devlog entry, then use af-finish when done.
+Use af-flow for this file-changing request. Keep related work in the same AF session worktree until I ask to finish, review, reconcile, merge, or switch direction.
 ```
 
 Direct script flow:
@@ -85,6 +85,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Initialize without pnpm conversion | `~/.agent-flow/scripts/init-repo.sh --no-pnpm` |
 | Start session | `scripts/start-session.sh feat short-name` |
 | Start branch-backed session | `scripts/start-session.sh --branch feat/short-name feat short-name` |
+| Continue active session | `cd ../<repo>.worktrees/<session-slug>` |
 | Finish session | `scripts/finish-session.sh` |
 | Merge finished session after approval | `scripts/finish-session.sh --merge` |
 | List worktrees | `scripts/worktree-manager.py` |
@@ -134,7 +135,7 @@ discover features -> write user stories -> record expected behavior -> test ever
 Fixes discovered during an audit still use normal AF sessions:
 
 ```text
-af-flow -> implementation -> af-devlog -> af-finish
+af-flow -> persistent implementation -> af-devlog -> af-finish
 ```
 
 ## UI Audit And Brand Guidelines
@@ -176,6 +177,8 @@ Run `af-security-review` when requested, config-required, or when the release to
 - Do not work directly on `main`.
 - Treat `staging` as protected when enabled.
 - Use detached session worktrees unless a named branch is explicitly requested.
+- Continue the current AF session worktree for related follow-up prompts.
+- Do not run `af-finish` until the user asks to wrap up or change session state.
 - Keep metadata small and record human decisions in `devlog/`.
 - Do not run destructive production actions as proof or QA.
 - Do not leave untracked or uncommitted session work behind at finish.

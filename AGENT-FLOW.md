@@ -7,7 +7,7 @@ Agent-Flow (`AF`) is the shared workflow for Claude, Codex, and other coding age
 Use one lifecycle:
 
 ```text
-af-flow -> implementation -> af-devlog -> af-finish
+af-flow -> persistent implementation session -> af-devlog -> af-finish
 ```
 
 Release work adds:
@@ -44,6 +44,7 @@ When opening a repo:
 - If config says `mode = "disabled"`, disclose that AF is disabled and do not enforce AF in that repo.
 - If no AF instructions or config exist, ask whether to run `~/.agent-flow/scripts/init-repo.sh` or opt out locally.
 - Read-only chats can answer directly. Any file edit, dependency change, commit, push, config change, or destructive operation must happen in one AF session worktree.
+- In Codex, treat a working thread as a persistent AF session. Keep using the same session worktree until the user asks to wrap up, finish, review, reconcile, switch direction, or merge.
 
 ## Branch Rules
 
@@ -59,8 +60,13 @@ When opening a repo:
 
 Work must happen in an isolated worktree. AF does not prescribe how that isolation is created — only that it exists.
 
+An AF session is not one prompt and not necessarily one chat turn. It is a worktree-backed working context that stays active until the user explicitly ends it or asks for a session action.
+
 - If the agent provides native worktree isolation, work within it and record AF metadata there.
 - If no isolated worktree exists, use `af-flow` or `scripts/start-session.sh` to create one.
+- If the current checkout is already an AF session worktree and the user is continuing the same direction, keep working there. Do not run `af-finish` just because one request completed.
+- If the user asks to review, reconcile, finish, wrap up, or merge, route to the matching AF skill/script instead of starting a new worktree.
+- If the user changes to a clearly unrelated direction, finish, pause, or explicitly reconcile the current session before starting another.
 
 AF metadata should stay small:
 
@@ -68,12 +74,14 @@ AF metadata should stay small:
 agentFlow.kind = session
 agentFlow.parent = <parent-branch>
 agentFlow.sessionName = <session-name>
-agentFlow.state = started|active|ready|merged
+agentFlow.state = active|ready|merged
 agentFlow.owner = <agent> (set via AF_AGENT_ID env var, defaults to "agent")
 agentFlow.devlogPolicy = finish
 agentFlow.startedAt = <timestamp>
 agentFlow.lastTouchedAt = <timestamp>
 agentFlow.branch = <explicit-branch> # only when branch-backed
+agentFlow.sessionUnit = user-ended
+agentFlow.endTriggers = finish,review,reconcile,merge,switch-direction
 ```
 
 If the current checkout is dirty before starting, inspect it and create or require a devlog-backed commit for that existing work before opening a new session. Do not hide dirty parent work in a new worktree.
@@ -81,6 +89,8 @@ If the current checkout is dirty before starting, inspect it and create or requi
 ## Finish Policy
 
 Every file-changing session needs a `devlog/` entry before the session commit.
+
+Do not finish automatically after every prompt. Finish only when the user asks to wrap up, finish, commit, review for merge, reconcile the session, switch away from the current work, or otherwise end the active working session.
 
 Finish with `af-finish` or:
 

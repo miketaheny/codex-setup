@@ -52,7 +52,7 @@ flowchart TD
     Help -->|No| Kind
     Kind -->|No| Answer["Answer directly"]
     Kind -->|Yes| Flow["af-flow"]
-    Flow --> Work["Scoped implementation"]
+    Flow --> Work["Persistent scoped implementation"]
     Work --> Devlog["af-devlog"]
     Devlog --> Finish["af-finish"]
     Finish --> Show["af-show when useful"]
@@ -84,7 +84,9 @@ flowchart TD
 ```mermaid
 flowchart LR
     Parent["parent branch"] --> Start["start-session.sh"]
-    Start --> Worktree["detached or explicit branch worktree"]
+    Start --> Worktree["active detached or explicit branch worktree"]
+    Worktree --> Continue["related prompts continue here"]
+    Continue --> Worktree
     Worktree --> Finish["finish-session.sh"]
     Finish --> Ready["ASK_USER_MERGE"]
     Ready --> Merge["finish-session.sh --merge"]

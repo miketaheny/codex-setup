@@ -4,7 +4,7 @@
 
 ```text
 Read-only chat: answer directly.
-File-changing chat: af-flow -> implementation -> af-devlog -> af-finish.
+File-changing session: af-flow -> persistent implementation -> af-devlog -> af-finish.
 Release: af-reconcile -> af-full-review -> af-release.
 Manual feature audit: af-feature-audit.
 Manual UI audit: af-brand-guidelines -> af-ui-audit.
@@ -39,6 +39,8 @@ scripts/finish-session.sh --merge
 
 `finish-session.sh` checks readiness and reports `ASK_USER_MERGE`; use `--merge` only after explicit approval.
 
+Do not run `finish-session.sh` after every prompt. A session is open-ended by default and remains active while related work continues. End it only when the user asks to finish, review, reconcile, merge, or switch direction.
+
 New session worktrees are created under a sibling worktree root so they are visually distinct from normal repositories:
 
 ```text
@@ -57,6 +59,8 @@ Keep metadata minimal:
 - `agentFlow.state`
 - `agentFlow.owner`
 - `agentFlow.devlogPolicy`
+- `agentFlow.sessionUnit = user-ended`
+- `agentFlow.endTriggers`
 - timestamps
 - `agentFlow.branch` only for explicit branch-backed sessions
 

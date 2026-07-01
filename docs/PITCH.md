@@ -46,7 +46,7 @@ Agent-Flow is a portable setup for developers who use multiple AI coding agents 
 
 ## Launch Angle
 
-Lead with the workflow problem: AI coding agents are useful, but unstructured file-changing chats are hard to trust later. Agent-Flow turns those chats into scoped sessions with a visible lifecycle: worktree, validation, devlog, docs, review, merge prompt, and push readiness.
+Lead with the workflow problem: AI coding agents are useful, but unstructured file-changing chats are hard to trust later. Agent-Flow turns those chats into persistent scoped sessions with a visible lifecycle: worktree, validation, devlog, docs, review, merge prompt, and push readiness.
 
 Use commands, diagrams, and real terminal output as proof. Do not lead with model-vendor logos, productivity metrics, or broad autonomy claims.
 

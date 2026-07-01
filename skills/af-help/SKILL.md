@@ -127,7 +127,7 @@ Use af-help and show me the Agent-Flow commands.
 ```
 
 ```text
-Use af-flow for this file-changing request, then af-finish when done.
+Use af-flow for this file-changing request. Keep related follow-up work in the same AF session worktree until I ask to finish, review, reconcile, merge, or switch direction.
 ```
 
 ```text
