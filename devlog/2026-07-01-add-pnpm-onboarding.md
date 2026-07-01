@@ -1,0 +1,35 @@
+# 2026-07-01 - Add pnpm onboarding
+
+- Branch/worktree: `a93d9d3` / `/Users/taheny/vault/teamt/agent-flow.worktrees/pnpm-onboarding`
+- Commit: pending
+- Goal: Add an Agent-Flow skill and onboarding path that can detect whether a Node repo uses pnpm and convert it when needed.
+- Summary:
+  - Added `af-pnpm` with a reusable conversion helper.
+  - Wired `init-repo.sh` to offer pnpm onboarding for repos with a root `package.json`.
+  - Added `--pnpm` and `--no-pnpm` controls for explicit reruns or opt-out.
+  - Updated help, usage, architecture, demo, prompt, and presentation docs.
+- Files changed:
+  - `skills/af-pnpm/SKILL.md` - defines the pnpm conversion workflow and recommendations.
+  - `skills/af-pnpm/scripts/convert_to_pnpm.py` - detects package-manager state, converts to pnpm, runs install, removes legacy lockfiles after success, and reports follow-up command references.
+  - `skills/af-pnpm/agents/openai.yaml` - exposes UI metadata for Codex.
+  - `scripts/init-repo.sh` - runs pnpm onboarding during repo init for Node repos and supports `--pnpm` / `--no-pnpm`.
+  - `skills/af-help/SKILL.md` and `docs/*.md` - document the new skill and onboarding behavior.
+- Decisions:
+  - Kept conversion repo-scoped and opt-out rather than making a global sweep, because dependency-manager migrations need per-repo validation.
+  - Let each worktree run `pnpm install` instead of symlinking `node_modules`, because pnpm's shared store provides the disk/time benefit without coupling worktrees to one install tree.
+  - Made init warn rather than abort if pnpm onboarding fails, so AF initialization still completes and the user can rerun `af-pnpm` after fixing local toolchain issues.
+- Validation:
+  - `python3 -m py_compile skills/af-pnpm/scripts/convert_to_pnpm.py` - passed.
+  - `bash -n scripts/init-repo.sh scripts/install.sh scripts/check-push-readiness.sh scripts/start-session.sh scripts/finish-session.sh scripts/install-hooks.sh` - passed.
+  - `python3 skills/af-pnpm/scripts/convert_to_pnpm.py . --check` - passed; skipped because this setup repo has no `package.json`.
+  - `python3 skills/af-pnpm/scripts/convert_to_pnpm.py . --convert --yes` in a temporary Node repo - passed and created `pnpm-lock.yaml`.
+  - `pnpm install --frozen-lockfile && pnpm build` in the temporary converted repo - passed.
+  - `init-repo.sh --yes --no-hooks --no-staging` in a temporary Node repo - passed and ran pnpm onboarding.
+  - `git diff --check` - passed.
+  - Skill quick validator - not run; the local `skill-creator` validator path was unavailable after scaffold generation, so direct metadata/frontmatter checks were run instead.
+- Visual/manual proof:
+  - Not applicable; no UI changed.
+- Review:
+  - Not run; finish/release review remains separate in AF.
+- Risks / follow-ups:
+  - pnpm conversion can expose undeclared transitive dependencies in target repos; target repos still need their own build/test validation after migration.

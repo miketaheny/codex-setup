@@ -60,6 +60,12 @@ Use af-security-review for [head] against [base]. Prefer Codex Security diff sca
 Use af-docs. Update project docs from devlog entries, commits, changed scripts, skills, templates, screenshots, and config.
 ```
 
+## pnpm Conversion
+
+```text
+Use af-pnpm. Check whether this repo already uses pnpm, convert it if needed, update obvious CI/docs commands, and validate install/build/test.
+```
+
 ## Feature Audit
 
 ```text

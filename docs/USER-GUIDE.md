@@ -29,6 +29,8 @@ Inside a target Git repo:
 
 The init script creates missing AF instruction files, `devlog/`, docs folders, `.agent-flow/config.toml`, and a non-destructive `.gitignore` block. It asks about enforcement, optional staging, and the pre-push hook.
 
+For repos with a root `package.json`, init also offers pnpm onboarding. It skips non-Node repos and repos already using pnpm. Use `--no-pnpm` to skip conversion or `--pnpm` to run only that onboarding step on an already initialized repo.
+
 ## Daily Work
 
 Ask the agent:
@@ -67,6 +69,7 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 |---|---|
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
+| Convert Node repos to pnpm | `af-pnpm` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |

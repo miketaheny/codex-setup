@@ -48,6 +48,9 @@ Show the relevant subset of these commands:
 # initialize a target repo
 ~/.agent-flow/scripts/init-repo.sh
 
+# initialize while skipping pnpm conversion
+~/.agent-flow/scripts/init-repo.sh --no-pnpm
+
 # start a file-changing session
 scripts/start-session.sh feat short-name
 
@@ -80,6 +83,7 @@ Use this table when the user asks what to run:
 |---|---|
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
+| Convert Node repos to pnpm | `af-pnpm` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish, validate, review, and ask before merge | `af-finish` |
@@ -107,6 +111,10 @@ Use af-flow for this file-changing request, then af-finish when done.
 
 ```text
 Use af-feature-audit on this app and keep one canonical feature register.
+```
+
+```text
+Use af-pnpm to check this repo's package manager and convert it to pnpm.
 ```
 
 ```text

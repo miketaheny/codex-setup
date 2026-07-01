@@ -38,6 +38,8 @@ Inside a target Git repo:
 
 The init script creates repo instruction files, `.agent-flow/config.toml`, `devlog/`, docs scaffolding, helper scripts, and optional pre-push hooks.
 
+For repos with a root `package.json`, init also offers pnpm onboarding. It skips non-Node repos and repos already using pnpm. Use `--no-pnpm` to skip conversion or `--pnpm` to run the pnpm step on an already initialized repo.
+
 ## Daily File-Changing Work
 
 Ask the agent:
@@ -70,6 +72,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Job | Command |
 |---|---|
 | Initialize repo | `~/.agent-flow/scripts/init-repo.sh` |
+| Initialize without pnpm conversion | `~/.agent-flow/scripts/init-repo.sh --no-pnpm` |
 | Start session | `scripts/start-session.sh feat short-name` |
 | Start branch-backed session | `scripts/start-session.sh --branch feat/short-name feat short-name` |
 | Finish session | `scripts/finish-session.sh` |
@@ -86,6 +89,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 |---|---|
 | Command help and this usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
+| Convert Node repos to pnpm | `af-pnpm` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
