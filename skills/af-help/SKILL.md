@@ -51,6 +51,10 @@ Show the relevant subset of these commands:
 # initialize while skipping pnpm conversion
 ~/.agent-flow/scripts/init-repo.sh --no-pnpm
 
+# explicitly opt this repo out of or back into Agent-Flow
+python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --disable --yes
+python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --enable --yes
+
 # run Codex with an Agent-Flow model/effort profile
 codex --profile fast
 codex --profile review
@@ -89,6 +93,8 @@ Use this table when the user asks what to run:
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish, validate, review, and ask before merge | `af-finish` |
@@ -148,6 +154,14 @@ Use af-feature-audit on this app and keep one canonical feature register.
 
 ```text
 Use af-pnpm to check this repo's package manager and convert it to pnpm.
+```
+
+```text
+Use af-disable to opt this repo out of Agent-Flow.
+```
+
+```text
+Use af-enable to enable Agent-Flow for this repo.
 ```
 
 ```text

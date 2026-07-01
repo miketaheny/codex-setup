@@ -4,6 +4,8 @@
 
 ### Added
 
+- Added `af-disable` and `af-enable` skills for explicit repo-local Agent-Flow opt-out and re-enable workflows.
+- Added `scripts/set-agent-flow-mode.py` for deterministic `.agent-flow/config.toml` mode updates.
 - Added a Codex fast-path guide in Markdown and PDF form, including workflow, escalation, and worktree diagrams.
 - Added a reproducible PDF generator for the Codex fast-path guide.
 - Added `af-flow` as the entry workflow for file-changing sessions.

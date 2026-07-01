@@ -14,6 +14,8 @@ Use `af-show` during finish when seeing the app, rendered docs, CLI output, or a
 
 Use `af-help` for command help and usage-guide routing. `af-feature-audit` and `af-ui-audit` are manual-only and should not run as part of ordinary finish or release gates.
 
+Use `af-disable` only for an explicit repo-local opt-out. Use `af-enable` to reverse that opt-out or run normal AF initialization when setup is missing.
+
 ## Fast Path
 
 Most Codex sessions should use the light path:

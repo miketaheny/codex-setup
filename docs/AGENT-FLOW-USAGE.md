@@ -98,6 +98,8 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Initialize repo | `~/.agent-flow/scripts/init-repo.sh` |
 | Initialize without pnpm conversion | `~/.agent-flow/scripts/init-repo.sh --no-pnpm` |
 | Initialize with explicit branches | `~/.agent-flow/scripts/init-repo.sh --integration-branch development --production-branch main` |
+| Disable AF in this repo | `python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --disable --yes` |
+| Re-enable AF in this repo | `python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --enable --yes` |
 | Start session | `scripts/start-session.sh feat short-name` |
 | Start branch-backed session | `scripts/start-session.sh --branch feat/short-name feat short-name` |
 | Continue active session | `cd ../<repo>.worktrees/<session-slug>` |
@@ -139,6 +141,8 @@ Specialist skills are optional. Use them only when the work asks for that domain
 | Command help and this usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |

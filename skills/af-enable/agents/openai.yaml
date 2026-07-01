@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Enable"
+  short_description: "Enable Agent-Flow for a repo"
+  default_prompt: "Use $af-enable to enable Agent-Flow enforcement for this repo."

@@ -27,6 +27,8 @@ The default path is intentionally light: keep one related work session in one wo
 - Compact AF skills:
   - `af-help`
   - `af-brand-guidelines`
+  - `af-disable`
+  - `af-enable`
   - `af-flow`
   - `af-status`
   - `af-devlog`
@@ -41,7 +43,7 @@ The default path is intentionally light: keep one related work session in one wo
   - `af-feature-audit`
   - `af-ui-audit`
   - `af-migrate-backlog-devlog`
-- Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
+- Scripts for install, repo init, local AF enable/disable, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
 - Brand and launch assets under `docs/BRAND-GUIDELINES.md` and `docs/assets/`.
 

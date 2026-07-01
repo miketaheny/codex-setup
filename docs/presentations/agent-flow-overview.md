@@ -1,5 +1,7 @@
 # Agent-Flow Overview Presentation
 
+The current branded landscape deck lives at `docs/presentations/agent-flow-walkthrough.pptx`.
+
 ## Slide 1: Agent-Flow
 
 Shared workflow rules for Claude, Codex, and other coding agents.

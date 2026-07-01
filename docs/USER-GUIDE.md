@@ -105,6 +105,8 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |

@@ -93,6 +93,7 @@ REPO_HELPER_SCRIPTS=(
   "check-push-readiness.sh"
   "finish-session.sh"
   "install-hooks.sh"
+  "set-agent-flow-mode.py"
   "start-session.sh"
   "worktree-manager.py"
 )
