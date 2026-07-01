@@ -16,7 +16,9 @@ Release work adds:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. When the Codex Security plugin is available, `af-security-review` prefers `$codex-security:security-diff-scan` for Git-backed release diffs and falls back to the manual AF checklist when the plugin is unavailable or blocked.
+Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. `af-security-review` uses the agent's own built-in security-review tool (e.g. Claude Code's `/security-review`) as the scan engine in all cases, falling back to the manual AF checklist only when no such tool is available.
+
+`af-finish` is intentionally fast and does not run a full review — it validates, checks devlog/docs, and reports readiness to merge into the session's parent branch. The one mandatory review gate is `af-full-review`, run once as part of the release flow before code reaches `main`. Use `af-review` only as an optional, on-demand quick check mid-session; it is never required.
 
 Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
 
@@ -42,17 +44,10 @@ When opening a repo:
 
 ## Session Worktrees
 
-Before changing files, use `af-flow` or:
+Work must happen in an isolated worktree. AF does not prescribe how that isolation is created — only that it exists.
 
-```bash
-scripts/start-session.sh <type> <session-name>
-```
-
-For an explicit branch:
-
-```bash
-scripts/start-session.sh --branch <type>/<session-name> <type> <session-name>
-```
+- If the agent provides native worktree isolation, work within it and record AF metadata there.
+- If no isolated worktree exists, use `af-flow` or `scripts/start-session.sh` to create one.
 
 AF metadata should stay small:
 
@@ -61,7 +56,7 @@ agentFlow.kind = session
 agentFlow.parent = <parent-branch>
 agentFlow.sessionName = <session-name>
 agentFlow.state = started|active|ready|merged
-agentFlow.owner = codex
+agentFlow.owner = <agent> (set via AF_AGENT_ID env var, defaults to "agent")
 agentFlow.devlogPolicy = finish
 agentFlow.startedAt = <timestamp>
 agentFlow.lastTouchedAt = <timestamp>
@@ -80,7 +75,7 @@ Finish with `af-finish` or:
 scripts/finish-session.sh
 ```
 
-The finish flow validates, checks docs/devlog, uses `af-show` when useful, runs `af-review`, commits dirty session work when configured, and reports readiness. Ready sessions ask before merge:
+The finish flow validates, checks docs/devlog, uses `af-show` when useful, commits dirty session work when configured, and reports readiness. It does not run a review — that happens once, at release time, via `af-full-review`. Ready sessions ask before merge:
 
 ```bash
 scripts/finish-session.sh --merge
@@ -130,7 +125,7 @@ Before release:
 
 1. Run `af-reconcile`.
 2. Run `af-full-review`.
-3. Run `af-security-review` if requested, config-required, or security-sensitive. Prefer the Codex Security diff-scan path when available.
+3. Run `af-security-review` if requested, config-required, or security-sensitive. It uses the agent's built-in security-review tool for the scan.
 4. Run `af-release`.
 
 Ask before remote side effects such as `git push` or `gh pr create` unless the user clearly authorized them in the current request.
@@ -145,4 +140,4 @@ Ask before remote side effects such as `git push` or `gh pr create` unless the u
 
 ## Done
 
-A session is done when changes are implemented in one AF session worktree, validation is run or explicitly skipped with reason, visual/manual proof is recorded when relevant, devlog and impacted docs are updated, review is complete, merge readiness is reported, and the user has been asked before merge.
+A session is done when changes are implemented in one AF session worktree, validation is run or explicitly skipped with reason, visual/manual proof is recorded when relevant, devlog and impacted docs are updated, merge readiness is reported, and the user has been asked before merge. Full review is a release-time gate (`af-full-review`), not a per-session requirement.

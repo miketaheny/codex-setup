@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -258,7 +259,7 @@ def pickup(report: dict[str, Any], wt: dict[str, Any]) -> str:
     run(["git", "config", "extensions.worktreeConfig", "true"], root)
     metadata = {
         "agentFlow.state": "active",
-        "agentFlow.owner": "codex",
+        "agentFlow.owner": os.environ.get("AF_AGENT_ID", "agent"),
         "agentFlow.lastTouchedAt": now_iso(),
     }
     for key, value in metadata.items():
@@ -269,7 +270,7 @@ def pickup(report: dict[str, Any], wt: dict[str, Any]) -> str:
         [
             f"Picked up worktree [{wt['id']}]: {wt['path']}",
             "",
-            "Recommended new Codex chat start:",
+            "Recommended new agent session start:",
             f"  cd {wt['path']}",
             "  Use Agent-Flow. Continue this AF worktree session, inspect the status, then finish or merge when ready.",
             "",

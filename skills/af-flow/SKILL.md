@@ -1,6 +1,6 @@
 ---
 name: af-flow
-description: Start or adopt one Agent-Flow worktree session for file-changing Codex work. Use when the user asks to change files, fix code, update docs, continue unfinished AF work, switch worktrees, or ensure a request happens in an isolated AF session before implementation.
+description: Start or adopt one Agent-Flow worktree session for file-changing agent work. Use when the user asks to change files, fix code, update docs, continue unfinished AF work, switch worktrees, or ensure a request happens in an isolated session before implementation.
 ---
 
 # AF Flow
@@ -28,7 +28,11 @@ git config --worktree --get agentFlow.parent || true
 
 ## Create Or Adopt
 
-Prefer the repo helper:
+Work must happen in an isolated worktree. Check whether one already exists before creating anything new.
+
+**If the agent provides native worktree isolation** (e.g. Claude Code's built-in worktree, a Codex session worktree already checked out): work within that. Record AF metadata into it and continue — do not create a second worktree.
+
+**If no isolated worktree exists**, use the repo helper:
 
 ```bash
 scripts/start-session.sh <type> <session-name>
@@ -40,7 +44,7 @@ Create a named branch only when explicitly requested:
 scripts/start-session.sh --branch <type>/<session-name> <type> <session-name>
 ```
 
-Use the manager for existing work:
+Use the manager to pick up existing AF work:
 
 ```bash
 scripts/worktree-manager.py
@@ -55,7 +59,7 @@ agentFlow.kind = session
 agentFlow.parent = <parent-branch>
 agentFlow.sessionName = <session-name>
 agentFlow.state = started|active|ready|merged
-agentFlow.owner = codex
+agentFlow.owner = agent
 agentFlow.devlogPolicy = finish
 agentFlow.startedAt = <timestamp>
 agentFlow.lastTouchedAt = <timestamp>

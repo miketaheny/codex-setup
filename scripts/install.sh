@@ -70,8 +70,15 @@ chmod +x "$CODEX_HOME/scripts/"*.sh 2>/dev/null || true
 # Claude-compatible install surface.
 cp "$SRC_DIR/CLAUDE.md" "$CLAUDE_HOME/CLAUDE.md"
 cp "$SRC_DIR/AGENT-FLOW.md" "$CLAUDE_HOME/AGENT-FLOW.md"
+mkdir -p "$CLAUDE_HOME/skills" "$CLAUDE_HOME/templates" "$CLAUDE_HOME/scripts" "$CLAUDE_HOME/docs"
+remove_retired "$CLAUDE_HOME"
+cp -R "$SRC_DIR/skills/." "$CLAUDE_HOME/skills/"
+cp -R "$SRC_DIR/templates/." "$CLAUDE_HOME/templates/"
+cp -R "$SRC_DIR/scripts/." "$CLAUDE_HOME/scripts/"
+cp -R "$SRC_DIR/docs/." "$CLAUDE_HOME/docs/"
+chmod +x "$CLAUDE_HOME/scripts/"*.sh 2>/dev/null || true
 
 echo "Installed AF Agent-Flow setup to $AF_HOME"
 echo "Installed Codex adapter and skills to $CODEX_HOME"
-echo "Installed Claude adapter to $CLAUDE_HOME"
+echo "Installed Claude adapter and skills to $CLAUDE_HOME"
 echo "Next: open a repo and run: $AF_HOME/scripts/init-repo.sh"

@@ -18,7 +18,7 @@ When available, point users to:
 ```text
 docs/AGENT-FLOW-USAGE.md
 ~/.agent-flow/docs/AGENT-FLOW-USAGE.md
-~/.codex/docs/AGENT-FLOW-USAGE.md
+~/.agent-flow/docs/AGENT-FLOW-USAGE.md
 ```
 
 If the user asks to create a repo-local guide, use `af-flow` first and write or update `docs/AGENT-FLOW-USAGE.md`.

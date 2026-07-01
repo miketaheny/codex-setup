@@ -13,7 +13,7 @@ Run release work in this order:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-security-review` only when the user asks, config requires it, `af-full-review` flags security-sensitive changes, or the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. When Codex Security is available, that security gate should prefer `$codex-security:security-diff-scan` for the release diff and report the plugin result or fallback reason.
+Run `af-security-review` only when the user asks, config requires it, `af-full-review` flags security-sensitive changes, or the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. That skill uses the agent's built-in security review tool for the scan.
 
 ## Release Path
 
@@ -119,4 +119,4 @@ Create PRs only after approval. If GitHub tooling is unavailable, provide the ex
 
 ## Output
 
-Report release path, reconcile result, full-review result, security-review status when applicable, Codex Security plugin status when used or skipped, validation, push-readiness, push/SHA verification, PRs offered or created, and remaining blockers or accepted risks.
+Report release path, reconcile result, full-review result, security-review status when applicable, security-review tool status when used or skipped, validation, push-readiness, push/SHA verification, PRs offered or created, and remaining blockers or accepted risks.

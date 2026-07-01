@@ -7,7 +7,7 @@ description: Finish an Agent-Flow worktree session after implementation. Use whe
 
 ## Purpose
 
-Use this as the end-of-session workflow for one AF worktree. It coordinates validation, `af-show` when visual or manual proof is relevant, `af-review`, mandatory `af-devlog`, `scripts/finish-session.sh`, and ask-before-merge.
+Use this as the end-of-session workflow for one AF worktree. It coordinates validation, `af-show` when visual or manual proof is relevant, mandatory `af-devlog`, `scripts/finish-session.sh`, and ask-before-merge. Review happens at merge time via `af-full-review` in the release pipeline, not here.
 
 ## Workflow
 
@@ -51,16 +51,11 @@ Ensure one session devlog entry under `devlog/` records:
 - goal and changed files
 - decisions
 - validation and visual/manual proof status
-- review result
 - risks or follow-ups
 
 Update project docs when the session changes behavior, setup, architecture, security, deployment, operations, onboarding, or user-facing workflows.
 
-### 6. Review
-
-Run `af-review` or perform its checklist directly. Fix P1 findings before continuing. Fix P2 findings or record explicit user acceptance before merge.
-
-### 7. Finish Script
+### 6. Finish Script
 
 Run:
 
@@ -76,6 +71,8 @@ scripts/finish-session.sh --merge
 
 Never merge automatically into `main` or `staging`.
 
+This flow is intentionally fast: no full-diff review gate runs here. If the user explicitly wants a quick mid-session sanity check, run `af-review` on demand — it is optional, not a required step. The mandatory review gate runs once, at release time, via `af-full-review`.
+
 ## Output
 
-Report session path, parent branch, changed files, validation, visual/manual proof status, docs/devlog status, review findings, finish-script result, and merge status or the exact approval needed.
+Report session path, parent branch, changed files, validation, visual/manual proof status, docs/devlog status, finish-script result, and merge status or the exact approval needed.

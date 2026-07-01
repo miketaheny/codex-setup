@@ -1,0 +1,40 @@
+# 2026-07-01 - Multi-agent cleanup and review/worktree de-opinionation
+
+- Branch/worktree: `development` / direct edit in current checkout (no AF session worktree; user-directed global-config session, not entered via `$af-flow`)
+- Commit: `pending`
+- Goal: Remove Codex-only assumptions so Agent-Flow works evenly across Claude Code and Codex, reduce the review overhead on every session finish, and stop AF from imposing its own worktree when the agent already provides isolation.
+- Summary:
+  - Replaced hardcoded `agentFlow.owner = codex` with an `AF_AGENT_ID`-driven default (`"agent"`) in `start-session.sh` and `worktree_manager.py`.
+  - Replaced "Codex work" / "Codex sessions" / "Codex chat" language with agent-neutral phrasing in `af-flow` and `af-reconcile`.
+  - Replaced the Codex Security plugin dependency in `af-security-review`, `af-full-review`, and `af-release` with routing to the agent's own built-in security-review tool (e.g. Claude Code's `/security-review`), falling back to the manual AF checklist when no such tool exists.
+  - Removed the mandatory review step from `af-finish`; session finishes now just validate, check devlog/docs, and report readiness. Repurposed `af-review` as an optional, on-demand mid-session check. `af-full-review` is now the single mandatory review gate, run once in the release flow before `main`.
+  - Changed `af-flow`'s worktree guidance from "always create an AF worktree" to "use native agent worktree isolation if it exists; only create one if it doesn't."
+  - Fixed `install.sh`: it previously only copied `CLAUDE.md`/`AGENT-FLOW.md` for Claude, never the skills bundle, so `~/.claude/skills/` never existed. Added the missing skills/templates/scripts/docs copy block for `$CLAUDE_HOME`, mirroring the existing Codex block.
+- Files changed:
+  - `AGENT-FLOW.md` - Core Lifecycle, Session Worktrees, Finish Policy, Release Flow, and Done sections updated to match the above.
+  - `skills/af-flow/SKILL.md` - description, owner default, worktree section.
+  - `skills/af-reconcile/SKILL.md` - description and body language.
+  - `skills/af-finish/SKILL.md` - purpose, devlog checklist, output, removed review step.
+  - `skills/af-review/SKILL.md` - repositioned as optional/on-demand.
+  - `skills/af-full-review/SKILL.md` - purpose clarifies it's the sole mandatory release-time gate.
+  - `skills/af-security-review/SKILL.md` - scan-path section rewritten around the agent's built-in tool; remaining Codex Security mentions in Practical Checks and Output cleaned up.
+  - `skills/af-release/SKILL.md` - required-order and output sections updated for the same routing.
+  - `skills/af-help/SKILL.md` - fixed a hardcoded `~/.codex/docs/AGENT-FLOW-USAGE.md` path to `~/.agent-flow/docs/AGENT-FLOW-USAGE.md`.
+  - `skills/af-reconcile/scripts/worktree_manager.py` - `pickup()` now uses `AF_AGENT_ID` (default `"agent"`) instead of hardcoded `"codex"`, and the recommended-next-step message is agent-neutral; added missing `import os`.
+  - `scripts/start-session.sh` - same `AF_AGENT_ID` default for `agentFlow.owner`.
+  - `scripts/install.sh` - added the `$CLAUDE_HOME` skills/templates/scripts/docs install block.
+- Decisions:
+  - Did not add a `agents/claude.yaml` (or similar) alongside the existing `agents/openai.yaml` files. Claude Code discovers skills natively from `SKILL.md` frontmatter and needs no separate registration file; the `openai.yaml` files stay because Codex's plugin system requires them.
+  - Kept `af-review` rather than deleting it — it's useful as a fast, optional mid-session sanity check for users who want one without waiting for the release-time gate.
+  - Treated `af-full-review` as the only mandatory review gate, since the user wants review concentrated at the point a worktree/branch goes back toward `main`, not at every session finish.
+- Validation:
+  - `python3 -m py_compile skills/af-reconcile/scripts/worktree_manager.py` - passed.
+  - `rg -rn "codex" skills/ AGENT-FLOW.md scripts/*.sh` (case-insensitive) - reviewed all remaining hits; left intentional ones (e.g. `agents/openai.yaml` files, `install.sh`'s `CODEX_HOME` env var, an illustrative "Codex session worktree" example in `af-flow`, and `audit_repo.py`'s legacy fallback path for finding a globally-installed `af-release` skill).
+  - `diff -rq` between this repo, `~/.agent-flow`, `~/.codex`, and `~/.claude` after running `scripts/install.sh` from this repo - confirmed all four are in sync for AF-owned files, and that Codex's unrelated pre-existing skills (`bible-study`, `chronicle`, `clip-notes`, `hatch-pet`) were untouched.
+  - Confirmed `~/.claude/skills/` now contains all 16 AF skills, where previously it didn't exist.
+- Visual/manual proof:
+  - Not applicable; skill/doc/script metadata only, no UI surface.
+- Review:
+  - Manual review of the scoped diff found no unrelated rewrites, secrets, generated files, or dependency/config changes. Diff is confined to the 12 files listed above.
+- Risks / follow-ups:
+  - `af-reconcile/scripts/audit_repo.py` still has a Codex-specific fallback search path (`codex_home / "skills" / "af-release" / "SKILL.md"`) for locating a globally-installed AF skill when `AF_HOME` doesn't have one. It's additive/non-blocking and out of scope for this pass, but could be extended to also check `CLAUDE_HOME` for symmetry.
