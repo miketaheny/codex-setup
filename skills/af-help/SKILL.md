@@ -18,7 +18,7 @@ When available, point users to:
 ```text
 docs/AGENT-FLOW-USAGE.md
 ~/.agent-flow/docs/AGENT-FLOW-USAGE.md
-~/.codex/docs/AGENT-FLOW-USAGE.md
+~/.agent-flow/docs/AGENT-FLOW-USAGE.md
 ```
 
 If the user asks to create a repo-local guide, use `af-flow` first and write or update `docs/AGENT-FLOW-USAGE.md`.
@@ -48,6 +48,18 @@ Show the relevant subset of these commands:
 # initialize a target repo
 ~/.agent-flow/scripts/init-repo.sh
 
+# initialize while skipping pnpm conversion
+~/.agent-flow/scripts/init-repo.sh --no-pnpm
+
+# explicitly opt this repo out of or back into Agent-Flow
+python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --disable --yes
+python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --enable --yes
+
+# run Codex with an Agent-Flow model/effort profile
+codex --profile fast
+codex --profile review
+codex --profile deep
+
 # start a file-changing session
 scripts/start-session.sh feat short-name
 
@@ -70,6 +82,9 @@ scripts/worktree-manager.py --cleanup <id> --yes
 
 # check parent branch push readiness
 scripts/check-push-readiness.sh development
+
+# optional external Claude CLI review from a Codex AF session
+scripts/claude-review.sh
 ```
 
 ## Skill Map
@@ -80,12 +95,16 @@ Use this table when the user asks what to run:
 |---|---|
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
+| Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish, validate, review, and ask before merge | `af-finish` |
 | Engineering history | `af-devlog` |
 | Visual/manual proof | `af-show` |
 | Normal pre-merge review | `af-review` |
+| Optional Claude CLI external review | `af-claude-review` |
 | Worktree cleanup or pickup | `af-reconcile` |
 | Release readiness review | `af-full-review` |
 | Release PRs | `af-release` |
@@ -95,6 +114,34 @@ Use this table when the user asks what to run:
 | Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
 
+## Codex Model Profiles
+
+When asked about speed, token use, or reasoning effort, point to:
+
+```text
+docs/CODEX-MODEL-POLICY.md
+~/.agent-flow/docs/CODEX-MODEL-POLICY.md
+```
+
+Default guidance:
+
+- `fast` for read-only help/status and lightweight exploration
+- medium for trivial one-file edits and narrow docs copy
+- `xhigh` for most development and computer-use work
+- `deep` for release review, hard debugging, and security-sensitive work
+
+## Fast Path Guidance
+
+When users ask whether Agent-Flow is too complicated, answer with the five daily concepts:
+
+```text
+af-flow, af-status, af-review, af-reconcile, af-finish
+```
+
+Explain that specialist skills are optional add-ons. Ordinary file-changing sessions should continue in one worktree, use targeted context reads, run focused validation, and defer full review to release or explicit review requests.
+
+Also distinguish workflow speed from model effort: AF should stay lightweight, but normal development and computer-use work should usually run at extra-high reasoning unless a quick effort preflight chooses a cheaper tier.
+
 ## Prompt Examples
 
 ```text
@@ -102,11 +149,23 @@ Use af-help and show me the Agent-Flow commands.
 ```
 
 ```text
-Use af-flow for this file-changing request, then af-finish when done.
+Use af-flow for this file-changing request. Keep related follow-up work in the same AF session worktree until I ask to finish, review, reconcile, merge, or switch direction.
 ```
 
 ```text
 Use af-feature-audit on this app and keep one canonical feature register.
+```
+
+```text
+Use af-pnpm to check this repo's package manager and convert it to pnpm.
+```
+
+```text
+Use af-disable to opt this repo out of Agent-Flow.
+```
+
+```text
+Use af-enable to enable Agent-Flow for this repo.
 ```
 
 ```text
@@ -123,6 +182,10 @@ Use af-status to summarize current worktrees without changing anything.
 
 ```text
 Use af-reconcile, then af-full-review, then af-release.
+```
+
+```text
+Use af-claude-review to run Claude CLI as an external review pass, then triage the findings.
 ```
 
 ## Output

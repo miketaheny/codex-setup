@@ -1,11 +1,15 @@
 ---
 name: af-review
-description: Normal pre-merge review gate for Agent-Flow worktree sessions. Checks branch safety, scope, diffs, docs, devlog, validation, risk, and readiness to merge back into the recorded parent branch.
+description: Optional, on-demand review checklist for an Agent-Flow worktree session. Checks branch safety, scope, diffs, docs, devlog, validation, risk. Use only when the user explicitly asks for a quick review mid-session — it is not run automatically by af-finish and is not required before merging into the parent branch.
 ---
 
 # AF Review
 
-Use this before merging an AF session worktree into its recorded parent branch. For the full finish workflow, including visual/manual proof, devlog/docs checks, this review, commit readiness, and ask-before-merge, use `af-finish`.
+Use this only when the user explicitly asks for a review before `af-full-review` would otherwise run. It is not part of the mandatory lifecycle: `af-finish` does not invoke it, so session finishes stay fast. The mandatory review gate before code merges toward `main` is `af-full-review`, run once as part of the release flow.
+
+Reach for this when the user wants a faster gut-check on a session worktree without waiting for the full release review.
+
+If the user asks for a Claude or outside-model review, route to `af-claude-review` after the local diff inspection. Do not run Claude CLI by default.
 
 ## Checklist
 
@@ -57,4 +61,4 @@ Use:
 
 End with `READY TO MERGE INTO <parent-branch>`, `READY BUT ASK USER BEFORE MERGE`, or `NOT READY TO MERGE`.
 
-Include the session branch or detached commit, changed files, validation results, docs/devlog status, findings, and recommended next command.
+Include the session branch or detached commit, changed files, validation results, docs/devlog status, Claude CLI review status when used, findings, and recommended next command.

@@ -42,7 +42,7 @@ Agent-Flow gives AI coding agents a shared operating model: isolated worktree se
 
 ### Positioning Statement
 
-For solo developers and maintainers using Claude, Codex, and other coding agents, Agent-Flow is a local workflow kit that turns unstructured agent chats into reviewable development sessions. Unlike prompt-only conventions, Agent-Flow installs shared instructions, agent adapters, lifecycle scripts, devlog conventions, docs maintenance rules, and release gates that keep agent-assisted work safer to merge and easier to understand later.
+For solo developers and maintainers using Codex, Agent-Flow is a local workflow kit that turns unstructured Codex chats into reviewable development sessions. Unlike prompt-only conventions, Agent-Flow installs Codex instructions, lifecycle scripts, devlog conventions, docs maintenance rules, and release gates that keep Codex-assisted work safer to merge and easier to understand later.
 
 ### Brand Promise
 
@@ -63,12 +63,12 @@ AI coding agents need operating rules, not just better prompts.
 
 ### Supporting Messages
 
-- One chat, one session worktree.
+- One related working session, one session worktree.
 - Every session leaves a devlog.
 - Docs move with the code.
 - Review happens before merge.
 - Protected release paths get a security gate.
-- Agent-agnostic instructions keep Claude, Codex, and future agents aligned.
+- Codex-first instructions keep sessions consistent across repos.
 
 ### Message Pillars
 
@@ -77,7 +77,7 @@ AI coding agents need operating rules, not just better prompts.
 | Control | Agent work is isolated and merge-aware. | `scripts/start-session.sh`, `scripts/finish-session.sh`, worktree metadata |
 | Memory | Decisions and validation survive the chat. | `devlog/`, `af-devlog`, devlog templates |
 | Trust | Changes are reviewed before they reach parent branches. | `af-review`, `scripts/review-snapshot.sh`, `scripts/check-push-readiness.sh` |
-| Portability | The workflow works across agents and repos. | `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, `templates/` |
+| Portability | The workflow works across Codex sessions and repos. | `AGENT-FLOW.md`, `AGENTS.md`, `templates/` |
 | Discipline | Release paths are explicit and protected. | `af-release`, `af-security-review`, protected-branch rules |
 
 ### Tagline Options
@@ -138,7 +138,7 @@ Avoid:
 Prefer:
 
 ```text
-Agent-Flow maps each file-changing chat to one isolated worktree session.
+Agent-Flow maps each related file-changing working session to one isolated worktree session.
 ```
 
 Avoid:
@@ -306,13 +306,13 @@ Turn file-changing agent chats into isolated worktree sessions with devlogs, doc
 Short version:
 
 ```text
-I built Agent-Flow to make AI coding agent work easier to trust: one chat, one worktree session, one devlog, docs when behavior changes, review before merge, and push checks before release.
+I built Agent-Flow to make AI coding agent work easier to trust: one related working session, one worktree, one devlog, docs when behavior changes, review before merge, and push checks before release.
 ```
 
 Developer version:
 
 ```text
-Agent-Flow is a local workflow kit for Claude, Codex, and other coding agents. It installs shared instructions, adapters, lifecycle scripts, devlog conventions, docs maintenance rules, and release gates so agent-assisted work stays reviewable.
+Agent-Flow is a local workflow kit for Codex. It installs Codex instructions, lifecycle scripts, devlog conventions, docs maintenance rules, and release gates so Codex-assisted work stays reviewable.
 ```
 
 ### Repository Topics
@@ -325,7 +325,7 @@ Recommended GitHub topics:
 - `developer-tools`
 - `git-worktree`
 - `codex`
-- `claude`
+- `claude` except when documenting the optional `af-claude-review` integration
 - `devlog`
 - `release-workflow`
 - `solo-developer`
@@ -429,7 +429,7 @@ Avoid vague categories such as "AI broke my repo" when a concrete workflow failu
 Allowed claims:
 
 - Agent-Flow standardizes branch safety, worktree isolation, devlogs, docs maintenance, review gates, and protected release checks.
-- Agent-Flow includes Codex-compatible skills and Claude/Codex adapter files.
+- Agent-Flow includes Codex skills and an optional Claude CLI review skill.
 - Agent-Flow is designed for solo developers and maintainers using AI coding agents.
 
 Do not claim yet:

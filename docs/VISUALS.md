@@ -11,7 +11,7 @@ This plan applies the `af-docs` visual interview to this Agent-Flow setup repo.
 | Audience | Solo developers, AI coding agents, future maintainers, and stakeholders evaluating Agent-Flow. |
 | Goal | Explain how the setup works, how to install it, how to use skills, and how to present the workflow. |
 | Style | Efficient, technical, and data-driven for core docs; polished but restrained for stakeholder content. |
-| Format | Markdown, Mermaid diagrams, demo scripts, and presentation outlines. |
+| Format | Markdown, Mermaid diagrams, demo scripts, presentation outlines, and branded PDF presentations. |
 | Fidelity | Accurate implementation diagrams now; screenshots/videos later after install flows are exercised on a real machine. |
 | Source of truth | Repo files, scripts, skills, templates, and devlog entries. |
 
@@ -25,11 +25,13 @@ Public-facing brand, voice, color, launch copy, and social-card rules live in `d
 | Install flow | `docs/ARCHITECTURE.md` | Mermaid sequence | Show where files are copied during install. |
 | Repo init flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and creates missing AF files in a target repo. |
 | Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route through compact AF skills. |
+| Codex fast path | `docs/ARCHITECTURE.md`, `docs/AGENT-FLOW-CODEX-GUIDE.md`, `docs/agent-flow-codex-fast-path-guide.pdf` | Mermaid + PDF diagrams | Show how routine Codex work stays in one session and escalates only when needed. |
 | Core flow | `docs/WORKFLOW.md` | Text lifecycle | Show the expected branch, validation, docs, and review cycle. |
 | Session lifecycle | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show start-session, finish-session, merge prompt, and push readiness. |
 | Worktree manager | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show visual map, details, pickup, and cleanup actions. |
 | Brand system | `docs/BRAND-GUIDELINES.md` | Markdown reference | Define positioning, voice, visual identity, README hierarchy, and launch surfaces. |
 | Logo suite | `docs/assets/agent-flow-logo.svg`, `docs/assets/agent-flow-mark.svg`, `docs/assets/agent-flow-social-card.svg` | SVG | Provide README, icon, and social-card assets using the same flow-mark system. |
+| Product walkthrough deck | `docs/presentations/agent-flow-walkthrough.pdf` | Landscape PDF | Explain what Agent-Flow is, why it exists, and how to use the core workflow from install through release. Regenerate with `scripts/generate-agent-flow-walkthrough-pdf.py`. |
 
 ## Recommended Formats
 
@@ -47,7 +49,7 @@ Use screenshots for:
 - terminal install output
 - init output inside a sample repo
 - Codex skill discovery, if relevant
-- Claude adapter behavior, if relevant
+- optional Claude CLI review behavior, if relevant
 
 Use demo video for:
 
@@ -69,7 +71,7 @@ Capture these after the next local install test:
 - `~/.agent-flow` tree view
 - `~/.codex/skills` showing AF skills
 - `~/.agent-flow/scripts/init-repo.sh` output in a sample repo
-- generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `devlog/README.md`
+- generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, and `devlog/README.md`
 - generated `.git/hooks/pre-push`
 - `start-session.sh` output showing detached worktree mode, parent branch, and session metadata
 - `finish-session.sh` output showing `ASK_USER_MERGE`
@@ -94,7 +96,7 @@ Keep the video under three minutes for adoption. Use captions for the commands a
 
 ## Presentation Recommendation
 
-Use `docs/presentations/agent-flow-overview.md` as the source outline for a future slide deck. Build a PPTX only when the audience and visual style are known.
+Use `docs/presentations/agent-flow-overview.md` as the editable outline source and `docs/presentations/agent-flow-walkthrough.pdf` as the current branded landscape PDF presentation.
 
 Recommended deck style:
 
@@ -109,8 +111,8 @@ Recommended deck style:
 Use `docs/PITCH.md` for launch or stakeholder copy. Keep claims grounded:
 
 - Agent-Flow standardizes branch safety, devlogs, docs, and review.
-- It works across Claude, Codex, and other agents through shared instructions and adapters.
-- Codex skills are included, but the core workflow is agent-agnostic.
+- It is optimized for Codex through shared instructions, skills, scripts, and profiles.
+- Claude CLI review is optional and external; it is not an installed adapter surface.
 - Use `docs/assets/agent-flow-social-card.svg` for social sharing or title cards.
 
 Avoid unsupported claims about speed, reliability, or compatibility until measured.

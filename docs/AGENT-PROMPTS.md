@@ -12,10 +12,10 @@ Use af-help. Show me the Agent-Flow command map, skill choices, and usage-guide 
 Use af-brand-guidelines. Create or ingest this repo's brand/design guideline for UI work, mark whether it is canonical or provisional, and record open questions.
 ```
 
-## Start And Finish Work
+## Start Or Continue Work
 
 ```text
-Use af-flow for this file-changing request. Create or adopt one AF session worktree, implement the change, add the devlog entry, then use af-finish to validate, review, and ask me before merging.
+Use af-flow for this file-changing request. Create or adopt one AF session worktree, keep related follow-up work in that same worktree, and do not finish until I ask to wrap up, review, reconcile, merge, or switch direction.
 ```
 
 ## Finish Existing Session
@@ -58,6 +58,12 @@ Use af-security-review for [head] against [base]. Prefer Codex Security diff sca
 
 ```text
 Use af-docs. Update project docs from devlog entries, commits, changed scripts, skills, templates, screenshots, and config.
+```
+
+## pnpm Conversion
+
+```text
+Use af-pnpm. Check whether this repo already uses pnpm, convert it if needed, update obvious CI/docs commands, and validate install/build/test.
 ```
 
 ## Feature Audit

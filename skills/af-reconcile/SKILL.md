@@ -1,13 +1,13 @@
 ---
 name: af-reconcile
-description: Audit, visualize, pick up, finish, and clean up Agent-Flow worktree sessions. Use when the user asks to review worktrees, find dirty or unmerged work, continue incomplete Codex work, clean up merged worktrees or branches, inspect development/staging/main state, or check push readiness.
+description: Audit, visualize, pick up, finish, and clean up Agent-Flow worktree sessions. Use when the user asks to review worktrees, find dirty or unmerged work, continue incomplete agent work, clean up merged worktrees or branches, inspect development/staging/main state, or check push readiness.
 ---
 
 # AF Reconcile
 
 ## Overview
 
-Audit first and mutate second. Worktrees may contain active Codex sessions, dirty changes, unmerged commits, or completed cleanup candidates. Never remove dirty or unmerged work.
+Audit first and mutate second. Worktrees may contain active agent sessions, dirty changes, unmerged commits, or completed cleanup candidates. Never remove dirty or unmerged work.
 
 ## Workflow
 
@@ -75,7 +75,7 @@ scripts/worktree-manager.py --pickup <id>
 
 Pickup updates AF metadata such as `agentFlow.state`, `agentFlow.owner`, and `agentFlow.lastTouchedAt`, then prints the worktree path and recommended new-chat handoff.
 
-Prefer starting a new Codex chat in the picked-up worktree. If staying in the same chat, restate the worktree path, parent branch, status, and goal before editing.
+Prefer starting a new agent session in the picked-up worktree. If staying in the same session, restate the worktree path, parent branch, status, and goal before editing.
 
 ### 5. Clean Up Completed Work
 

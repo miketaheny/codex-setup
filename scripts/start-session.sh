@@ -172,7 +172,7 @@ git config extensions.worktreeConfig true
 if [ -n "$BRANCH" ]; then
   git worktree add "$WORKTREE" -b "$BRANCH" "$PARENT"
   git config "branch.$BRANCH.agentFlowParent" "$PARENT"
-  git config "branch.$BRANCH.agentFlowState" "started"
+  git config "branch.$BRANCH.agentFlowState" "active"
   git config "branch.$BRANCH.agentFlowStartedAt" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 else
   git worktree add --detach "$WORKTREE" "$PARENT"
@@ -182,10 +182,12 @@ STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 git -C "$WORKTREE" config --worktree agentFlow.kind "session"
 git -C "$WORKTREE" config --worktree agentFlow.parent "$PARENT"
 git -C "$WORKTREE" config --worktree agentFlow.sessionName "$SESSION_NAME"
-git -C "$WORKTREE" config --worktree agentFlow.state "started"
-git -C "$WORKTREE" config --worktree agentFlow.owner "codex"
+git -C "$WORKTREE" config --worktree agentFlow.state "active"
+git -C "$WORKTREE" config --worktree agentFlow.owner "${AF_AGENT_ID:-agent}"
 git -C "$WORKTREE" config --worktree agentFlow.devlogPolicy "finish"
 git -C "$WORKTREE" config --worktree agentFlow.worktreeRoot "$WORKTREE_ROOT"
+git -C "$WORKTREE" config --worktree agentFlow.sessionUnit "user-ended"
+git -C "$WORKTREE" config --worktree agentFlow.endTriggers "finish,review,reconcile,merge,switch-direction"
 git -C "$WORKTREE" config --worktree agentFlow.startedAt "$STARTED_AT"
 git -C "$WORKTREE" config --worktree agentFlow.lastTouchedAt "$STARTED_AT"
 if [ -n "$BRANCH" ]; then
@@ -201,4 +203,5 @@ else
 fi
 echo "Parent branch: $PARENT"
 echo "Session name: $SESSION_NAME"
-echo "Next: cd '$WORKTREE' and re-read the repo instructions."
+echo "State: active"
+echo "Next: cd '$WORKTREE' and keep related work in this session until finish/review/reconcile."

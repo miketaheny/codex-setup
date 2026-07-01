@@ -4,7 +4,7 @@
 
 ```text
 Read-only chat: answer directly.
-File-changing chat: af-flow -> implementation -> af-devlog -> af-finish.
+File-changing session: af-flow -> persistent implementation -> af-devlog -> af-finish.
 Release: af-reconcile -> af-full-review -> af-release.
 Manual feature audit: af-feature-audit.
 Manual UI audit: af-brand-guidelines -> af-ui-audit.
@@ -14,9 +14,34 @@ Use `af-show` during finish when seeing the app, rendered docs, CLI output, or a
 
 Use `af-help` for command help and usage-guide routing. `af-feature-audit` and `af-ui-audit` are manual-only and should not run as part of ordinary finish or release gates.
 
+Use `af-disable` only for an explicit repo-local opt-out. Use `af-enable` to reverse that opt-out or run normal AF initialization when setup is missing.
+
+## Fast Path
+
+Most Codex sessions should use the light path:
+
+```text
+one persistent worktree -> targeted context -> scoped change -> focused validation -> one devlog -> finish on request
+```
+
+The daily command surface is intentionally small:
+
+```text
+af-flow, af-status, af-review, af-reconcile, af-finish
+```
+
+Escalate to specialist skills, full review, security review, release checks, visual capture, or broad audits only when requested, risk-triggered, or needed after repeated failure.
+
+## Codex Model And Effort
+
+Default Codex posture for real development and computer-use work is `gpt-5.5` with extra-high effort and low verbosity. Run an effort preflight first: use `fast` or medium for read-only/status and trivial edits, and use `deep`/`xhigh` for release, security-sensitive, or hard debugging work. See `docs/CODEX-MODEL-POLICY.md`.
+
 ## Branch Model
 
 - `development` is the default integration branch.
+- `main` is the default production/final PR target.
+- `init-repo.sh` asks for the integration branch, production branch, optional staging branch, hooks, and whether AF enforcement should be enabled.
+- If a repo has no AF setup, file-changing work waits until init runs or the user explicitly opts out for that repo.
 - Session worktrees start from the checked-out parent branch and merge back to that recorded parent.
 - Worktrees are detached by default.
 - Named branches are created only when explicitly requested.
@@ -34,6 +59,8 @@ scripts/finish-session.sh --merge
 ```
 
 `finish-session.sh` checks readiness and reports `ASK_USER_MERGE`; use `--merge` only after explicit approval.
+
+Do not run `finish-session.sh` after every prompt. A session is open-ended by default and remains active while related work continues. End it only when the user asks to finish, review, reconcile, merge, or switch direction.
 
 New session worktrees are created under a sibling worktree root so they are visually distinct from normal repositories:
 
@@ -53,6 +80,8 @@ Keep metadata minimal:
 - `agentFlow.state`
 - `agentFlow.owner`
 - `agentFlow.devlogPolicy`
+- `agentFlow.sessionUnit = user-ended`
+- `agentFlow.endTriggers`
 - timestamps
 - `agentFlow.branch` only for explicit branch-backed sessions
 
@@ -64,6 +93,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 |---|---|
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
+| Convert Node repos to pnpm | `af-pnpm` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Record engineering history | `af-devlog` |

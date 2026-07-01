@@ -4,11 +4,13 @@
 
 # Agent-Flow
 
-Structured workflow rules for AI coding agents.
+Structured workflow rules for Codex.
 
-Agent-Flow is a portable setup for solo development with Codex, Claude, and other coding agents. It gives file-changing agent work a repeatable lifecycle: create one session worktree, make a scoped change, write the devlog, finish with review, ask before merge, and check readiness before release.
+Agent-Flow is a Codex-focused setup for solo development. It gives file-changing Codex work a repeatable lifecycle: create one session worktree, make a scoped change, write the devlog, finish with review, ask before merge, and check readiness before release.
 
-It exists because capable agents still need reliable rails. Without a shared workflow, parallel sessions can drift across branches, skip documentation, overwrite work, or leave weak handoff records. Agent-Flow makes the development loop inspectable, portable, and easier to trust.
+It exists because capable Codex sessions still need reliable rails. Without a consistent workflow, parallel sessions can drift across branches, skip documentation, overwrite work, or leave weak handoff records. Agent-Flow makes the development loop inspectable, portable, and easier to trust.
+
+The default path is intentionally light: keep one related work session in one worktree, read targeted context, validate the specific change, and finish only when you ask. Broader audits, release reviews, security reviews, and specialist skills are available on demand instead of being mandatory daily overhead.
 
 ## Why It Matters
 
@@ -16,21 +18,24 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - **Preserve engineering memory:** write finish-time `devlog/` entries instead of burying decisions in chat history.
 - **Keep docs current:** update user, architecture, workflow, visual, and marketing docs when behavior changes.
 - **Protect release paths:** use review, release readiness, optional Codex Security-aware security review, and push-readiness checks.
-- **Stay agent-agnostic:** use one canonical `AGENT-FLOW.md`, with adapters for Codex-compatible agents and Claude-compatible agents.
+- **Optimize for Codex:** use `AGENTS.md`, Codex skills, Codex model profiles, and optional Claude CLI review only when a second-model check is useful.
 
 ## What It Installs
 
 - Canonical workflow rules in `AGENT-FLOW.md`.
-- Agent adapters: `AGENTS.md` for Codex-compatible agents and `CLAUDE.md` for Claude-compatible agents.
+- Codex adapter: `AGENTS.md`.
 - Compact AF skills:
   - `af-help`
   - `af-brand-guidelines`
+  - `af-disable`
+  - `af-enable`
   - `af-flow`
   - `af-status`
   - `af-devlog`
   - `af-finish`
   - `af-show`
   - `af-review`
+  - `af-claude-review`
   - `af-reconcile`
   - `af-full-review`
   - `af-release`
@@ -39,7 +44,7 @@ It exists because capable agents still need reliable rails. Without a shared wor
   - `af-feature-audit`
   - `af-ui-audit`
   - `af-migrate-backlog-devlog`
-- Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
+- Scripts for install, repo init, local AF enable/disable, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
 - Brand and launch assets under `docs/BRAND-GUIDELINES.md` and `docs/assets/`.
 
@@ -54,15 +59,16 @@ Default destinations:
 
 - `~/.agent-flow` for shared AF files
 - `~/.codex` for Codex adapter, skills, scripts, docs, and templates
-- `~/.claude` for Claude adapter
 
 Override locations:
 
 ```bash
-AF_HOME=/path/to/agent-flow CODEX_HOME=/path/to/codex CLAUDE_HOME=/path/to/claude ./scripts/install.sh
+AF_HOME=/path/to/agent-flow CODEX_HOME=/path/to/codex ./scripts/install.sh
 ```
 
 Reinstalling removes retired AF skill and script names from the install targets before copying the current compact set.
+
+Claude CLI is not installed as an Agent-Flow adapter. Use `af-claude-review` when Codex should run Claude CLI as an optional external review pass.
 
 ## Initialize A Repo
 
@@ -149,11 +155,15 @@ af-reconcile -> af-full-review -> af-release
 
 Run `af-security-review` when requested, config-required, or security-sensitive. When the Codex Security plugin is available, AF prefers its diff-scan workflow for Git-backed release diffs and records the plugin result or fallback reason.
 
+Run `af-claude-review` only when you explicitly want Claude CLI to provide an external second-model review.
+
 Default release path is `development -> staging -> main`. With staging disabled or explicitly skipped, use `development -> main`.
 
 ## Documentation
 
 - [Agent-Flow Usage Guide](docs/AGENT-FLOW-USAGE.md)
+- [Codex Fast Path Guide](docs/AGENT-FLOW-CODEX-GUIDE.md)
+- [Codex Fast Path PDF](docs/agent-flow-codex-fast-path-guide.pdf)
 - [Brand Guidelines](docs/BRAND-GUIDELINES.md)
 - [Workflow](docs/WORKFLOW.md)
 - [User Guide](docs/USER-GUIDE.md)
@@ -171,7 +181,7 @@ Agent-Flow should make a visitor understand the project within one minute:
 
 1. AI coding agents need shared operating rules, not just stronger prompts.
 2. Worktree sessions, devlogs, review, and push checks are the core behavior.
-3. The workflow is agent-agnostic, with Codex and Claude support included.
+3. The workflow is optimized for Codex, with Claude CLI available only as an optional external reviewer.
 4. The repo is useful today as an installable local workflow kit.
 5. The documentation and brand assets are part of the product, not an afterthought.
 

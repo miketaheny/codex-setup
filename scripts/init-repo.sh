@@ -14,7 +14,9 @@ YES=0
 MODE=""
 STAGING_CHOICE=""
 HOOKS_CHOICE=""
+PNPM_CHOICE=""
 INTEGRATION_BRANCH="development"
+PRODUCTION_BRANCH="main"
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -42,6 +44,12 @@ while [ "$#" -gt 0 ]; do
     --no-hooks)
       HOOKS_CHOICE="false"
       ;;
+    --pnpm)
+      PNPM_CHOICE="true"
+      ;;
+    --no-pnpm)
+      PNPM_CHOICE="false"
+      ;;
     --integration-branch)
       shift
       if [ "$#" -eq 0 ]; then
@@ -50,8 +58,16 @@ while [ "$#" -gt 0 ]; do
       fi
       INTEGRATION_BRANCH="$1"
       ;;
+    --production-branch)
+      shift
+      if [ "$#" -eq 0 ]; then
+        echo "Error: --production-branch requires a branch name." >&2
+        exit 2
+      fi
+      PRODUCTION_BRANCH="$1"
+      ;;
     -h|--help)
-      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--integration-branch <branch>]" >&2
+      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--pnpm|--no-pnpm] [--integration-branch <branch>] [--production-branch <branch>]" >&2
       exit 0
       ;;
     *)
@@ -75,8 +91,10 @@ CONFIG_FILE="$CONFIG_DIR/config.toml"
 REPO_HELPER_SCRIPTS=(
   "check-branch-safety.sh"
   "check-push-readiness.sh"
+  "claude-review.sh"
   "finish-session.sh"
   "install-hooks.sh"
+  "set-agent-flow-mode.py"
   "start-session.sh"
   "worktree-manager.py"
 )
@@ -149,8 +167,47 @@ prompt_yes_no() {
   fi
 }
 
+run_pnpm_onboarding() {
+  local answer script
+
+  if [ ! -f "package.json" ]; then
+    echo "pnpm onboarding: no package.json; skipped."
+    return
+  fi
+
+  if [ "$PNPM_CHOICE" = "false" ]; then
+    echo "pnpm onboarding: skipped by --no-pnpm."
+    return
+  fi
+
+  if [ "$PNPM_CHOICE" != "true" ]; then
+    answer="$(prompt_yes_no "Convert this Node repo to pnpm during onboarding?" "yes")"
+    if [ "$answer" != "yes" ]; then
+      echo "pnpm onboarding: skipped."
+      return
+    fi
+  fi
+
+  script="$AF_HOME/skills/af-pnpm/scripts/convert_to_pnpm.py"
+  if [ ! -f "$script" ]; then
+    script="$SCRIPT_HOME/skills/af-pnpm/scripts/convert_to_pnpm.py"
+  fi
+
+  if [ ! -f "$script" ]; then
+    echo "Warning: af-pnpm conversion helper missing; skipped pnpm onboarding." >&2
+    return
+  fi
+
+  if ! python3 "$script" "$ROOT" --convert --yes --onboarding; then
+    echo "Warning: pnpm onboarding failed. Resolve the error, then run: python3 $script . --convert --yes" >&2
+  fi
+}
+
 if [ -f "$CONFIG_FILE" ] && [ "$FORCE" -ne 1 ]; then
   ensure_repo_helpers
+  if [ "$PNPM_CHOICE" = "true" ]; then
+    run_pnpm_onboarding
+  fi
   echo "Agent-Flow already initialized: $CONFIG_FILE"
   echo "Repo helper scripts checked."
   echo "Use --force to rewrite repo choices and refresh Agent-Flow-owned helpers."
@@ -163,7 +220,6 @@ mkdir -p docs/decisions docs/solutions docs/plans docs/diagrams docs/assets docs
 
 copy_if_missing "$AF_HOME/templates/repo-AGENT-FLOW.md" "AGENT-FLOW.md"
 copy_if_missing "$AF_HOME/templates/repo-AGENTS.md" "AGENTS.md"
-copy_if_missing "$AF_HOME/templates/repo-CLAUDE.md" "CLAUDE.md"
 copy_if_missing "$AF_HOME/templates/devlog-README.md" "devlog/README.md"
 ensure_repo_helpers
 
@@ -212,11 +268,34 @@ ensure_gitignore() {
 ensure_gitignore
 
 if [ -z "$MODE" ]; then
-  disable="$(prompt_yes_no "Disable Agent-Flow enforcement for this repo?" "no")"
-  if [ "$disable" = "yes" ]; then
-    MODE="disabled"
-  else
+  enable="$(prompt_yes_no "Enable Agent-Flow enforcement for this repo?" "yes")"
+  if [ "$enable" = "yes" ]; then
     MODE="enforced"
+  else
+    MODE="disabled"
+  fi
+fi
+
+prompt_branch() {
+  local question="$1"
+  local default="$2"
+  local answer
+
+  if [ "$YES" -eq 1 ]; then
+    printf '%s\n' "$default"
+    return
+  fi
+
+  read -r -p "$question [$default] " answer
+  printf '%s\n' "${answer:-$default}"
+}
+
+if [ "$MODE" != "disabled" ]; then
+  if [ "$INTEGRATION_BRANCH" = "development" ]; then
+    INTEGRATION_BRANCH="$(prompt_branch "Integration branch for completed AF sessions?" "$INTEGRATION_BRANCH")"
+  fi
+  if [ "$PRODUCTION_BRANCH" = "main" ]; then
+    PRODUCTION_BRANCH="$(prompt_branch "Production branch / final PR target?" "$PRODUCTION_BRANCH")"
   fi
 fi
 
@@ -252,11 +331,11 @@ if [ -z "$HOOKS_CHOICE" ]; then
   fi
 fi
 
-PROTECTED='["main", "staging"]'
-FLOW="development -> main"
+PROTECTED="[\"$PRODUCTION_BRANCH\", \"staging\"]"
+FLOW="$INTEGRATION_BRANCH -> $PRODUCTION_BRANCH"
 STAGING_NOTE="Staging: disabled. Do not assume a staging branch unless .agent-flow/config.toml changes."
 if [ "$STAGING_CHOICE" = "true" ]; then
-  FLOW="development -> staging -> main"
+  FLOW="$INTEGRATION_BRANCH -> staging -> $PRODUCTION_BRANCH"
   STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only through the release PR flow unless an explicit direct-push exception is approved."
 fi
 
@@ -269,7 +348,8 @@ worktrees = "required-for-changes"
 session_base = "checked-out"
 session_merge_target = "parent"
 session_branch = "explicit-only"
-session_unit = "chat"
+session_unit = "user-ended"
+session_end_triggers = ["finish", "review", "reconcile", "merge", "switch-direction"]
 devlog_policy = "finish"
 
 merge_prompt = "always"
@@ -280,7 +360,7 @@ pre_push_worktree_check = true
 pre_push_hook_installed = $HOOKS_CHOICE
 
 integration_branch = "$INTEGRATION_BRANCH"
-production_branch = "main"
+production_branch = "$PRODUCTION_BRANCH"
 staging_enabled = $STAGING_CHOICE
 staging_branch = "staging"
 reserved_branch_names = ["master", "production", "prod"]
@@ -316,7 +396,7 @@ append_local_choices() {
 - Merge behavior: ask before merge by default.
 - Push behavior: check child session worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.
-- SDLC flow: $FLOW. \`main\` is the production PR target and should not be kept as a local work branch.
+- SDLC flow: $FLOW. \`$PRODUCTION_BRANCH\` is the production PR target and should not be kept as a local work branch.
 - $STAGING_NOTE
 - Legacy branch names \`master\`, \`production\`, and \`prod\` are reserved and should not be used as mainline branches.
 <!-- agent-flow-local-end -->
@@ -324,14 +404,17 @@ EOF
 }
 
 append_local_choices "AGENTS.md"
-append_local_choices "CLAUDE.md"
 
 if [ "$HOOKS_CHOICE" = "true" ]; then
   AF_HOME="$AF_HOME" "$SCRIPT_DIR/install-hooks.sh"
 fi
 
+run_pnpm_onboarding
+
 echo "Agent-Flow initialized at $ROOT"
 echo "Config: $CONFIG_FILE"
 echo "Mode: $MODE"
+echo "Integration branch: $INTEGRATION_BRANCH"
+echo "Production branch: $PRODUCTION_BRANCH"
 echo "Flow: $FLOW"
 echo "Pre-push hook: $HOOKS_CHOICE"

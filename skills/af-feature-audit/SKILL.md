@@ -115,7 +115,7 @@ Use the register as the backlog for discovered issues.
 Fixes should happen through normal AF sessions:
 
 ```text
-af-flow -> implementation -> af-devlog -> af-finish
+af-flow -> persistent implementation -> af-devlog -> af-finish
 ```
 
 Keep each fix session scoped to one issue or a small coherent batch. Do not turn the whole audit into one giant fix commit unless the repo is tiny and the diff is genuinely low-risk.

@@ -1,13 +1,13 @@
 # Agent-Flow Instructions
 
-Agent-Flow (`AF`) is the shared workflow for Claude, Codex, and other coding agents in this repo.
+Agent-Flow (`AF`) is the Codex workflow for this repo.
 
 ## Core Lifecycle
 
 Use one lifecycle:
 
 ```text
-af-flow -> implementation -> af-devlog -> af-finish
+af-flow -> persistent implementation session -> af-devlog -> af-finish
 ```
 
 Release work adds:
@@ -16,19 +16,50 @@ Release work adds:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. When the Codex Security plugin is available, `af-security-review` prefers `$codex-security:security-diff-scan` for Git-backed release diffs and falls back to the manual AF checklist when the plugin is unavailable or blocked.
+Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. Prefer the Codex Security diff-scan path when available, falling back to the manual AF checklist only when no security-review tool is available.
 
-Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
+`af-finish` is intentionally fast and does not run a full review — it validates, checks devlog/docs, and reports readiness to merge into the session's parent branch. The one mandatory review gate is `af-full-review`, run once as part of the release flow before code reaches `main`. Use `af-review` only as an optional, on-demand quick check mid-session; it is never required.
+
+Use `af-help` for read-only command help and usage-guide routing. Use `af-claude-review` only when the user asks for Claude CLI as an external review pass or when a release/high-risk review explicitly wants a second-model check. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
+
+## Fast Path
+
+Default to the smallest workflow that preserves safety:
+
+```text
+continue or create one session worktree -> make the scoped change -> run targeted validation -> write one finish-time devlog -> finish when asked
+```
+
+Do not run full audits, broad repo scans, release reviews, security reviews, or visual captures unless the user asks, the change is high-risk, or the evidence says they are needed. Keep the user-facing command set small: `af-flow`, `af-status`, `af-review`, `af-reconcile`, and `af-finish`. Treat specialist skills such as `af-pnpm`, `af-docs`, `af-feature-audit`, and `af-ui-audit` as on-demand tools, not mandatory steps in ordinary sessions.
+
+Use cached local context before rereading large docs. Inside an active session, re-check only the files and instructions relevant to the changed paths unless the user changes direction or the repo state looks inconsistent.
+
+## Codex Model And Effort
+
+For Codex, run a quick effort preflight before meaningful work. Fast workflow does not mean low reasoning: keep the AF process lightweight, but use enough model effort for the task.
+
+Default to `gpt-5.5` with `model_reasoning_effort = "xhigh"` and low verbosity for most development, debugging, refactoring, multi-file docs, browser/computer-use, release, and high-context work.
+
+Downgrade deliberately:
+
+- Use a fast profile or `gpt-5.4-mini` for read-only help, status, command lookup, and lightweight exploration.
+- Use base `gpt-5.5` / `medium` for trivial one-file edits, narrow docs copy, formatting, or low-risk config changes.
+- Use `gpt-5.5` / `high` for moderate implementation when `xhigh` is unnecessary but low/medium would be brittle.
+- Use `gpt-5.5` / `xhigh` for normal development and computer-use work unless the effort preflight clearly chooses a cheaper tier.
+
+See `docs/CODEX-MODEL-POLICY.md` for the profile names and routing table.
 
 ## First Contact
 
 When opening a repo:
 
-- Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present.
+- Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, and `AGENTS.md` when present.
 - Follow the most specific nested `AGENT-FLOW.md` or adapter file for the path being edited.
 - If config says `mode = "disabled"`, disclose that AF is disabled and do not enforce AF in that repo.
-- If no AF instructions or config exist, ask whether to run `~/.agent-flow/scripts/init-repo.sh` or opt out locally.
+- If no AF instructions or config exist, do not do file-changing work until the repo is initialized with `~/.agent-flow/scripts/init-repo.sh` or the user explicitly opts out for that repo. Read-only questions can still be answered directly.
 - Read-only chats can answer directly. Any file edit, dependency change, commit, push, config change, or destructive operation must happen in one AF session worktree.
+- In Codex, treat a working thread as a persistent AF session. Keep using the same session worktree until the user asks to wrap up, finish, review, reconcile, switch direction, or merge.
+- Do not install or maintain Claude adapter files. Claude CLI is supported only as an optional external review command through `af-claude-review`.
 
 ## Branch Rules
 
@@ -42,17 +73,15 @@ When opening a repo:
 
 ## Session Worktrees
 
-Before changing files, use `af-flow` or:
+Work must happen in an isolated worktree. AF does not prescribe how that isolation is created — only that it exists.
 
-```bash
-scripts/start-session.sh <type> <session-name>
-```
+An AF session is not one prompt and not necessarily one chat turn. It is a worktree-backed working context that stays active until the user explicitly ends it or asks for a session action.
 
-For an explicit branch:
-
-```bash
-scripts/start-session.sh --branch <type>/<session-name> <type> <session-name>
-```
+- If the agent provides native worktree isolation, work within it and record AF metadata there.
+- If no isolated worktree exists, use `af-flow` or `scripts/start-session.sh` to create one.
+- If the current checkout is already an AF session worktree and the user is continuing the same direction, keep working there. Do not run `af-finish` just because one request completed.
+- If the user asks to review, reconcile, finish, wrap up, or merge, route to the matching AF skill/script instead of starting a new worktree.
+- If the user changes to a clearly unrelated direction, finish, pause, or explicitly reconcile the current session before starting another.
 
 AF metadata should stay small:
 
@@ -60,12 +89,14 @@ AF metadata should stay small:
 agentFlow.kind = session
 agentFlow.parent = <parent-branch>
 agentFlow.sessionName = <session-name>
-agentFlow.state = started|active|ready|merged
-agentFlow.owner = codex
+agentFlow.state = active|ready|merged
+agentFlow.owner = <agent> (set via AF_AGENT_ID env var, defaults to "agent")
 agentFlow.devlogPolicy = finish
 agentFlow.startedAt = <timestamp>
 agentFlow.lastTouchedAt = <timestamp>
 agentFlow.branch = <explicit-branch> # only when branch-backed
+agentFlow.sessionUnit = user-ended
+agentFlow.endTriggers = finish,review,reconcile,merge,switch-direction
 ```
 
 If the current checkout is dirty before starting, inspect it and create or require a devlog-backed commit for that existing work before opening a new session. Do not hide dirty parent work in a new worktree.
@@ -74,13 +105,15 @@ If the current checkout is dirty before starting, inspect it and create or requi
 
 Every file-changing session needs a `devlog/` entry before the session commit.
 
+Do not finish automatically after every prompt. Finish only when the user asks to wrap up, finish, commit, review for merge, reconcile the session, switch away from the current work, or otherwise end the active working session.
+
 Finish with `af-finish` or:
 
 ```bash
 scripts/finish-session.sh
 ```
 
-The finish flow validates, checks docs/devlog, uses `af-show` when useful, runs `af-review`, commits dirty session work when configured, and reports readiness. Ready sessions ask before merge:
+The finish flow validates, checks docs/devlog, uses `af-show` when useful, commits dirty session work when configured, and reports readiness. It does not run a review — that happens once, at release time, via `af-full-review`. Ready sessions ask before merge:
 
 ```bash
 scripts/finish-session.sh --merge
@@ -130,8 +163,9 @@ Before release:
 
 1. Run `af-reconcile`.
 2. Run `af-full-review`.
-3. Run `af-security-review` if requested, config-required, or security-sensitive. Prefer the Codex Security diff-scan path when available.
-4. Run `af-release`.
+3. Run `af-security-review` if requested, config-required, or security-sensitive. Prefer Codex Security when available.
+4. Run `af-claude-review` only when the user requests Claude CLI review or the release/high-risk review explicitly needs an external model check.
+5. Run `af-release`.
 
 Ask before remote side effects such as `git push` or `gh pr create` unless the user clearly authorized them in the current request.
 
@@ -145,4 +179,4 @@ Ask before remote side effects such as `git push` or `gh pr create` unless the u
 
 ## Done
 
-A session is done when changes are implemented in one AF session worktree, validation is run or explicitly skipped with reason, visual/manual proof is recorded when relevant, devlog and impacted docs are updated, review is complete, merge readiness is reported, and the user has been asked before merge.
+A session is done when changes are implemented in one AF session worktree, validation is run or explicitly skipped with reason, visual/manual proof is recorded when relevant, devlog and impacted docs are updated, merge readiness is reported, and the user has been asked before merge. Full review is a release-time gate (`af-full-review`), not a per-session requirement.

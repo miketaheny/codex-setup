@@ -1,0 +1,23 @@
+# 2026-07-01 - Standardize presentations on PDF
+
+- Branch/worktree: `674912f` / `/Users/taheny/vault/teamt/agent-flow.worktrees/pdf-presentation-format`
+- Commit: pending
+- Goal: Replace the Agent-Flow walkthrough PPTX artifact with a PDF presentation and update docs/skills so future presentations are PDF-first.
+- Summary:
+  - Removed `docs/presentations/agent-flow-walkthrough.pptx`.
+  - Added `docs/presentations/agent-flow-walkthrough.pdf` as the only committed walkthrough presentation artifact.
+  - Added `scripts/generate-agent-flow-walkthrough-pdf.py` so the walkthrough is generated directly as a landscape PDF.
+  - Updated visual docs, docs strategy, presentation outline, changelog, and `af-docs` guidance to prefer PDF presentations and avoid PPTX files.
+- Validation:
+  - `scripts/generate-agent-flow-walkthrough-pdf.py` with bundled Python/reportlab - passed.
+  - `pdfinfo docs/presentations/agent-flow-walkthrough.pdf` - passed, 10 landscape pages at 960 x 540 points.
+  - `pdftoppm -png -r 144 docs/presentations/agent-flow-walkthrough.pdf` - passed.
+  - Visual inspection of rendered PDF pages 2 and 7 plus full montage - passed.
+  - `git diff --check` - passed.
+  - `./scripts/install.sh` - passed and refreshed `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+  - Installed artifact verification for `docs/presentations/agent-flow-walkthrough.pdf`, `scripts/generate-agent-flow-walkthrough-pdf.py`, and PDF-first `af-docs` wording - passed.
+  - Removed stale installed walkthrough PPTX copies after install - passed.
+- Visual/manual proof:
+  - Rendered PDF pages were inspected from `tmp/pdfs/agent-flow-walkthrough/page-*.png`; temp files were removed before commit.
+- Risks / follow-ups:
+  - Future presentation edits should update the generator and regenerate the PDF directly.

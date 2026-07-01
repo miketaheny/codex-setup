@@ -1,8 +1,11 @@
 # Agent-Flow Overview Presentation
 
+The current branded landscape PDF presentation lives at `docs/presentations/agent-flow-walkthrough.pdf`.
+Regenerate it with `scripts/generate-agent-flow-walkthrough-pdf.py`.
+
 ## Slide 1: Agent-Flow
 
-Shared workflow rules for Claude, Codex, and other coding agents.
+Structured workflow rules for Codex.
 
 Visual: simple flow from developer to agents to protected Git workflow.
 
@@ -14,19 +17,19 @@ Visual: before/after comparison.
 
 ## Slide 3: The Core Loop
 
-For file-changing chats, use `af-flow`, implement in one AF session worktree, write devlog, use `af-finish`, ask before merge, then check child worktrees before push. Use `af-help` for command help.
+For file-changing work, use `af-flow`, keep related prompts in one AF session worktree, write devlog, use `af-finish` when wrapping up, ask before merge, then check child worktrees before push. Use `af-help` for command help.
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 
-## Slide 4: Agent-Agnostic Instructions
+## Slide 4: Codex Instructions
 
-`AGENT-FLOW.md` is canonical. `AGENTS.md` and `CLAUDE.md` are adapters.
+`AGENT-FLOW.md` is canonical. `AGENTS.md` is the Codex adapter. Claude CLI is optional review tooling only.
 
 Visual: hub-and-spoke diagram.
 
 ## Slide 5: Skills and Scripts
 
-AF skills cover help, brand guidelines, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, Codex Security-aware security review, manual feature audits, manual UI audits, and Backlog migration.
+AF skills cover help, brand guidelines, pnpm conversion, Codex speed/depth profiles, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, Codex Security-aware security review, manual feature audits, manual UI audits, and Backlog migration.
 
 Visual: skill routing diagram from `docs/ARCHITECTURE.md`.
 
@@ -44,7 +47,7 @@ Visual: docs artifact matrix.
 
 ## Slide 8: Demo Flow
 
-Install, initialize a repo, inspect generated config and instruction files, start a session, run finish checks, inspect push readiness.
+Install, initialize a repo, inspect generated config and instruction files, show pnpm onboarding for Node repos, start a session, run finish checks, inspect push readiness.
 
 Visual: terminal screenshot sequence.
 
@@ -57,7 +60,7 @@ Visual: concise outcome list.
 ## Production Notes
 
 - Start with this Markdown outline.
-- Convert to PPTX only after the audience and visual style are confirmed.
+- Create PDF presentations, not PPTX files, after the audience and visual style are confirmed.
 - Use real terminal screenshots for credibility.
 - Add generated imagery only for a marketing version, not for the technical overview.
 - Follow `docs/BRAND-GUIDELINES.md` for tagline, voice, color, and public-facing visual direction.
