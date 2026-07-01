@@ -18,6 +18,7 @@ flowchart TD
 
     CodexHome --> CodexAdapter["AGENTS.md"]
     CodexHome --> CodexSkills["Codex skills"]
+    CodexHome --> CodexProfiles["fast/review/deep config profiles"]
     ClaudeHome --> ClaudeAdapter["CLAUDE.md"]
 
     Scripts --> Init["init-repo.sh"]

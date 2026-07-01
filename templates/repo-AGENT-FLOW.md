@@ -75,6 +75,10 @@ Before merge:
 - run `af-review`
 - resolve P1 findings
 
+## Codex Model And Effort
+
+For Codex, prefer the base config of `gpt-5.5` with medium reasoning for normal file-changing sessions. Use fast/low settings for read-only help or status, high effort for release review or hard debugging, and `xhigh` only for security-sensitive or repeatedly failing work. See the installed Agent-Flow guide at `~/.agent-flow/docs/CODEX-MODEL-POLICY.md`.
+
 Before release:
 
 - run `af-reconcile`

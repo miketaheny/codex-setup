@@ -27,6 +27,7 @@ Show:
 ```bash
 find ~/.agent-flow -maxdepth 2 -type f | sort
 find ~/.codex/skills -maxdepth 2 -name SKILL.md | sort
+ls ~/.codex/fast.config.toml ~/.codex/review.config.toml ~/.codex/deep.config.toml
 test -f ~/.claude/CLAUDE.md && echo "Claude adapter installed"
 ```
 
@@ -57,7 +58,7 @@ af-reconcile -> af-full-review -> af-release
 
 Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates, including Codex Security diff scans when available.
 
-Show `af-help` as the read-only command map. Mention `af-pnpm` for package-manager standardization, `af-feature-audit` as a manual-only app-wide feature/user-story QA campaign, and `af-brand-guidelines -> af-ui-audit` as the manual brand/UI review campaign.
+Show `af-help` as the read-only command map. Mention `af-pnpm` for package-manager standardization, `docs/CODEX-MODEL-POLICY.md` for speed/token profile choices, `af-feature-audit` as a manual-only app-wide feature/user-story QA campaign, and `af-brand-guidelines -> af-ui-audit` as the manual brand/UI review campaign.
 
 ### 4. Demonstrate A Session
 

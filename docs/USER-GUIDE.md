@@ -19,6 +19,16 @@ Custom locations:
 AF_HOME=/path/to/agent-flow CODEX_HOME=/path/to/codex CLAUDE_HOME=/path/to/claude ./scripts/install.sh
 ```
 
+Agent-Flow also installs Codex profile templates when missing:
+
+```bash
+codex --profile fast
+codex --profile review
+codex --profile deep
+```
+
+Use base `gpt-5.5` / medium for routine work, `fast` for cheap read-only/status tasks, `review` for release review, and `deep` only for high-risk or repeatedly failing work.
+
 ## Initialize A Project
 
 Inside a target Git repo:
