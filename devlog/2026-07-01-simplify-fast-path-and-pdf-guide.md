@@ -33,6 +33,7 @@
   - Fast-path wording and guide/PDF link spot check across docs, skills, templates, scripts, devlog, and changelog - passed.
   - `./scripts/install.sh` - passed and refreshed `~/.agent-flow`, `~/.codex`, and `~/.claude`.
   - Installed artifact verification for Markdown guide, PDF, PDF generator, fast-path skill wording, and PDF metadata - passed.
+  - Added `.gitattributes` for PDF/image binary classification after `finish-session.sh` correctly exposed that Git whitespace checks treated the PDF as text.
 - Visual/manual proof:
   - Rendered PDF proof pages were inspected from `tmp/pdfs/codex-fast-path-*.png`; temp render files were removed before commit.
 - Review:
