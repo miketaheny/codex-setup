@@ -23,7 +23,7 @@ Do not run broad scans, full reviews, security reviews, visual captures, package
 
 ## Start Checklist
 
-1. Read repo instructions first: `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present, plus any more specific nested instruction file for the edited path.
+1. Read repo instructions first: `.agent-flow/config.toml`, `AGENT-FLOW.md`, and `AGENTS.md` when present, plus any more specific nested instruction file for the edited path.
 2. Confirm repository state:
 
 ```bash
@@ -44,7 +44,7 @@ git config --worktree --get agentFlow.parent || true
 
 Work must happen in an isolated worktree. Check whether one already exists before creating anything new.
 
-**If the agent provides native worktree isolation** (e.g. Claude Code's built-in worktree, a Codex session worktree already checked out): work within that. Record AF metadata into it and continue — do not create a second worktree.
+**If Codex already provides native worktree isolation** (for example, a Codex session worktree already checked out): work within that. Record AF metadata into it and continue — do not create a second worktree.
 
 **If already inside an AF session worktree**, continue there while the task remains part of the same working session. Update `agentFlow.state` to `active` and `agentFlow.lastTouchedAt` when picking it back up.
 

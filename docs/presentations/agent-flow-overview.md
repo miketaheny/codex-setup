@@ -5,7 +5,7 @@ Regenerate it with `scripts/generate-agent-flow-walkthrough-pdf.py`.
 
 ## Slide 1: Agent-Flow
 
-Shared workflow rules for Claude, Codex, and other coding agents.
+Structured workflow rules for Codex.
 
 Visual: simple flow from developer to agents to protected Git workflow.
 
@@ -21,9 +21,9 @@ For file-changing work, use `af-flow`, keep related prompts in one AF session wo
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 
-## Slide 4: Agent-Agnostic Instructions
+## Slide 4: Codex Instructions
 
-`AGENT-FLOW.md` is canonical. `AGENTS.md` and `CLAUDE.md` are adapters.
+`AGENT-FLOW.md` is canonical. `AGENTS.md` is the Codex adapter. Claude CLI is optional review tooling only.
 
 Visual: hub-and-spoke diagram.
 

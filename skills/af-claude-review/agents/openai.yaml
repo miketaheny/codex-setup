@@ -1,0 +1,4 @@
+version: 1
+name: af-claude-review
+short_description: "Run Claude CLI external review"
+default_prompt: "Use $af-claude-review to run Claude CLI as an external review pass for this Agent-Flow diff, then triage the findings."

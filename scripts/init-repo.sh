@@ -91,6 +91,7 @@ CONFIG_FILE="$CONFIG_DIR/config.toml"
 REPO_HELPER_SCRIPTS=(
   "check-branch-safety.sh"
   "check-push-readiness.sh"
+  "claude-review.sh"
   "finish-session.sh"
   "install-hooks.sh"
   "set-agent-flow-mode.py"
@@ -219,7 +220,6 @@ mkdir -p docs/decisions docs/solutions docs/plans docs/diagrams docs/assets docs
 
 copy_if_missing "$AF_HOME/templates/repo-AGENT-FLOW.md" "AGENT-FLOW.md"
 copy_if_missing "$AF_HOME/templates/repo-AGENTS.md" "AGENTS.md"
-copy_if_missing "$AF_HOME/templates/repo-CLAUDE.md" "CLAUDE.md"
 copy_if_missing "$AF_HOME/templates/devlog-README.md" "devlog/README.md"
 ensure_repo_helpers
 
@@ -404,7 +404,6 @@ EOF
 }
 
 append_local_choices "AGENTS.md"
-append_local_choices "CLAUDE.md"
 
 if [ "$HOOKS_CHOICE" = "true" ]; then
   AF_HOME="$AF_HOME" "$SCRIPT_DIR/install-hooks.sh"

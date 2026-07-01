@@ -7,7 +7,7 @@ description: Deep security-only review for Agent-Flow releases or high-risk diff
 
 Use this as a distinct security gate. It is not the general release review; run `af-full-review` for broad correctness and release readiness.
 
-Use the agent's built-in security review capability as the primary scan engine. In Claude Code this is the `/security-review` skill; in other agents use the equivalent native security tool. Keep this AF skill as the orchestration wrapper and final release gate — it provides context, scope, and the AF verdict regardless of which underlying tool runs the scan.
+Use Codex Security as the preferred scan engine when available. Keep this AF skill as the orchestration wrapper and final release gate — it provides context, scope, and the AF verdict regardless of which underlying tool runs the scan.
 
 ## Inputs
 
@@ -33,10 +33,10 @@ Stop if the worktree is dirty unless the dirty files are explicit review evidenc
 
 ### 2. Run Security Scan
 
-Use the agent's built-in security review tool for the diff:
+Use the best available security review tool for the diff:
 
-- In Claude Code: invoke `/security-review` with the base/head range and AF context (changed files, validation already run, docs/devlog links, known risks, accepted risk context).
-- In other agents: use the equivalent native security skill or tool.
+- In Codex: prefer the Codex Security diff-scan workflow for Git-backed release diffs.
+- If Claude CLI is explicitly requested for an external security-adjacent review, run `af-claude-review` separately and triage its output as non-authoritative review input.
 - Carry findings back into this AF review using `SEC-P1`, `SEC-P2`, and `SEC-P3`.
 - If no built-in tool is available, continue with the manual AF checklist below and note the gap.
 

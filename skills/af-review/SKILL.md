@@ -9,6 +9,8 @@ Use this only when the user explicitly asks for a review before `af-full-review`
 
 Reach for this when the user wants a faster gut-check on a session worktree without waiting for the full release review.
 
+If the user asks for a Claude or outside-model review, route to `af-claude-review` after the local diff inspection. Do not run Claude CLI by default.
+
 ## Checklist
 
 ### 1. Branch Safety
@@ -59,4 +61,4 @@ Use:
 
 End with `READY TO MERGE INTO <parent-branch>`, `READY BUT ASK USER BEFORE MERGE`, or `NOT READY TO MERGE`.
 
-Include the session branch or detached commit, changed files, validation results, docs/devlog status, findings, and recommended next command.
+Include the session branch or detached commit, changed files, validation results, docs/devlog status, Claude CLI review status when used, findings, and recommended next command.

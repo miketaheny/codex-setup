@@ -205,12 +205,11 @@ def agents_review(root: Path) -> dict[str, Any]:
     codex_home = Path(os.environ.get("CODEX_HOME", home / ".codex"))
     global_flow = af_home / "AGENT-FLOW.md"
     global_agents = codex_home / "AGENTS.md"
-    global_claude = Path(os.environ.get("CLAUDE_HOME", home / ".claude")) / "CLAUDE.md"
     af_push_skill = af_home / "skills" / "af-release" / "SKILL.md"
     if not af_push_skill.exists():
         af_push_skill = codex_home / "skills" / "af-release" / "SKILL.md"
     push_skill = af_push_skill
-    instruction_names = {"AGENT-FLOW.md", "AGENTS.md", "CLAUDE.md"}
+    instruction_names = {"AGENT-FLOW.md", "AGENTS.md"}
     local_agents = sorted(path for path in root.rglob("*.md") if path.name in instruction_names)
     local_agents = [
         path
@@ -220,7 +219,6 @@ def agents_review(root: Path) -> dict[str, Any]:
 
     global_flow_text = read_optional(global_flow)
     global_text = read_optional(global_agents)
-    global_claude_text = read_optional(global_claude)
     push_text = read_optional(push_skill)
     concerns: list[str] = []
 
@@ -234,8 +232,6 @@ def agents_review(root: Path) -> dict[str, Any]:
 
     if global_text is None:
         concerns.append(f"Global AGENTS.md adapter missing: {global_agents}")
-    if global_claude_text is None:
-        concerns.append(f"Global CLAUDE.md adapter missing: {global_claude}")
 
     if push_text is None:
         concerns.append(f"af-release skill missing or unreadable: {push_skill}")
@@ -253,7 +249,6 @@ def agents_review(root: Path) -> dict[str, Any]:
     return {
         "global_agent_flow": str(global_flow),
         "global_agents_adapter": str(global_agents),
-        "global_claude_adapter": str(global_claude),
         "local_instruction_files": [str(path) for path in local_agents],
         "release_skill": str(push_skill),
         "concerns": concerns,

@@ -82,6 +82,9 @@ scripts/worktree-manager.py --cleanup <id> --yes
 
 # check parent branch push readiness
 scripts/check-push-readiness.sh development
+
+# optional external Claude CLI review from a Codex AF session
+scripts/claude-review.sh
 ```
 
 ## Skill Map
@@ -101,6 +104,7 @@ Use this table when the user asks what to run:
 | Engineering history | `af-devlog` |
 | Visual/manual proof | `af-show` |
 | Normal pre-merge review | `af-review` |
+| Optional Claude CLI external review | `af-claude-review` |
 | Worktree cleanup or pickup | `af-reconcile` |
 | Release readiness review | `af-full-review` |
 | Release PRs | `af-release` |
@@ -178,6 +182,10 @@ Use af-status to summarize current worktrees without changing anything.
 
 ```text
 Use af-reconcile, then af-full-review, then af-release.
+```
+
+```text
+Use af-claude-review to run Claude CLI as an external review pass, then triage the findings.
 ```
 
 ## Output

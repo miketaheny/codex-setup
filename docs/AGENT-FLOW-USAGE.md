@@ -26,7 +26,6 @@ Default install targets:
 ```text
 ~/.agent-flow
 ~/.codex
-~/.claude
 ```
 
 The installer also provides Codex profile templates when missing:
@@ -110,6 +109,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Pick up worktree | `scripts/worktree-manager.py --pickup <id>` |
 | Clean up merged worktree | `scripts/worktree-manager.py --cleanup <id> --yes` |
 | Check push readiness | `scripts/check-push-readiness.sh development` |
+| Run optional Claude CLI review | `scripts/claude-review.sh` |
 
 ## Daily Fast Path
 
@@ -149,6 +149,7 @@ Specialist skills are optional. Use them only when the work asks for that domain
 | Visual/manual proof | `af-show` |
 | Engineering history | `af-devlog` |
 | Normal review | `af-review` |
+| Optional Claude CLI external review | `af-claude-review` |
 | Worktree cleanup or pickup | `af-reconcile` |
 | Release readiness review | `af-full-review` |
 | Release PRs | `af-release` |

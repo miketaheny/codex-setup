@@ -1,6 +1,6 @@
 # Agent-Flow Instructions
 
-Agent-Flow (`AF`) is the shared workflow for Claude, Codex, and other coding agents in this repo.
+Agent-Flow (`AF`) is the Codex workflow for this repo.
 
 ## Core Lifecycle
 
@@ -16,11 +16,11 @@ Release work adds:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. `af-security-review` uses the agent's own built-in security-review tool (e.g. Claude Code's `/security-review`) as the scan engine in all cases, falling back to the manual AF checklist only when no such tool is available.
+Run `af-show` during finish when visual or manual proof is useful. Run `af-security-review` only when requested, when repo config requires it, when `af-full-review` flags security-sensitive changes, or when the release touches auth, secrets, input validation, dependencies, infrastructure, privacy, or data access. Prefer the Codex Security diff-scan path when available, falling back to the manual AF checklist only when no security-review tool is available.
 
 `af-finish` is intentionally fast and does not run a full review — it validates, checks devlog/docs, and reports readiness to merge into the session's parent branch. The one mandatory review gate is `af-full-review`, run once as part of the release flow before code reaches `main`. Use `af-review` only as an optional, on-demand quick check mid-session; it is never required.
 
-Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
+Use `af-help` for read-only command help and usage-guide routing. Use `af-claude-review` only when the user asks for Claude CLI as an external review pass or when a release/high-risk review explicitly wants a second-model check. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
 
 ## Fast Path
 
@@ -53,12 +53,13 @@ See `docs/CODEX-MODEL-POLICY.md` for the profile names and routing table.
 
 When opening a repo:
 
-- Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present.
+- Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, and `AGENTS.md` when present.
 - Follow the most specific nested `AGENT-FLOW.md` or adapter file for the path being edited.
 - If config says `mode = "disabled"`, disclose that AF is disabled and do not enforce AF in that repo.
 - If no AF instructions or config exist, do not do file-changing work until the repo is initialized with `~/.agent-flow/scripts/init-repo.sh` or the user explicitly opts out for that repo. Read-only questions can still be answered directly.
 - Read-only chats can answer directly. Any file edit, dependency change, commit, push, config change, or destructive operation must happen in one AF session worktree.
 - In Codex, treat a working thread as a persistent AF session. Keep using the same session worktree until the user asks to wrap up, finish, review, reconcile, switch direction, or merge.
+- Do not install or maintain Claude adapter files. Claude CLI is supported only as an optional external review command through `af-claude-review`.
 
 ## Branch Rules
 
@@ -162,8 +163,9 @@ Before release:
 
 1. Run `af-reconcile`.
 2. Run `af-full-review`.
-3. Run `af-security-review` if requested, config-required, or security-sensitive. It uses the agent's built-in security-review tool for the scan.
-4. Run `af-release`.
+3. Run `af-security-review` if requested, config-required, or security-sensitive. Prefer Codex Security when available.
+4. Run `af-claude-review` only when the user requests Claude CLI review or the release/high-risk review explicitly needs an external model check.
+5. Run `af-release`.
 
 Ask before remote side effects such as `git push` or `gh pr create` unless the user clearly authorized them in the current request.
 

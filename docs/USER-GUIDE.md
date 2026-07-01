@@ -11,12 +11,11 @@ Installed surfaces:
 
 - `~/.agent-flow`
 - `~/.codex`
-- `~/.claude`
 
 Custom locations:
 
 ```bash
-AF_HOME=/path/to/agent-flow CODEX_HOME=/path/to/codex CLAUDE_HOME=/path/to/claude ./scripts/install.sh
+AF_HOME=/path/to/agent-flow CODEX_HOME=/path/to/codex ./scripts/install.sh
 ```
 
 Agent-Flow also installs Codex profile templates when missing:
@@ -113,6 +112,7 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Visual/manual proof | `af-show` |
 | Engineering history | `af-devlog` |
 | Normal review | `af-review` |
+| Optional Claude CLI external review | `af-claude-review` |
 | Worktree cleanup or pickup | `af-reconcile` |
 | Release readiness review | `af-full-review` |
 | Release PRs | `af-release` |
@@ -121,6 +121,8 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Whole-app feature/user-story QA campaign | `af-feature-audit` |
 | Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
+
+Use `af-claude-review` only when you want Codex to run Claude CLI as an external second-model review. It requires the `claude` command to already be installed and authenticated.
 
 ## Feature Audit
 

@@ -1,0 +1,29 @@
+# 2026-07-01 - Optimize Agent-Flow for Codex and add Claude CLI review
+
+- Branch/worktree: `605b5ad` / `/Users/taheny/vault/teamt/agent-flow.worktrees/codex-exclusive-review-flow`
+- Commit: pending
+- Goal: Make Agent-Flow Codex-exclusive by default while adding an optional Claude CLI external review skill.
+- Summary:
+  - Removed Claude adapter installation and repo initialization defaults.
+  - Deleted repo-level `CLAUDE.md` and `templates/repo-CLAUDE.md`.
+  - Added `af-claude-review` and `scripts/claude-review.sh` so Codex can run Claude CLI from a terminal for optional external review.
+  - Wired `claude-review.sh` into initialized repo helper scripts.
+  - Updated core AF instructions, README, usage docs, user guide, architecture, demo, pitch, brand guidance, visual docs, review skills, security-review guidance, and presentation source for Codex-first behavior.
+  - Regenerated the walkthrough PDF so the visual artifact no longer describes Claude adapters.
+- Decisions:
+  - Claude CLI is an optional review tool, not an Agent-Flow adapter surface.
+  - `af-claude-review` is not part of routine `af-finish`; it runs only when requested or when a release/high-risk review explicitly wants a second-model check.
+  - Codex remains responsible for triaging Claude output before accepting findings.
+- Validation:
+  - `bash -n` for install, init, Claude review, session, readiness, branch-safety, and hook scripts - passed.
+  - Bundled Python `py_compile` for PDF generator, set-mode helper, worktree manager, and reconcile audit script - passed.
+  - `scripts/claude-review.sh` missing-binary preflight - passed with exit 127 and clear `Claude CLI was not found on PATH` message.
+  - Walkthrough PDF regenerated with bundled Python/reportlab - passed.
+  - `pdfinfo docs/presentations/agent-flow-walkthrough.pdf` - passed, 10 landscape pages.
+  - `pdftoppm` render plus montage visual inspection for the walkthrough PDF - passed.
+  - Codex-only `init-repo.sh` smoke test - passed; generated `AGENT-FLOW.md`, `AGENTS.md`, helper scripts including `claude-review.sh`, and no `CLAUDE.md`.
+  - `git diff --check` - passed.
+  - `./scripts/install.sh` - passed; refreshed `~/.agent-flow` and `~/.codex`.
+  - Installed artifact verification for `af-claude-review`, `claude-review.sh`, Codex-first instructions, and removal of stale AF/Codex Claude adapter templates - passed.
+- Risks / follow-ups:
+  - Claude CLI is not installed on this machine, so runtime review execution can only be validated through the missing-binary preflight unless the CLI is installed later.
