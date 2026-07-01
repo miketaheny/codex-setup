@@ -51,6 +51,11 @@ Show the relevant subset of these commands:
 # initialize while skipping pnpm conversion
 ~/.agent-flow/scripts/init-repo.sh --no-pnpm
 
+# run Codex with an Agent-Flow model/effort profile
+codex --profile fast
+codex --profile review
+codex --profile deep
+
 # start a file-changing session
 scripts/start-session.sh feat short-name
 
@@ -98,6 +103,22 @@ Use this table when the user asks what to run:
 | Whole-app feature/user-story QA campaign | `af-feature-audit` |
 | Responsive UI/UX audit and fix campaign | `af-ui-audit` |
 | Backlog history migration | `af-migrate-backlog-devlog` |
+
+## Codex Model Profiles
+
+When asked about speed, token use, or reasoning effort, point to:
+
+```text
+docs/CODEX-MODEL-POLICY.md
+~/.agent-flow/docs/CODEX-MODEL-POLICY.md
+```
+
+Default guidance:
+
+- `fast` for read-only help/status and lightweight exploration
+- base config for routine implementation
+- `review` for release review and risky diffs
+- `deep` only for security-sensitive or repeatedly failing work
 
 ## Prompt Examples
 

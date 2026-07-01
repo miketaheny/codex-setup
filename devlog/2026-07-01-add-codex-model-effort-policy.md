@@ -1,0 +1,37 @@
+# 2026-07-01 - Add Codex model effort policy
+
+- Branch/worktree: `4de7f8a` / `/Users/taheny/vault/teamt/agent-flow.worktrees/codex-model-effort-policy`
+- Commit: pending
+- Goal: Optimize Codex's default model/effort posture for speed and token usage while keeping deeper profiles available for Agent-Flow review and high-risk work.
+- Summary:
+  - Updated the live Codex base config to `gpt-5.5` with medium reasoning and low verbosity.
+  - Added live Codex `fast`, `review`, and `deep` profile files.
+  - Added Agent-Flow model/effort policy docs and Codex profile templates.
+  - Updated the installer to copy Codex profiles only when missing.
+  - Refreshed the global Agent-Flow, Codex, and Claude install surfaces.
+- Files changed:
+  - `docs/CODEX-MODEL-POLICY.md` - documents default model/effort posture, profiles, routing, and escalation rules.
+  - `templates/codex-*.config.toml` - profile templates for fast, review, and deep Codex runs.
+  - `scripts/install.sh` - installs Codex profile templates non-destructively.
+  - `AGENT-FLOW.md`, `templates/repo-AGENT-FLOW.md`, docs, and `skills/af-help/SKILL.md` - expose the policy throughout Agent-Flow.
+  - `/Users/taheny/.codex/config.toml` - changed live base effort from `xhigh` to `medium` and added `model_verbosity = "low"`.
+  - `/Users/taheny/.codex/{fast,review,deep}.config.toml` - added live profile files.
+- Decisions:
+  - Kept `gpt-5.5` as the base model but reduced default effort to `medium` to improve speed/cost for routine work.
+  - Kept `xhigh` available only through the `deep` profile for security-sensitive, repeatedly failing, or unusually broad work.
+  - Made installer profile copy non-destructive so local profile tuning is not overwritten by future Agent-Flow installs.
+- Validation:
+  - `python3` TOML parsing for live Codex config and all profile templates - passed.
+  - `bash -n scripts/install.sh scripts/init-repo.sh scripts/start-session.sh scripts/finish-session.sh scripts/check-push-readiness.sh` - passed.
+  - `codex --strict-config --help` - passed.
+  - `codex --profile fast --strict-config --help` - passed.
+  - `codex --profile review --strict-config --help` - passed.
+  - `codex --profile deep --strict-config --help` - passed.
+  - `./scripts/install.sh` - passed and refreshed `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+  - `git diff --check` - passed.
+- Visual/manual proof:
+  - Not applicable.
+- Review:
+  - Not run; finish/release review remains separate in AF.
+- Risks / follow-ups:
+  - Codex app/IDE users still need to switch model/effort manually when the UI exposes those controls; Agent-Flow does not assume automatic model escalation.

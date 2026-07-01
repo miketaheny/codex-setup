@@ -15,6 +15,23 @@ backup_if_exists() {
   fi
 }
 
+copy_if_missing() {
+  local src="$1"
+  local dest="$2"
+  if [ -f "$dest" ]; then
+    echo "Exists: $dest"
+  else
+    cp "$src" "$dest"
+    echo "Created: $dest"
+  fi
+}
+
+install_codex_profiles() {
+  copy_if_missing "$SRC_DIR/templates/codex-fast.config.toml" "$CODEX_HOME/fast.config.toml"
+  copy_if_missing "$SRC_DIR/templates/codex-review.config.toml" "$CODEX_HOME/review.config.toml"
+  copy_if_missing "$SRC_DIR/templates/codex-deep.config.toml" "$CODEX_HOME/deep.config.toml"
+}
+
 remove_retired() {
   local home="$1"
   local skill script
@@ -66,6 +83,7 @@ cp -R "$SRC_DIR/templates/." "$CODEX_HOME/templates/"
 cp -R "$SRC_DIR/scripts/." "$CODEX_HOME/scripts/"
 cp -R "$SRC_DIR/docs/." "$CODEX_HOME/docs/"
 chmod +x "$CODEX_HOME/scripts/"*.sh 2>/dev/null || true
+install_codex_profiles
 
 # Claude-compatible install surface.
 cp "$SRC_DIR/CLAUDE.md" "$CLAUDE_HOME/CLAUDE.md"

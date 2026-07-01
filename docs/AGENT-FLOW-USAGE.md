@@ -28,6 +28,16 @@ Default install targets:
 ~/.claude
 ```
 
+The installer also provides Codex profile templates when missing:
+
+```bash
+codex --profile fast
+codex --profile review
+codex --profile deep
+```
+
+See `docs/CODEX-MODEL-POLICY.md` for when to use each profile.
+
 ## Initialize A Repo
 
 Inside a target Git repo:

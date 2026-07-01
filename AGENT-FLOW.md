@@ -22,6 +22,19 @@ Run `af-show` during finish when visual or manual proof is useful. Run `af-secur
 
 Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
 
+## Codex Model And Effort
+
+For Codex, start routine Agent-Flow work on `gpt-5.5` with `model_reasoning_effort = "medium"` and low verbosity. Do not use `xhigh` as the default.
+
+Escalate deliberately:
+
+- Use a fast profile or `gpt-5.4-mini` for read-only help, status, and lightweight exploration.
+- Use base `gpt-5.5` / `medium` for normal `af-flow` implementation.
+- Use `gpt-5.5` / `high` for `af-full-review`, risky diffs, and hard debugging.
+- Use `gpt-5.5` / `xhigh` only for security-sensitive analysis, repeated failed debugging, or unusually broad release review.
+
+See `docs/CODEX-MODEL-POLICY.md` for the profile names and routing table.
+
 ## First Contact
 
 When opening a repo:
