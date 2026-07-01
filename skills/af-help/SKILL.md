@@ -120,6 +120,16 @@ Default guidance:
 - `review` for release review and risky diffs
 - `deep` only for security-sensitive or repeatedly failing work
 
+## Fast Path Guidance
+
+When users ask whether Agent-Flow is too complicated, answer with the five daily concepts:
+
+```text
+af-flow, af-status, af-review, af-reconcile, af-finish
+```
+
+Explain that specialist skills are optional add-ons. Ordinary file-changing sessions should continue in one worktree, use targeted context reads, run focused validation, and defer full review to release or explicit review requests.
+
 ## Prompt Examples
 
 ```text

@@ -25,6 +25,7 @@ Public-facing brand, voice, color, launch copy, and social-card rules live in `d
 | Install flow | `docs/ARCHITECTURE.md` | Mermaid sequence | Show where files are copied during install. |
 | Repo init flow | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how init records repo choices and creates missing AF files in a target repo. |
 | Skill model | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show how requests route through compact AF skills. |
+| Codex fast path | `docs/ARCHITECTURE.md`, `docs/AGENT-FLOW-CODEX-GUIDE.md`, `docs/agent-flow-codex-fast-path-guide.pdf` | Mermaid + PDF diagrams | Show how routine Codex work stays in one session and escalates only when needed. |
 | Core flow | `docs/WORKFLOW.md` | Text lifecycle | Show the expected branch, validation, docs, and review cycle. |
 | Session lifecycle | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show start-session, finish-session, merge prompt, and push readiness. |
 | Worktree manager | `docs/ARCHITECTURE.md` | Mermaid flowchart | Show visual map, details, pickup, and cleanup actions. |

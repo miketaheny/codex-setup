@@ -4,6 +4,8 @@
 
 ### Added
 
+- Added a Codex fast-path guide in Markdown and PDF form, including workflow, escalation, and worktree diagrams.
+- Added a reproducible PDF generator for the Codex fast-path guide.
 - Added `af-flow` as the entry workflow for file-changing sessions.
 - Added `af-help` for read-only Agent-Flow command help and usage-guide routing.
 - Added `af-brand-guidelines` for creating, ingesting, interviewing for, or updating repo brand/design guidelines.
@@ -21,6 +23,8 @@
 
 ### Changed
 
+- Clarified the daily Agent-Flow fast path: one persistent worktree, targeted context, scoped edits, focused validation, one finish-time devlog, and deliberate escalation.
+- Updated Codex model guidance to emphasize starting with the cheapest setting that fits the risk and escalating only when blocked, risky, security-sensitive, or release-facing.
 - Simplified Agent-Flow around one lifecycle: `af-flow -> af-devlog -> af-finish`.
 - Simplified release readiness to `af-reconcile -> af-full-review -> af-release`.
 - Updated `af-security-review` to prefer Codex Security diff scans for Git-backed release diffs when available, with the manual AF checklist as fallback.

@@ -6,6 +6,7 @@ This guide is the quick reference for using Agent-Flow from a repo that has been
 
 - Read-only questions can be answered directly.
 - File-changing work uses one active AF session worktree until the user asks to finish, review, reconcile, merge, or switch direction.
+- Routine work uses the fast path: targeted context reads, scoped edits, focused validation, one finish-time devlog, and no full audits unless requested or risk-triggered.
 - Every file-changing session gets a `devlog/` entry before commit.
 - `af-finish` validates, commits when configured, and asks before merge; it is a wrap-up action, not an every-prompt action.
 - Parent branches should pass push-readiness checks before pushing.
@@ -94,6 +95,29 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Clean up merged worktree | `scripts/worktree-manager.py --cleanup <id> --yes` |
 | Check push readiness | `scripts/check-push-readiness.sh development` |
 
+## Daily Fast Path
+
+Use these five concepts for most work:
+
+| Need | Run |
+|---|---|
+| Start or continue file-changing work | `af-flow` |
+| See where sessions stand | `af-status` |
+| Ask for a quick checkpoint | `af-review` |
+| Pick up, audit, or clean worktrees | `af-reconcile` |
+| Wrap up, commit, and ask before merge | `af-finish` |
+
+Specialist skills are optional. Use them only when the work asks for that domain:
+
+| Domain | Skill |
+|---|---|
+| Package-manager migration | `af-pnpm` |
+| Docs, diagrams, PDFs, demos, guides | `af-docs` |
+| Brand/design baseline | `af-brand-guidelines` |
+| Whole-app feature QA campaign | `af-feature-audit` |
+| Responsive UI/UX audit campaign | `af-ui-audit` |
+| Release PR preparation | `af-release` |
+
 ## Skill Cheat Sheet
 
 | Need | Skill |
@@ -179,6 +203,7 @@ Run `af-security-review` when requested, config-required, or when the release to
 - Use detached session worktrees unless a named branch is explicitly requested.
 - Continue the current AF session worktree for related follow-up prompts.
 - Do not run `af-finish` until the user asks to wrap up or change session state.
+- Do not run full audits, full reviews, security reviews, visual captures, or release checks during routine sessions unless requested or risk-triggered.
 - Keep metadata small and record human decisions in `devlog/`.
 - Do not run destructive production actions as proof or QA.
 - Do not leave untracked or uncommitted session work behind at finish.

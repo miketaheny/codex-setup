@@ -14,6 +14,22 @@ Use `af-show` during finish when seeing the app, rendered docs, CLI output, or a
 
 Use `af-help` for command help and usage-guide routing. `af-feature-audit` and `af-ui-audit` are manual-only and should not run as part of ordinary finish or release gates.
 
+## Fast Path
+
+Most Codex sessions should use the light path:
+
+```text
+one persistent worktree -> targeted context -> scoped change -> focused validation -> one devlog -> finish on request
+```
+
+The daily command surface is intentionally small:
+
+```text
+af-flow, af-status, af-review, af-reconcile, af-finish
+```
+
+Escalate to specialist skills, full review, security review, release checks, visual capture, or broad audits only when requested, risk-triggered, or needed after repeated failure.
+
 ## Codex Model And Effort
 
 Default Codex posture is `gpt-5.5` with medium effort and low verbosity. Use `fast` for read-only help/status, `review` for `af-full-review`, and `deep` only for security-sensitive or repeatedly failing work. See `docs/CODEX-MODEL-POLICY.md`.

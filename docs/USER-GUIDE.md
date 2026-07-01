@@ -29,6 +29,8 @@ codex --profile deep
 
 Use base `gpt-5.5` / medium for routine work, `fast` for cheap read-only/status tasks, `review` for release review, and `deep` only for high-risk or repeatedly failing work.
 
+The default habit is to start with the cheapest setting that can do the job and escalate only when the work becomes risky, broad, blocked, or release-facing.
+
 ## Initialize A Project
 
 Inside a target Git repo:
@@ -60,6 +62,18 @@ scripts/finish-session.sh --merge
 If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`.
 
 Do not finish after every prompt. A normal Codex flow/vibe session should remain in the same worktree while the work is related. Use `af-finish` only when you want to wrap up the session; use `af-review` or `af-reconcile` when you want a checkpoint without starting a new worktree.
+
+For most days, keep the mental model to five actions:
+
+| Moment | Action |
+|---|---|
+| Start or continue changing files | `af-flow` |
+| Check where things stand | `af-status` |
+| Get a quick sanity check | `af-review` |
+| Clean up or pick up worktrees | `af-reconcile` |
+| Commit and prepare to merge | `af-finish` |
+
+Use specialist skills only when the task needs them: `af-pnpm` for pnpm conversion, `af-docs` for docs and visuals, `af-feature-audit` for an explicit feature QA campaign, and `af-ui-audit` for an explicit responsive UI/UX campaign.
 
 For command help:
 
@@ -140,6 +154,8 @@ docs/product/ui-audit-register.csv
 ```
 
 See [Agent-Flow Usage Guide](AGENT-FLOW-USAGE.md) for the full command map.
+
+For a printable Codex-focused guide with flow charts, see [Agent-Flow Codex Fast Path Guide](AGENT-FLOW-CODEX-GUIDE.md) or `docs/agent-flow-codex-fast-path-guide.pdf`.
 
 ## Manage Worktrees
 

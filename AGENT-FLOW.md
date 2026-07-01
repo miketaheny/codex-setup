@@ -22,6 +22,18 @@ Run `af-show` during finish when visual or manual proof is useful. Run `af-secur
 
 Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
 
+## Fast Path
+
+Default to the smallest workflow that preserves safety:
+
+```text
+continue or create one session worktree -> make the scoped change -> run targeted validation -> write one finish-time devlog -> finish when asked
+```
+
+Do not run full audits, broad repo scans, release reviews, security reviews, or visual captures unless the user asks, the change is high-risk, or the evidence says they are needed. Keep the user-facing command set small: `af-flow`, `af-status`, `af-review`, `af-reconcile`, and `af-finish`. Treat specialist skills such as `af-pnpm`, `af-docs`, `af-feature-audit`, and `af-ui-audit` as on-demand tools, not mandatory steps in ordinary sessions.
+
+Use cached local context before rereading large docs. Inside an active session, re-check only the files and instructions relevant to the changed paths unless the user changes direction or the repo state looks inconsistent.
+
 ## Codex Model And Effort
 
 For Codex, start routine Agent-Flow work on `gpt-5.5` with `model_reasoning_effort = "medium"` and low verbosity. Do not use `xhigh` as the default.

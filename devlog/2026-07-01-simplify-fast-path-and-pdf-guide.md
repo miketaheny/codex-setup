@@ -1,0 +1,41 @@
+# 2026-07-01 - Simplify Agent-Flow fast path and add Codex PDF guide
+
+- Branch/worktree: `f241648` / `/Users/taheny/vault/teamt/agent-flow.worktrees/simplify-fast-path`
+- Commit: pending
+- Goal: Make Agent-Flow faster and less token-heavy for Codex without losing quality, then document the operating model in Markdown and PDF form.
+- Summary:
+  - Added an explicit daily fast path: one persistent worktree, targeted context reads, scoped edits, focused validation, one finish-time devlog, and deliberate escalation.
+  - Updated core AF instructions, `af-flow`, `af-help`, repo templates, README, workflow docs, usage docs, user guide, and Codex model policy.
+  - Added `docs/AGENT-FLOW-CODEX-GUIDE.md` with Mermaid flow charts for the daily flow, escalation flow, and worktree mental model.
+  - Added `docs/agent-flow-codex-fast-path-guide.pdf` as a 3-page printable guide with rendered diagrams and command tables.
+  - Added `scripts/generate-codex-fast-path-pdf.py` so the PDF can be regenerated from repo-local source.
+- Files changed:
+  - `AGENT-FLOW.md` - documents the fast path and specialist-skill boundaries.
+  - `skills/af-flow/SKILL.md` - adds a fast-path checklist and targeted-read guidance.
+  - `skills/af-help/SKILL.md` - adds concise guidance for speed/token-use questions.
+  - `docs/CODEX-MODEL-POLICY.md` - adds operating principle and token-budget rules.
+  - `docs/AGENT-FLOW-USAGE.md`, `docs/USER-GUIDE.md`, `docs/WORKFLOW.md`, and `README.md` - simplify daily workflow guidance and link the guide/PDF.
+  - `docs/ARCHITECTURE.md` and `docs/VISUALS.md` - add fast-path visual inventory and routing diagram.
+  - `templates/repo-AGENT-FLOW.md` - carries the fast-path default into initialized repos.
+  - `scripts/generate-codex-fast-path-pdf.py` - generates the PDF guide.
+- Decisions:
+  - Kept the daily command surface to five actions: `af-flow`, `af-status`, `af-review`, `af-reconcile`, and `af-finish`.
+  - Kept specialist skills available but optional so they do not become routine overhead.
+  - Used a generated PDF rather than a hand-edited binary so guide updates are reproducible.
+- Validation:
+  - PDF generated with bundled Python/reportlab - passed.
+  - `pdfinfo docs/agent-flow-codex-fast-path-guide.pdf` - passed, 3 pages, letter size.
+  - Rendered PDF pages to PNG with bundled Poppler - passed with a local fontconfig warning only.
+  - Visually inspected rendered PDF pages - passed after tightening the page 1 loop arrow and label.
+  - `bash -n scripts/start-session.sh scripts/finish-session.sh scripts/init-repo.sh scripts/install.sh scripts/check-push-readiness.sh scripts/install-hooks.sh scripts/check-branch-safety.sh` - passed.
+  - Bundled Python `py_compile` for the PDF generator, reconcile scripts, and pnpm conversion script - passed.
+  - `git diff --check` - passed.
+  - Fast-path wording and guide/PDF link spot check across docs, skills, templates, scripts, devlog, and changelog - passed.
+  - `./scripts/install.sh` - passed and refreshed `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+  - Installed artifact verification for Markdown guide, PDF, PDF generator, fast-path skill wording, and PDF metadata - passed.
+- Visual/manual proof:
+  - Rendered PDF proof pages were inspected from `tmp/pdfs/codex-fast-path-*.png`; temp render files were removed before commit.
+- Review:
+  - Not run; this is a docs/workflow session and release review remains separate.
+- Risks / follow-ups:
+  - The PDF is intentionally concise. Future screenshots or demo video can be added if the Codex UI exposes stable project/session visuals worth documenting.
