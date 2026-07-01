@@ -23,6 +23,7 @@ Adjust this section to match the repo.
 - Use one active AF session worktree for a related working session, not one worktree per prompt.
 - Keep related Codex/agent follow-up work in the same session worktree until the user asks to finish, review, reconcile, merge, or switch direction.
 - Use the fast path for routine work: targeted context reads, scoped edits, focused validation, one finish-time devlog, and no full audits unless requested or risk-triggered.
+- For newly adopted repos, run `~/.agent-flow/scripts/init-repo.sh` before file-changing work unless the user explicitly opts out for this repo.
 - Use detached session worktrees by default.
 - Create named branches only when explicitly requested.
 - Merge reviewed sessions back to their recorded parent branch after asking the user.

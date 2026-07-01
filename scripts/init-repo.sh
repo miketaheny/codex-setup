@@ -16,6 +16,7 @@ STAGING_CHOICE=""
 HOOKS_CHOICE=""
 PNPM_CHOICE=""
 INTEGRATION_BRANCH="development"
+PRODUCTION_BRANCH="main"
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -57,8 +58,16 @@ while [ "$#" -gt 0 ]; do
       fi
       INTEGRATION_BRANCH="$1"
       ;;
+    --production-branch)
+      shift
+      if [ "$#" -eq 0 ]; then
+        echo "Error: --production-branch requires a branch name." >&2
+        exit 2
+      fi
+      PRODUCTION_BRANCH="$1"
+      ;;
     -h|--help)
-      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--pnpm|--no-pnpm] [--integration-branch <branch>]" >&2
+      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--pnpm|--no-pnpm] [--integration-branch <branch>] [--production-branch <branch>]" >&2
       exit 0
       ;;
     *)
@@ -258,11 +267,34 @@ ensure_gitignore() {
 ensure_gitignore
 
 if [ -z "$MODE" ]; then
-  disable="$(prompt_yes_no "Disable Agent-Flow enforcement for this repo?" "no")"
-  if [ "$disable" = "yes" ]; then
-    MODE="disabled"
-  else
+  enable="$(prompt_yes_no "Enable Agent-Flow enforcement for this repo?" "yes")"
+  if [ "$enable" = "yes" ]; then
     MODE="enforced"
+  else
+    MODE="disabled"
+  fi
+fi
+
+prompt_branch() {
+  local question="$1"
+  local default="$2"
+  local answer
+
+  if [ "$YES" -eq 1 ]; then
+    printf '%s\n' "$default"
+    return
+  fi
+
+  read -r -p "$question [$default] " answer
+  printf '%s\n' "${answer:-$default}"
+}
+
+if [ "$MODE" != "disabled" ]; then
+  if [ "$INTEGRATION_BRANCH" = "development" ]; then
+    INTEGRATION_BRANCH="$(prompt_branch "Integration branch for completed AF sessions?" "$INTEGRATION_BRANCH")"
+  fi
+  if [ "$PRODUCTION_BRANCH" = "main" ]; then
+    PRODUCTION_BRANCH="$(prompt_branch "Production branch / final PR target?" "$PRODUCTION_BRANCH")"
   fi
 fi
 
@@ -298,11 +330,11 @@ if [ -z "$HOOKS_CHOICE" ]; then
   fi
 fi
 
-PROTECTED='["main", "staging"]'
-FLOW="development -> main"
+PROTECTED="[\"$PRODUCTION_BRANCH\", \"staging\"]"
+FLOW="$INTEGRATION_BRANCH -> $PRODUCTION_BRANCH"
 STAGING_NOTE="Staging: disabled. Do not assume a staging branch unless .agent-flow/config.toml changes."
 if [ "$STAGING_CHOICE" = "true" ]; then
-  FLOW="development -> staging -> main"
+  FLOW="$INTEGRATION_BRANCH -> staging -> $PRODUCTION_BRANCH"
   STAGING_NOTE="Staging: enabled. Treat staging as protected and use it only through the release PR flow unless an explicit direct-push exception is approved."
 fi
 
@@ -327,7 +359,7 @@ pre_push_worktree_check = true
 pre_push_hook_installed = $HOOKS_CHOICE
 
 integration_branch = "$INTEGRATION_BRANCH"
-production_branch = "main"
+production_branch = "$PRODUCTION_BRANCH"
 staging_enabled = $STAGING_CHOICE
 staging_branch = "staging"
 reserved_branch_names = ["master", "production", "prod"]
@@ -363,7 +395,7 @@ append_local_choices() {
 - Merge behavior: ask before merge by default.
 - Push behavior: check child session worktrees before pushing a parent branch.
 - Pre-push hook installed: $HOOKS_CHOICE.
-- SDLC flow: $FLOW. \`main\` is the production PR target and should not be kept as a local work branch.
+- SDLC flow: $FLOW. \`$PRODUCTION_BRANCH\` is the production PR target and should not be kept as a local work branch.
 - $STAGING_NOTE
 - Legacy branch names \`master\`, \`production\`, and \`prod\` are reserved and should not be used as mainline branches.
 <!-- agent-flow-local-end -->
@@ -382,5 +414,7 @@ run_pnpm_onboarding
 echo "Agent-Flow initialized at $ROOT"
 echo "Config: $CONFIG_FILE"
 echo "Mode: $MODE"
+echo "Integration branch: $INTEGRATION_BRANCH"
+echo "Production branch: $PRODUCTION_BRANCH"
 echo "Flow: $FLOW"
 echo "Pre-push hook: $HOOKS_CHOICE"

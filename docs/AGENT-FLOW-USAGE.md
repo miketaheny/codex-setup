@@ -51,6 +51,17 @@ Inside a target Git repo:
 
 The init script creates repo instruction files, `.agent-flow/config.toml`, `devlog/`, docs scaffolding, helper scripts, and optional pre-push hooks.
 
+When a local repo has no AF setup, agents should not make file changes there until the repo is initialized or the user explicitly opts out for that repo.
+
+Init walks through:
+
+- whether Agent-Flow enforcement should be enabled at all
+- integration branch for completed sessions, default `development`
+- production branch / final PR target, default `main`
+- whether a protected `staging` branch sits between integration and production
+- whether to install the local pre-push hook for child worktree readiness
+- optional pnpm onboarding for root Node repos
+
 For repos with a root `package.json`, init also offers pnpm onboarding. It skips non-Node repos and repos already using pnpm. Use `--no-pnpm` to skip conversion or `--pnpm` to run the pnpm step on an already initialized repo.
 
 ## Daily File-Changing Work
@@ -86,6 +97,7 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 |---|---|
 | Initialize repo | `~/.agent-flow/scripts/init-repo.sh` |
 | Initialize without pnpm conversion | `~/.agent-flow/scripts/init-repo.sh --no-pnpm` |
+| Initialize with explicit branches | `~/.agent-flow/scripts/init-repo.sh --integration-branch development --production-branch main` |
 | Start session | `scripts/start-session.sh feat short-name` |
 | Start branch-backed session | `scripts/start-session.sh --branch feat/short-name feat short-name` |
 | Continue active session | `cd ../<repo>.worktrees/<session-slug>` |

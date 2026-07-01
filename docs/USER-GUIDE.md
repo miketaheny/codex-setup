@@ -41,6 +41,15 @@ Inside a target Git repo:
 
 The init script creates missing AF instruction files, `devlog/`, docs folders, `.agent-flow/config.toml`, and a non-destructive `.gitignore` block. It asks about enforcement, optional staging, and the pre-push hook.
 
+If a repo has no AF setup, agents should stop before file edits and ask to initialize AF or explicitly opt out for that repo. Init asks:
+
+- whether AF enforcement should be enabled at all
+- which branch receives completed session merges, default `development`
+- which branch is the production/final PR target, default `main`
+- whether the repo uses protected `staging`
+- whether to install the pre-push worktree readiness hook
+- whether to run pnpm onboarding for root Node repos
+
 For repos with a root `package.json`, init also offers pnpm onboarding. It skips non-Node repos and repos already using pnpm. Use `--no-pnpm` to skip conversion or `--pnpm` to run only that onboarding step on an already initialized repo.
 
 ## Daily Work

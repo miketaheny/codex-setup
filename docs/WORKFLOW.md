@@ -37,6 +37,9 @@ Default Codex posture for real development and computer-use work is `gpt-5.5` wi
 ## Branch Model
 
 - `development` is the default integration branch.
+- `main` is the default production/final PR target.
+- `init-repo.sh` asks for the integration branch, production branch, optional staging branch, hooks, and whether AF enforcement should be enabled.
+- If a repo has no AF setup, file-changing work waits until init runs or the user explicitly opts out for that repo.
 - Session worktrees start from the checked-out parent branch and merge back to that recorded parent.
 - Worktrees are detached by default.
 - Named branches are created only when explicitly requested.

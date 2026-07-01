@@ -56,7 +56,7 @@ When opening a repo:
 - Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present.
 - Follow the most specific nested `AGENT-FLOW.md` or adapter file for the path being edited.
 - If config says `mode = "disabled"`, disclose that AF is disabled and do not enforce AF in that repo.
-- If no AF instructions or config exist, ask whether to run `~/.agent-flow/scripts/init-repo.sh` or opt out locally.
+- If no AF instructions or config exist, do not do file-changing work until the repo is initialized with `~/.agent-flow/scripts/init-repo.sh` or the user explicitly opts out for that repo. Read-only questions can still be answered directly.
 - Read-only chats can answer directly. Any file edit, dependency change, commit, push, config change, or destructive operation must happen in one AF session worktree.
 - In Codex, treat a working thread as a persistent AF session. Keep using the same session worktree until the user asks to wrap up, finish, review, reconcile, switch direction, or merge.
 

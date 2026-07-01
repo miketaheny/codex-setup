@@ -25,6 +25,7 @@
 
 - Clarified the daily Agent-Flow fast path: one persistent worktree, targeted context, scoped edits, focused validation, one finish-time devlog, and deliberate escalation.
 - Updated Codex model guidance to use an effort preflight, defaulting most development and computer-use work to extra-high reasoning while downgrading cheap read-only or trivial tasks.
+- Updated repo initialization guidance so file-changing work in repos without AF setup must initialize AF or explicitly opt out, and `init-repo.sh` now prompts for integration and production branches.
 - Simplified Agent-Flow around one lifecycle: `af-flow -> af-devlog -> af-finish`.
 - Simplified release readiness to `af-reconcile -> af-full-review -> af-release`.
 - Updated `af-security-review` to prefer Codex Security diff scans for Git-backed release diffs when available, with the manual AF checklist as fallback.
