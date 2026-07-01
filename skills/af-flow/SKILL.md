@@ -9,6 +9,18 @@ description: Start or adopt one Agent-Flow worktree session for file-changing ag
 
 Use this as the entry workflow for any file-changing Agent-Flow session. Keep one coherent working session in one worktree until the user explicitly asks to finish, review, reconcile, merge, or switch direction.
 
+## Fast Path
+
+For routine changes, minimize ceremony:
+
+1. Confirm repo, branch, status, and AF parent metadata.
+2. Continue the active matching session worktree when one exists.
+3. Read only the repo instructions and files needed for the current change.
+4. Make the scoped change and run targeted validation.
+5. Add one finish-time devlog entry and use `af-finish` only when the user asks to wrap up.
+
+Do not run broad scans, full reviews, security reviews, visual captures, package-manager migrations, feature audits, UI audits, or release checks unless requested or risk-triggered.
+
 ## Start Checklist
 
 1. Read repo instructions first: `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present, plus any more specific nested instruction file for the edited path.
@@ -78,6 +90,7 @@ agentFlow.endTriggers = finish,review,reconcile,merge,switch-direction
 - Keep edits scoped to the session goal.
 - Update affected docs when behavior, setup, architecture, security, deployment, operations, onboarding, or user-facing workflows change.
 - Keep working in the same session worktree across prompts until the user asks to wrap up or changes direction.
+- Prefer targeted reads and validation over broad repo scans once the session context is established.
 - Add or update one `devlog/` entry before the session commit.
 - Run relevant validation as work accumulates.
 - Use `af-finish` only when the user asks to finish, wrap up, commit, or prepare the session for merge.

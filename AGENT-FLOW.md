@@ -22,16 +22,30 @@ Run `af-show` during finish when visual or manual proof is useful. Run `af-secur
 
 Use `af-help` for read-only command help and usage-guide routing. Use `af-feature-audit` only when explicitly requested for a whole-app feature register, user-story, test, fix, and retest campaign. Use `af-brand-guidelines` to create or ingest brand/design rules, and `af-ui-audit` only when explicitly requested for a responsive UI/UX audit, fix, and retest campaign.
 
+## Fast Path
+
+Default to the smallest workflow that preserves safety:
+
+```text
+continue or create one session worktree -> make the scoped change -> run targeted validation -> write one finish-time devlog -> finish when asked
+```
+
+Do not run full audits, broad repo scans, release reviews, security reviews, or visual captures unless the user asks, the change is high-risk, or the evidence says they are needed. Keep the user-facing command set small: `af-flow`, `af-status`, `af-review`, `af-reconcile`, and `af-finish`. Treat specialist skills such as `af-pnpm`, `af-docs`, `af-feature-audit`, and `af-ui-audit` as on-demand tools, not mandatory steps in ordinary sessions.
+
+Use cached local context before rereading large docs. Inside an active session, re-check only the files and instructions relevant to the changed paths unless the user changes direction or the repo state looks inconsistent.
+
 ## Codex Model And Effort
 
-For Codex, start routine Agent-Flow work on `gpt-5.5` with `model_reasoning_effort = "medium"` and low verbosity. Do not use `xhigh` as the default.
+For Codex, run a quick effort preflight before meaningful work. Fast workflow does not mean low reasoning: keep the AF process lightweight, but use enough model effort for the task.
 
-Escalate deliberately:
+Default to `gpt-5.5` with `model_reasoning_effort = "xhigh"` and low verbosity for most development, debugging, refactoring, multi-file docs, browser/computer-use, release, and high-context work.
 
-- Use a fast profile or `gpt-5.4-mini` for read-only help, status, and lightweight exploration.
-- Use base `gpt-5.5` / `medium` for normal `af-flow` implementation.
-- Use `gpt-5.5` / `high` for `af-full-review`, risky diffs, and hard debugging.
-- Use `gpt-5.5` / `xhigh` only for security-sensitive analysis, repeated failed debugging, or unusually broad release review.
+Downgrade deliberately:
+
+- Use a fast profile or `gpt-5.4-mini` for read-only help, status, command lookup, and lightweight exploration.
+- Use base `gpt-5.5` / `medium` for trivial one-file edits, narrow docs copy, formatting, or low-risk config changes.
+- Use `gpt-5.5` / `high` for moderate implementation when `xhigh` is unnecessary but low/medium would be brittle.
+- Use `gpt-5.5` / `xhigh` for normal development and computer-use work unless the effort preflight clearly chooses a cheaper tier.
 
 See `docs/CODEX-MODEL-POLICY.md` for the profile names and routing table.
 
@@ -42,7 +56,7 @@ When opening a repo:
 - Read repo-local `.agent-flow/config.toml`, `AGENT-FLOW.md`, `AGENTS.md`, and `CLAUDE.md` when present.
 - Follow the most specific nested `AGENT-FLOW.md` or adapter file for the path being edited.
 - If config says `mode = "disabled"`, disclose that AF is disabled and do not enforce AF in that repo.
-- If no AF instructions or config exist, ask whether to run `~/.agent-flow/scripts/init-repo.sh` or opt out locally.
+- If no AF instructions or config exist, do not do file-changing work until the repo is initialized with `~/.agent-flow/scripts/init-repo.sh` or the user explicitly opts out for that repo. Read-only questions can still be answered directly.
 - Read-only chats can answer directly. Any file edit, dependency change, commit, push, config change, or destructive operation must happen in one AF session worktree.
 - In Codex, treat a working thread as a persistent AF session. Keep using the same session worktree until the user asks to wrap up, finish, review, reconcile, switch direction, or merge.
 

@@ -1,0 +1,69 @@
+# 2026-07-01 - Simplify Agent-Flow fast path and add Codex PDF guide
+
+- Branch/worktree: `f241648` / `/Users/taheny/vault/teamt/agent-flow.worktrees/simplify-fast-path`
+- Commit: pending
+- Goal: Make Agent-Flow faster and less token-heavy for Codex without losing quality, then document the operating model in Markdown and PDF form.
+- Summary:
+  - Added an explicit daily fast path: one persistent worktree, targeted context reads, scoped edits, focused validation, one finish-time devlog, and deliberate escalation.
+  - Revised Codex model policy to separate lightweight workflow from low reasoning effort: most development and computer-use work now defaults to `xhigh` after an effort preflight.
+  - Updated the live Codex base config at `/Users/taheny/.codex/config.toml` from `model_reasoning_effort = "medium"` to `model_reasoning_effort = "xhigh"`.
+  - Tightened first-contact rules so repos without AF setup must run `init-repo.sh` or explicitly opt out before file-changing work.
+  - Updated `init-repo.sh` to ask positively whether AF enforcement should be enabled, then prompt for integration branch, production branch, staging, hooks, and pnpm onboarding.
+  - Added `af-disable` and `af-enable` skills for explicit repo-local opt-out and re-enable workflows.
+  - Added `scripts/set-agent-flow-mode.py` so skills can update `.agent-flow/config.toml` deterministically.
+  - Updated core AF instructions, `af-flow`, `af-help`, repo templates, README, workflow docs, usage docs, user guide, and Codex model policy.
+  - Added `docs/AGENT-FLOW-CODEX-GUIDE.md` with Mermaid flow charts for the daily flow, escalation flow, and worktree mental model.
+  - Added `docs/agent-flow-codex-fast-path-guide.pdf` as a 3-page printable guide with rendered diagrams and command tables.
+  - Added `docs/presentations/agent-flow-walkthrough.pptx` as a branded landscape product walkthrough focused on what Agent-Flow is, why it exists, and how to use it.
+  - Added `scripts/generate-codex-fast-path-pdf.py` so the PDF can be regenerated from repo-local source.
+- Files changed:
+  - `AGENT-FLOW.md` - documents the fast path and specialist-skill boundaries.
+  - `skills/af-flow/SKILL.md` - adds a fast-path checklist and targeted-read guidance.
+  - `skills/af-help/SKILL.md` - adds concise guidance for speed/token-use questions.
+  - `docs/CODEX-MODEL-POLICY.md` - adds operating principle and token-budget rules.
+  - `docs/AGENT-FLOW-CODEX-GUIDE.md` and `docs/agent-flow-codex-fast-path-guide.pdf` - explain effort preflight, daily workflow, and worktree flow.
+  - `docs/presentations/agent-flow-walkthrough.pptx` - provides the stakeholder-friendly walkthrough deck.
+  - `scripts/init-repo.sh` - prompts for enablement and branch setup during onboarding.
+  - `scripts/set-agent-flow-mode.py` - toggles `enabled` and `mode` in repo-local AF config.
+  - `skills/af-disable/SKILL.md` and `skills/af-enable/SKILL.md` - document confirmation and mutation flow.
+  - `docs/AGENT-FLOW-USAGE.md`, `docs/USER-GUIDE.md`, `docs/WORKFLOW.md`, and `README.md` - simplify daily workflow guidance and link the guide/PDF.
+  - `docs/ARCHITECTURE.md` and `docs/VISUALS.md` - add fast-path visual inventory, routing diagram, and presentation artifact reference.
+  - `docs/DOCS-STRATEGY.md` and `docs/presentations/agent-flow-overview.md` - document the branded walkthrough deck.
+  - `templates/repo-AGENT-FLOW.md` - carries the fast-path default into initialized repos.
+  - `scripts/generate-codex-fast-path-pdf.py` - generates the PDF guide.
+- Decisions:
+  - Kept the daily command surface to five actions: `af-flow`, `af-status`, `af-review`, `af-reconcile`, and `af-finish`.
+  - Changed the model policy so AF saves tokens with targeted context and fewer mandatory gates, not by under-reasoning normal development/computer-use work.
+  - Missing-AF repos should not silently fall back to ad hoc edits; they either initialize AF or explicitly opt out for that repo.
+  - `af-disable` creates a minimal disabled config when a repo has no existing `.agent-flow/config.toml`; `af-enable` routes missing config through normal init.
+  - Kept specialist skills available but optional so they do not become routine overhead.
+  - Used a generated PDF rather than a hand-edited binary so guide updates are reproducible.
+- Validation:
+  - PDF generated with bundled Python/reportlab - passed.
+  - `pdfinfo docs/agent-flow-codex-fast-path-guide.pdf` - passed, 3 pages, letter size.
+  - Rendered PDF pages to PNG with bundled Poppler - passed with a local fontconfig warning only.
+  - Visually inspected rendered PDF pages - passed after tightening the page 1 loop arrow and label; rechecked page 2 after changing the guide to the effort-preflight model.
+  - `bash -n scripts/start-session.sh scripts/finish-session.sh scripts/init-repo.sh scripts/install.sh scripts/check-push-readiness.sh scripts/install-hooks.sh scripts/check-branch-safety.sh` - passed.
+  - Python `py_compile` for `scripts/set-agent-flow-mode.py`, `scripts/generate-codex-fast-path-pdf.py`, and `scripts/worktree-manager.py` - passed.
+  - `git diff --check` - passed.
+  - Fast-path wording and guide/PDF link spot check across docs, skills, templates, scripts, devlog, and changelog - passed.
+  - `./scripts/install.sh` - passed and refreshed `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+  - Installed artifact verification for Markdown guide, PDF, PDF generator, fast-path skill wording, effort-preflight wording, `xhigh` policy text, and PDF metadata - passed.
+  - Live Codex config verification: `/Users/taheny/.codex/config.toml` now has `model_reasoning_effort = "xhigh"` - passed.
+  - `init-repo.sh --yes --no-hooks --no-pnpm --integration-branch develop --production-branch trunk --no-staging` smoke test - passed and generated `develop -> trunk` branch config plus local adapter notes.
+  - `set-agent-flow-mode.py --disable --yes` then `--enable --yes` smoke test in a temporary repo - passed and toggled `enabled` plus `mode`.
+  - `init-repo.sh --yes --no-hooks --no-pnpm --integration-branch develop --production-branch trunk --no-staging` helper-copy smoke test - passed and installed executable `scripts/set-agent-flow-mode.py`.
+  - `init-repo.sh --yes --disabled --no-pnpm` smoke test - passed and generated `enabled = false`, `mode = "disabled"`, no staging, and no pre-push hook.
+  - Installed `init-repo.sh` verification across `~/.agent-flow`, `~/.codex`, and `~/.claude` for enablement prompt, `--production-branch`, production branch config, and installed docs wording - passed.
+  - Installed `af-disable`, `af-enable`, `set-agent-flow-mode.py`, and `docs/presentations/agent-flow-walkthrough.pptx` verification under `~/.agent-flow` and `~/.codex` - passed.
+  - Added `.gitattributes` for PDF/image binary classification after `finish-session.sh` correctly exposed that Git whitespace checks treated the PDF as text.
+  - `render_slides.py docs/presentations/agent-flow-walkthrough.pptx` - passed.
+  - `slides_test.py docs/presentations/agent-flow-walkthrough.pptx` - passed with no overflow detected.
+  - Visual inspection of the generated walkthrough deck render - passed after tightening the skill-map slide.
+- Visual/manual proof:
+  - Rendered PDF proof pages were inspected from `tmp/pdfs/codex-fast-path-*.png`; temp render files were removed before commit.
+  - Rendered PowerPoint proof slides were inspected from the generated slide PNGs; render files and inspection sidecars were removed before commit.
+- Review:
+  - Not run; this is a docs/workflow session and release review remains separate.
+- Risks / follow-ups:
+  - The PDF is intentionally concise. Future screenshots or demo video can be added if the Codex UI exposes stable project/session visuals worth documenting.

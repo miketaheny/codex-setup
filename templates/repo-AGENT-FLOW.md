@@ -22,6 +22,8 @@ Adjust this section to match the repo.
 
 - Use one active AF session worktree for a related working session, not one worktree per prompt.
 - Keep related Codex/agent follow-up work in the same session worktree until the user asks to finish, review, reconcile, merge, or switch direction.
+- Use the fast path for routine work: targeted context reads, scoped edits, focused validation, one finish-time devlog, and no full audits unless requested or risk-triggered.
+- For newly adopted repos, run `~/.agent-flow/scripts/init-repo.sh` before file-changing work unless the user explicitly opts out for this repo.
 - Use detached session worktrees by default.
 - Create named branches only when explicitly requested.
 - Merge reviewed sessions back to their recorded parent branch after asking the user.
@@ -80,7 +82,7 @@ Do not run `af-finish` automatically after every prompt. Finish is a deliberate 
 
 ## Codex Model And Effort
 
-For Codex, prefer the base config of `gpt-5.5` with medium reasoning for normal file-changing sessions. Use fast/low settings for read-only help or status, high effort for release review or hard debugging, and `xhigh` only for security-sensitive or repeatedly failing work. See the installed Agent-Flow guide at `~/.agent-flow/docs/CODEX-MODEL-POLICY.md`.
+For Codex, run an effort preflight before acting. Prefer `gpt-5.5` with `xhigh` reasoning for most development and computer-use work. Use fast/low settings for read-only help or status, medium for trivial one-file edits, and `deep`/`xhigh` for release review, hard debugging, or security-sensitive work. See the installed Agent-Flow guide at `~/.agent-flow/docs/CODEX-MODEL-POLICY.md`.
 
 Before release:
 

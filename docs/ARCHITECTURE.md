@@ -79,6 +79,25 @@ flowchart TD
     UIAudit --> UIFix["Scoped AF fix sessions"]
 ```
 
+## Fast Path Routing
+
+```mermaid
+flowchart LR
+    Prompt["Codex prompt"] --> ReadOnly{"Read only?"}
+    ReadOnly -->|Yes| Fast["fast profile or base medium"]
+    Fast --> Answer["Answer directly"]
+    ReadOnly -->|No| Active{"Matching active AF session?"}
+    Active -->|Yes| Continue["Continue same worktree"]
+    Active -->|No| Start["af-flow / start-session.sh"]
+    Start --> Continue
+    Continue --> Scoped["Targeted reads + scoped edits"]
+    Scoped --> Validate["Focused validation"]
+    Validate --> More{"More related work?"}
+    More -->|Yes| Continue
+    More -->|No, user wraps up| Finish["af-finish"]
+    Finish --> Ready["Ready / ask before merge"]
+```
+
 ## Session Scripts
 
 ```mermaid

@@ -51,6 +51,10 @@ Show the relevant subset of these commands:
 # initialize while skipping pnpm conversion
 ~/.agent-flow/scripts/init-repo.sh --no-pnpm
 
+# explicitly opt this repo out of or back into Agent-Flow
+python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --disable --yes
+python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --enable --yes
+
 # run Codex with an Agent-Flow model/effort profile
 codex --profile fast
 codex --profile review
@@ -89,6 +93,8 @@ Use this table when the user asks what to run:
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish, validate, review, and ask before merge | `af-finish` |
@@ -116,9 +122,21 @@ docs/CODEX-MODEL-POLICY.md
 Default guidance:
 
 - `fast` for read-only help/status and lightweight exploration
-- base config for routine implementation
-- `review` for release review and risky diffs
-- `deep` only for security-sensitive or repeatedly failing work
+- medium for trivial one-file edits and narrow docs copy
+- `xhigh` for most development and computer-use work
+- `deep` for release review, hard debugging, and security-sensitive work
+
+## Fast Path Guidance
+
+When users ask whether Agent-Flow is too complicated, answer with the five daily concepts:
+
+```text
+af-flow, af-status, af-review, af-reconcile, af-finish
+```
+
+Explain that specialist skills are optional add-ons. Ordinary file-changing sessions should continue in one worktree, use targeted context reads, run focused validation, and defer full review to release or explicit review requests.
+
+Also distinguish workflow speed from model effort: AF should stay lightweight, but normal development and computer-use work should usually run at extra-high reasoning unless a quick effort preflight chooses a cheaper tier.
 
 ## Prompt Examples
 
@@ -136,6 +154,14 @@ Use af-feature-audit on this app and keep one canonical feature register.
 
 ```text
 Use af-pnpm to check this repo's package manager and convert it to pnpm.
+```
+
+```text
+Use af-disable to opt this repo out of Agent-Flow.
+```
+
+```text
+Use af-enable to enable Agent-Flow for this repo.
 ```
 
 ```text

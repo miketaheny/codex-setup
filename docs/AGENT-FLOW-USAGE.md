@@ -6,6 +6,7 @@ This guide is the quick reference for using Agent-Flow from a repo that has been
 
 - Read-only questions can be answered directly.
 - File-changing work uses one active AF session worktree until the user asks to finish, review, reconcile, merge, or switch direction.
+- Routine work uses the fast path: targeted context reads, scoped edits, focused validation, one finish-time devlog, and no full audits unless requested or risk-triggered.
 - Every file-changing session gets a `devlog/` entry before commit.
 - `af-finish` validates, commits when configured, and asks before merge; it is a wrap-up action, not an every-prompt action.
 - Parent branches should pass push-readiness checks before pushing.
@@ -38,6 +39,8 @@ codex --profile deep
 
 See `docs/CODEX-MODEL-POLICY.md` for when to use each profile.
 
+Effort default: use extra-high reasoning for most development and computer-use work. Downgrade to `fast` or medium only after a quick effort preflight classifies the task as read-only, trivial, low-risk, and easy to verify.
+
 ## Initialize A Repo
 
 Inside a target Git repo:
@@ -47,6 +50,17 @@ Inside a target Git repo:
 ```
 
 The init script creates repo instruction files, `.agent-flow/config.toml`, `devlog/`, docs scaffolding, helper scripts, and optional pre-push hooks.
+
+When a local repo has no AF setup, agents should not make file changes there until the repo is initialized or the user explicitly opts out for that repo.
+
+Init walks through:
+
+- whether Agent-Flow enforcement should be enabled at all
+- integration branch for completed sessions, default `development`
+- production branch / final PR target, default `main`
+- whether a protected `staging` branch sits between integration and production
+- whether to install the local pre-push hook for child worktree readiness
+- optional pnpm onboarding for root Node repos
 
 For repos with a root `package.json`, init also offers pnpm onboarding. It skips non-Node repos and repos already using pnpm. Use `--no-pnpm` to skip conversion or `--pnpm` to run the pnpm step on an already initialized repo.
 
@@ -83,6 +97,9 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 |---|---|
 | Initialize repo | `~/.agent-flow/scripts/init-repo.sh` |
 | Initialize without pnpm conversion | `~/.agent-flow/scripts/init-repo.sh --no-pnpm` |
+| Initialize with explicit branches | `~/.agent-flow/scripts/init-repo.sh --integration-branch development --production-branch main` |
+| Disable AF in this repo | `python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --disable --yes` |
+| Re-enable AF in this repo | `python3 ~/.agent-flow/scripts/set-agent-flow-mode.py --enable --yes` |
 | Start session | `scripts/start-session.sh feat short-name` |
 | Start branch-backed session | `scripts/start-session.sh --branch feat/short-name feat short-name` |
 | Continue active session | `cd ../<repo>.worktrees/<session-slug>` |
@@ -94,6 +111,29 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Clean up merged worktree | `scripts/worktree-manager.py --cleanup <id> --yes` |
 | Check push readiness | `scripts/check-push-readiness.sh development` |
 
+## Daily Fast Path
+
+Use these five concepts for most work:
+
+| Need | Run |
+|---|---|
+| Start or continue file-changing work | `af-flow` |
+| See where sessions stand | `af-status` |
+| Ask for a quick checkpoint | `af-review` |
+| Pick up, audit, or clean worktrees | `af-reconcile` |
+| Wrap up, commit, and ask before merge | `af-finish` |
+
+Specialist skills are optional. Use them only when the work asks for that domain:
+
+| Domain | Skill |
+|---|---|
+| Package-manager migration | `af-pnpm` |
+| Docs, diagrams, PDFs, demos, guides | `af-docs` |
+| Brand/design baseline | `af-brand-guidelines` |
+| Whole-app feature QA campaign | `af-feature-audit` |
+| Responsive UI/UX audit campaign | `af-ui-audit` |
+| Release PR preparation | `af-release` |
+
 ## Skill Cheat Sheet
 
 | Need | Skill |
@@ -101,6 +141,8 @@ scripts/start-session.sh --branch feat/short-name feat short-name
 | Command help and this usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
@@ -179,6 +221,7 @@ Run `af-security-review` when requested, config-required, or when the release to
 - Use detached session worktrees unless a named branch is explicitly requested.
 - Continue the current AF session worktree for related follow-up prompts.
 - Do not run `af-finish` until the user asks to wrap up or change session state.
+- Do not run full audits, full reviews, security reviews, visual captures, or release checks during routine sessions unless requested or risk-triggered.
 - Keep metadata small and record human decisions in `devlog/`.
 - Do not run destructive production actions as proof or QA.
 - Do not leave untracked or uncommitted session work behind at finish.

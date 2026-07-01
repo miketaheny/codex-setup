@@ -14,13 +14,34 @@ Use `af-show` during finish when seeing the app, rendered docs, CLI output, or a
 
 Use `af-help` for command help and usage-guide routing. `af-feature-audit` and `af-ui-audit` are manual-only and should not run as part of ordinary finish or release gates.
 
+Use `af-disable` only for an explicit repo-local opt-out. Use `af-enable` to reverse that opt-out or run normal AF initialization when setup is missing.
+
+## Fast Path
+
+Most Codex sessions should use the light path:
+
+```text
+one persistent worktree -> targeted context -> scoped change -> focused validation -> one devlog -> finish on request
+```
+
+The daily command surface is intentionally small:
+
+```text
+af-flow, af-status, af-review, af-reconcile, af-finish
+```
+
+Escalate to specialist skills, full review, security review, release checks, visual capture, or broad audits only when requested, risk-triggered, or needed after repeated failure.
+
 ## Codex Model And Effort
 
-Default Codex posture is `gpt-5.5` with medium effort and low verbosity. Use `fast` for read-only help/status, `review` for `af-full-review`, and `deep` only for security-sensitive or repeatedly failing work. See `docs/CODEX-MODEL-POLICY.md`.
+Default Codex posture for real development and computer-use work is `gpt-5.5` with extra-high effort and low verbosity. Run an effort preflight first: use `fast` or medium for read-only/status and trivial edits, and use `deep`/`xhigh` for release, security-sensitive, or hard debugging work. See `docs/CODEX-MODEL-POLICY.md`.
 
 ## Branch Model
 
 - `development` is the default integration branch.
+- `main` is the default production/final PR target.
+- `init-repo.sh` asks for the integration branch, production branch, optional staging branch, hooks, and whether AF enforcement should be enabled.
+- If a repo has no AF setup, file-changing work waits until init runs or the user explicitly opts out for that repo.
 - Session worktrees start from the checked-out parent branch and merge back to that recorded parent.
 - Worktrees are detached by default.
 - Named branches are created only when explicitly requested.

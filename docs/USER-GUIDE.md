@@ -27,7 +27,9 @@ codex --profile review
 codex --profile deep
 ```
 
-Use base `gpt-5.5` / medium for routine work, `fast` for cheap read-only/status tasks, `review` for release review, and `deep` only for high-risk or repeatedly failing work.
+Use base `gpt-5.5` / `xhigh` for most development and computer-use work. Use `fast` or medium for cheap read-only/status tasks and trivial edits. Use `deep` for release review, security-sensitive work, or hard debugging.
+
+The default habit is to run an effort preflight first: keep the AF workflow lightweight, but do not under-reason real development work.
 
 ## Initialize A Project
 
@@ -38,6 +40,15 @@ Inside a target Git repo:
 ```
 
 The init script creates missing AF instruction files, `devlog/`, docs folders, `.agent-flow/config.toml`, and a non-destructive `.gitignore` block. It asks about enforcement, optional staging, and the pre-push hook.
+
+If a repo has no AF setup, agents should stop before file edits and ask to initialize AF or explicitly opt out for that repo. Init asks:
+
+- whether AF enforcement should be enabled at all
+- which branch receives completed session merges, default `development`
+- which branch is the production/final PR target, default `main`
+- whether the repo uses protected `staging`
+- whether to install the pre-push worktree readiness hook
+- whether to run pnpm onboarding for root Node repos
 
 For repos with a root `package.json`, init also offers pnpm onboarding. It skips non-Node repos and repos already using pnpm. Use `--no-pnpm` to skip conversion or `--pnpm` to run only that onboarding step on an already initialized repo.
 
@@ -61,6 +72,18 @@ If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`
 
 Do not finish after every prompt. A normal Codex flow/vibe session should remain in the same worktree while the work is related. Use `af-finish` only when you want to wrap up the session; use `af-review` or `af-reconcile` when you want a checkpoint without starting a new worktree.
 
+For most days, keep the mental model to five actions:
+
+| Moment | Action |
+|---|---|
+| Start or continue changing files | `af-flow` |
+| Check where things stand | `af-status` |
+| Get a quick sanity check | `af-review` |
+| Clean up or pick up worktrees | `af-reconcile` |
+| Commit and prepare to merge | `af-finish` |
+
+Use specialist skills only when the task needs them: `af-pnpm` for pnpm conversion, `af-docs` for docs and visuals, `af-feature-audit` for an explicit feature QA campaign, and `af-ui-audit` for an explicit responsive UI/UX campaign.
+
 For command help:
 
 ```text
@@ -82,6 +105,8 @@ Example: starting `docs isms-structure` from `core12-isms` creates `../core12-is
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
 | Convert Node repos to pnpm | `af-pnpm` |
+| Disable AF enforcement for this repo | `af-disable` |
+| Enable or re-enable AF for this repo | `af-enable` |
 | Start or adopt work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Finish a session | `af-finish` |
@@ -140,6 +165,8 @@ docs/product/ui-audit-register.csv
 ```
 
 See [Agent-Flow Usage Guide](AGENT-FLOW-USAGE.md) for the full command map.
+
+For a printable Codex-focused guide with flow charts, see [Agent-Flow Codex Fast Path Guide](AGENT-FLOW-CODEX-GUIDE.md) or `docs/agent-flow-codex-fast-path-guide.pdf`.
 
 ## Manage Worktrees
 

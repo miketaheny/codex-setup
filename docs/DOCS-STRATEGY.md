@@ -63,13 +63,13 @@ Current canonical docs:
 | `docs/VISUALS.md` | Current | Keep visual format recommendations, screenshots, demos, decks, and content plans current. |
 | `docs/DEMO.md` | Current | Keep demo and recording flow aligned with the repo's actual commands. |
 | `docs/PITCH.md` | Current | Keep stakeholder and marketing copy grounded in verified repo behavior. |
-| `docs/presentations/agent-flow-overview.md` | Current | Keep as the editable slide-outline source until a PPTX is explicitly requested. |
+| `docs/presentations/agent-flow-overview.md` | Current | Keep as the editable slide-outline source for product walkthrough decks. |
 | `docs/decisions/` | Optional support | Use for durable workflow or architecture decisions. |
 | `docs/solutions/` | Optional support | Use for reusable implementation lessons. |
 | `docs/plans/` | Optional support | Use for meaningful future work plans. |
 | `docs/diagrams/` | Optional support | Use for diagram source files when diagrams outgrow inline Mermaid. |
 | `docs/assets/` | Optional support | Use for screenshots, generated visuals, or demo media. |
-| `docs/presentations/` | Optional support | Use for slide outlines and future deck artifacts. |
+| `docs/presentations/` | Optional support | Use for slide outlines and deck artifacts such as `agent-flow-walkthrough.pptx`. |
 
 ## Visual Strategy
 

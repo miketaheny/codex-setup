@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF Disable"
+  short_description: "Opt a repo out of Agent-Flow"
+  default_prompt: "Use $af-disable to disable Agent-Flow enforcement for this repo after confirming."

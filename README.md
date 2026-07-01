@@ -10,6 +10,8 @@ Agent-Flow is a portable setup for solo development with Codex, Claude, and othe
 
 It exists because capable agents still need reliable rails. Without a shared workflow, parallel sessions can drift across branches, skip documentation, overwrite work, or leave weak handoff records. Agent-Flow makes the development loop inspectable, portable, and easier to trust.
 
+The default path is intentionally light: keep one related work session in one worktree, read targeted context, validate the specific change, and finish only when you ask. Broader audits, release reviews, security reviews, and specialist skills are available on demand instead of being mandatory daily overhead.
+
 ## Why It Matters
 
 - **Control parallel work:** keep agent sessions isolated in worktrees instead of letting them collide on the parent branch.
@@ -25,6 +27,8 @@ It exists because capable agents still need reliable rails. Without a shared wor
 - Compact AF skills:
   - `af-help`
   - `af-brand-guidelines`
+  - `af-disable`
+  - `af-enable`
   - `af-flow`
   - `af-status`
   - `af-devlog`
@@ -39,7 +43,7 @@ It exists because capable agents still need reliable rails. Without a shared wor
   - `af-feature-audit`
   - `af-ui-audit`
   - `af-migrate-backlog-devlog`
-- Scripts for install, repo init, session lifecycle, branch safety, push readiness, hooks, and worktree management.
+- Scripts for install, repo init, local AF enable/disable, session lifecycle, branch safety, push readiness, hooks, and worktree management.
 - Templates for repo instructions, config, devlog entries, gitignore blocks, and decision records.
 - Brand and launch assets under `docs/BRAND-GUIDELINES.md` and `docs/assets/`.
 
@@ -154,6 +158,8 @@ Default release path is `development -> staging -> main`. With staging disabled 
 ## Documentation
 
 - [Agent-Flow Usage Guide](docs/AGENT-FLOW-USAGE.md)
+- [Codex Fast Path Guide](docs/AGENT-FLOW-CODEX-GUIDE.md)
+- [Codex Fast Path PDF](docs/agent-flow-codex-fast-path-guide.pdf)
 - [Brand Guidelines](docs/BRAND-GUIDELINES.md)
 - [Workflow](docs/WORKFLOW.md)
 - [User Guide](docs/USER-GUIDE.md)
