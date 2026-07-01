@@ -36,14 +36,16 @@ Use cached local context before rereading large docs. Inside an active session, 
 
 ## Codex Model And Effort
 
-For Codex, start routine Agent-Flow work on `gpt-5.5` with `model_reasoning_effort = "medium"` and low verbosity. Do not use `xhigh` as the default.
+For Codex, run a quick effort preflight before meaningful work. Fast workflow does not mean low reasoning: keep the AF process lightweight, but use enough model effort for the task.
 
-Escalate deliberately:
+Default to `gpt-5.5` with `model_reasoning_effort = "xhigh"` and low verbosity for most development, debugging, refactoring, multi-file docs, browser/computer-use, release, and high-context work.
 
-- Use a fast profile or `gpt-5.4-mini` for read-only help, status, and lightweight exploration.
-- Use base `gpt-5.5` / `medium` for normal `af-flow` implementation.
-- Use `gpt-5.5` / `high` for `af-full-review`, risky diffs, and hard debugging.
-- Use `gpt-5.5` / `xhigh` only for security-sensitive analysis, repeated failed debugging, or unusually broad release review.
+Downgrade deliberately:
+
+- Use a fast profile or `gpt-5.4-mini` for read-only help, status, command lookup, and lightweight exploration.
+- Use base `gpt-5.5` / `medium` for trivial one-file edits, narrow docs copy, formatting, or low-risk config changes.
+- Use `gpt-5.5` / `high` for moderate implementation when `xhigh` is unnecessary but low/medium would be brittle.
+- Use `gpt-5.5` / `xhigh` for normal development and computer-use work unless the effort preflight clearly chooses a cheaper tier.
 
 See `docs/CODEX-MODEL-POLICY.md` for the profile names and routing table.
 

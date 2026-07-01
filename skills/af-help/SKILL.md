@@ -116,9 +116,9 @@ docs/CODEX-MODEL-POLICY.md
 Default guidance:
 
 - `fast` for read-only help/status and lightweight exploration
-- base config for routine implementation
-- `review` for release review and risky diffs
-- `deep` only for security-sensitive or repeatedly failing work
+- medium for trivial one-file edits and narrow docs copy
+- `xhigh` for most development and computer-use work
+- `deep` for release review, hard debugging, and security-sensitive work
 
 ## Fast Path Guidance
 
@@ -129,6 +129,8 @@ af-flow, af-status, af-review, af-reconcile, af-finish
 ```
 
 Explain that specialist skills are optional add-ons. Ordinary file-changing sessions should continue in one worktree, use targeted context reads, run focused validation, and defer full review to release or explicit review requests.
+
+Also distinguish workflow speed from model effort: AF should stay lightweight, but normal development and computer-use work should usually run at extra-high reasoning unless a quick effort preflight chooses a cheaper tier.
 
 ## Prompt Examples
 

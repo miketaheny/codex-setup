@@ -32,7 +32,7 @@ Escalate to specialist skills, full review, security review, release checks, vis
 
 ## Codex Model And Effort
 
-Default Codex posture is `gpt-5.5` with medium effort and low verbosity. Use `fast` for read-only help/status, `review` for `af-full-review`, and `deep` only for security-sensitive or repeatedly failing work. See `docs/CODEX-MODEL-POLICY.md`.
+Default Codex posture for real development and computer-use work is `gpt-5.5` with extra-high effort and low verbosity. Run an effort preflight first: use `fast` or medium for read-only/status and trivial edits, and use `deep`/`xhigh` for release, security-sensitive, or hard debugging work. See `docs/CODEX-MODEL-POLICY.md`.
 
 ## Branch Model
 

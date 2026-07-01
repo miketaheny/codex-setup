@@ -27,9 +27,9 @@ codex --profile review
 codex --profile deep
 ```
 
-Use base `gpt-5.5` / medium for routine work, `fast` for cheap read-only/status tasks, `review` for release review, and `deep` only for high-risk or repeatedly failing work.
+Use base `gpt-5.5` / `xhigh` for most development and computer-use work. Use `fast` or medium for cheap read-only/status tasks and trivial edits. Use `deep` for release review, security-sensitive work, or hard debugging.
 
-The default habit is to start with the cheapest setting that can do the job and escalate only when the work becomes risky, broad, blocked, or release-facing.
+The default habit is to run an effort preflight first: keep the AF workflow lightweight, but do not under-reason real development work.
 
 ## Initialize A Project
 

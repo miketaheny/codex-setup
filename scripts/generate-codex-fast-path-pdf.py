@@ -137,20 +137,19 @@ def daily_flow() -> Drawing:
 
 def escalation_flow() -> Drawing:
     d = Drawing(500, 155)
-    draw_box(d, 18, 82, 92, 42, "Routine work", fill=colors.HexColor("#ecfdf5"))
-    draw_box(d, 138, 82, 102, 42, "Blocked twice?")
-    draw_box(d, 268, 82, 102, 42, "Security scope?")
-    draw_box(d, 398, 82, 86, 42, "Release gate?")
-    draw_box(d, 78, 18, 102, 40, "Stay light", fill=colors.HexColor("#ecfdf5"), stroke=GREEN)
-    draw_box(d, 220, 18, 102, 40, "Increase effort", fill=colors.HexColor("#fff7ed"), stroke=AMBER)
-    draw_box(d, 360, 18, 102, 40, "review / deep", fill=colors.HexColor("#fff7ed"), stroke=AMBER)
+    draw_box(d, 18, 82, 92, 42, "New task", fill=colors.HexColor("#eff6ff"))
+    draw_box(d, 138, 82, 102, 42, "Read-only or trivial?")
+    draw_box(d, 268, 82, 102, 42, "Development or computer use?")
+    draw_box(d, 398, 82, 86, 42, "Release or security?")
+    draw_box(d, 78, 18, 102, 40, "fast / medium", fill=colors.HexColor("#ecfdf5"), stroke=GREEN)
+    draw_box(d, 220, 18, 102, 40, "xhigh", fill=colors.HexColor("#fff7ed"), stroke=AMBER)
+    draw_box(d, 360, 18, 102, 40, "deep / xhigh", fill=colors.HexColor("#fff7ed"), stroke=AMBER)
     arrow(d, 110, 103, 138, 103)
     arrow(d, 240, 103, 268, 103)
     arrow(d, 370, 103, 398, 103)
-    arrow(d, 189, 82, 260, 58, color=AMBER)
-    arrow(d, 318, 82, 398, 58, color=AMBER)
+    arrow(d, 189, 82, 128, 58, color=GREEN)
+    arrow(d, 318, 82, 260, 58, color=AMBER)
     arrow(d, 441, 82, 411, 58, color=AMBER)
-    arrow(d, 64, 82, 128, 58, color=GREEN)
     return d
 
 
@@ -239,16 +238,17 @@ def build():
     story.append(Paragraph("Specialist skills are optional add-ons, not daily mandatory steps.", s["Small"]))
     story.append(PageBreak())
 
-    story.append(Paragraph("Token-Efficient Model Policy", s["Heading1"]))
-    story.append(Paragraph("Start with the cheapest setting that matches the risk. Escalate only when evidence demands it.", s["BodyText"]))
+    story.append(Paragraph("Effort Preflight", s["Heading1"]))
+    story.append(Paragraph("Pick effort before acting. Use extra-high for most development and computer-use work; downgrade only when the task is clearly cheap and easy to verify.", s["BodyText"]))
     story.append(
         table(
             [
                 ["Work", "Codex setting"],
                 ["Read-only help, status, command lookup", "fast profile or base medium"],
-                ["Routine implementation", "base gpt-5.5 / medium / low verbosity"],
-                ["Risky diff, hard debugging, release review", "review profile or high effort"],
-                ["Security-sensitive or repeatedly failing work", "deep profile or xhigh effort"],
+                ["Trivial one-file edit or narrow docs copy", "base gpt-5.5 / medium"],
+                ["Normal development, debugging, refactoring", "base gpt-5.5 / xhigh / low verbosity"],
+                ["Browser or computer-use workflow", "base gpt-5.5 / xhigh"],
+                ["Review, release, security-sensitive work", "deep profile or xhigh effort"],
             ],
             [3.0 * inch, 3.4 * inch],
         )
@@ -283,7 +283,7 @@ def build():
     story.append(Paragraph("Release:", s["Heading2"]))
     story.append(Paragraph("Use af-reconcile, then af-full-review, then af-release.", s["CodeBlock"]))
     story.append(Spacer(1, 10))
-    story.append(Paragraph("Rule of thumb: if the work is routine, stay light. If the work is risky, blocked, or release-facing, escalate deliberately.", s["Heading1"]))
+    story.append(Paragraph("Rule of thumb: keep the workflow light. Use extra-high reasoning for real development and computer-use work unless the preflight clearly says the task is cheap.", s["Heading1"]))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     doc.build(story, onFirstPage=header_footer, onLaterPages=header_footer)

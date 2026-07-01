@@ -39,6 +39,8 @@ codex --profile deep
 
 See `docs/CODEX-MODEL-POLICY.md` for when to use each profile.
 
+Effort default: use extra-high reasoning for most development and computer-use work. Downgrade to `fast` or medium only after a quick effort preflight classifies the task as read-only, trivial, low-risk, and easy to verify.
+
 ## Initialize A Repo
 
 Inside a target Git repo:

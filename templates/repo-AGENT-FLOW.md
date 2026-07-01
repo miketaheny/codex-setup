@@ -81,7 +81,7 @@ Do not run `af-finish` automatically after every prompt. Finish is a deliberate 
 
 ## Codex Model And Effort
 
-For Codex, prefer the base config of `gpt-5.5` with medium reasoning for normal file-changing sessions. Use fast/low settings for read-only help or status, high effort for release review or hard debugging, and `xhigh` only for security-sensitive or repeatedly failing work. See the installed Agent-Flow guide at `~/.agent-flow/docs/CODEX-MODEL-POLICY.md`.
+For Codex, run an effort preflight before acting. Prefer `gpt-5.5` with `xhigh` reasoning for most development and computer-use work. Use fast/low settings for read-only help or status, medium for trivial one-file edits, and `deep`/`xhigh` for release review, hard debugging, or security-sensitive work. See the installed Agent-Flow guide at `~/.agent-flow/docs/CODEX-MODEL-POLICY.md`.
 
 Before release:
 

@@ -1,6 +1,6 @@
 # Agent-Flow Codex Fast Path Guide
 
-This guide is the practical operating model for using Agent-Flow with Codex while keeping work fast, scoped, and token-efficient.
+This guide is the practical operating model for using Agent-Flow with Codex while keeping the workflow fast and the reasoning effort right-sized.
 
 Use the PDF version when sharing or printing:
 
@@ -45,18 +45,19 @@ flowchart TD
     I --> J["Commit, report readiness, ask before merge"]
 ```
 
-## Token-Efficient Model Policy
+## Effort Preflight
 
-Start with the cheapest setting that matches the risk.
+Pick effort before acting. The default for real development and computer-use work is extra-high reasoning; downgrade only when the task is obviously cheap and easy to verify.
 
 | Work | Codex setting |
 |---|---|
 | Read-only help, status, command lookup | `fast` profile or base medium |
-| Routine implementation | base `gpt-5.5` / medium / low verbosity |
-| Risky diff, hard debugging, release review | `review` profile or high effort |
-| Security-sensitive or repeatedly failing work | `deep` profile or xhigh effort |
+| Trivial one-file edit or narrow docs copy | base `gpt-5.5` / medium |
+| Normal development, debugging, refactoring | base `gpt-5.5` / xhigh / low verbosity |
+| Browser or computer-use workflow | base `gpt-5.5` / xhigh |
+| Review, release, security-sensitive work | `deep` profile or xhigh effort |
 
-Do not start routine sessions at `xhigh`. Escalate after evidence: repeated failure, risky scope, release gate, or security-sensitive changes.
+If uncertain, choose `xhigh` for development and computer-use work. Save tokens by keeping context targeted, not by under-reasoning important work.
 
 ## What To Avoid In Routine Sessions
 
@@ -73,13 +74,13 @@ Avoid spending tokens on:
 
 ```mermaid
 flowchart LR
-    A["Routine session"] --> B{"Blocked twice for same reason?"}
-    B -->|Yes| H["Increase effort / narrow diagnosis"]
-    B -->|No| C{"Security, auth, secrets, data access?"}
-    C -->|Yes| D["Use review or deep path"]
-    C -->|No| E{"Preparing release?"}
-    E -->|Yes| F["af-reconcile -> af-full-review -> af-release"]
-    E -->|No| G["Stay on fast path"]
+    A["New task"] --> B{"Read-only or trivial?"}
+    B -->|Yes| C["fast or medium"]
+    B -->|No| D{"Development or computer use?"}
+    D -->|Yes| E["xhigh"]
+    D -->|No| F{"Release/security/review?"}
+    F -->|Yes| G["deep / xhigh"]
+    F -->|No| H["medium or high"]
 ```
 
 ## Worktree Mental Model
@@ -124,4 +125,4 @@ Use af-reconcile, then af-full-review, then af-release.
 
 ## The Rule Of Thumb
 
-If the work is routine, stay light. If the work is risky, blocked, or release-facing, escalate deliberately.
+Keep the workflow light. Use extra-high reasoning for real development and computer-use work unless the preflight clearly says the task is cheap.
