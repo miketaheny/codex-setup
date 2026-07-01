@@ -41,6 +41,8 @@ git init -b development
 
 Show `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, `.agent-flow/config.toml`, `.git/hooks/pre-push`, `devlog/README.md`, and `docs/decisions/000-template.md`.
 
+For a Node sample repo with `package.json`, mention that init offers pnpm onboarding. Use `--no-pnpm` to skip it or `--pnpm` to rerun the pnpm step later.
+
 ### 3. Explain The Lifecycle
 
 ```text
@@ -55,7 +57,7 @@ af-reconcile -> af-full-review -> af-release
 
 Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates, including Codex Security diff scans when available.
 
-Show `af-help` as the read-only command map. Mention `af-feature-audit` as a manual-only app-wide feature/user-story QA campaign, and `af-brand-guidelines -> af-ui-audit` as the manual brand/UI review campaign.
+Show `af-help` as the read-only command map. Mention `af-pnpm` for package-manager standardization, `af-feature-audit` as a manual-only app-wide feature/user-story QA campaign, and `af-brand-guidelines -> af-ui-audit` as the manual brand/UI review campaign.
 
 ### 4. Demonstrate A Session
 

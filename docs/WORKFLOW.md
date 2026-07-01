@@ -64,6 +64,7 @@ Use `devlog/` for decisions, validation, review, and risks.
 |---|---|
 | Command help and usage guide | `af-help` |
 | Create or ingest brand/design guidelines | `af-brand-guidelines` |
+| Convert Node repos to pnpm | `af-pnpm` |
 | Start or adopt file-changing work | `af-flow` |
 | Overall AF status and worktree state | `af-status` |
 | Record engineering history | `af-devlog` |

@@ -26,6 +26,7 @@ flowchart TD
     Init --> RepoAdapters["repo AGENTS.md + CLAUDE.md"]
     Init --> RepoDevlog["repo devlog/"]
     Init --> RepoDocs["repo docs/"]
+    Init --> Pnpm["pnpm onboarding for Node repos"]
 ```
 
 ## Repository Components
@@ -63,6 +64,9 @@ flowchart TD
     Security -->|Yes| Sec["af-security-review with Codex Security when available"]
     Security -->|No| Release["af-release"]
     Sec --> Release
+
+    PnpmStart["Package-manager migration"] --> PnpmSkill["af-pnpm"]
+    PnpmSkill --> PnpmLock["pnpm-lock.yaml + packageManager"]
 
     AuditStart["Explicit feature audit"] --> Audit["af-feature-audit"]
     Audit --> Register["docs/product/feature-register.csv"]

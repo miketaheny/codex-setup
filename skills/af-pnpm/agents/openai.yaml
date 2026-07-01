@@ -1,0 +1,4 @@
+interface:
+  display_name: "AF pnpm"
+  short_description: "Convert repos to pnpm safely"
+  default_prompt: "Use $af-pnpm to check this repo's package manager and convert it to pnpm when appropriate."

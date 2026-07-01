@@ -14,6 +14,7 @@ YES=0
 MODE=""
 STAGING_CHOICE=""
 HOOKS_CHOICE=""
+PNPM_CHOICE=""
 INTEGRATION_BRANCH="development"
 
 while [ "$#" -gt 0 ]; do
@@ -42,6 +43,12 @@ while [ "$#" -gt 0 ]; do
     --no-hooks)
       HOOKS_CHOICE="false"
       ;;
+    --pnpm)
+      PNPM_CHOICE="true"
+      ;;
+    --no-pnpm)
+      PNPM_CHOICE="false"
+      ;;
     --integration-branch)
       shift
       if [ "$#" -eq 0 ]; then
@@ -51,7 +58,7 @@ while [ "$#" -gt 0 ]; do
       INTEGRATION_BRANCH="$1"
       ;;
     -h|--help)
-      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--integration-branch <branch>]" >&2
+      echo "Usage: $0 [--force] [--yes] [--enforced|--disabled] [--staging|--no-staging] [--install-hooks|--no-hooks] [--pnpm|--no-pnpm] [--integration-branch <branch>]" >&2
       exit 0
       ;;
     *)
@@ -149,8 +156,47 @@ prompt_yes_no() {
   fi
 }
 
+run_pnpm_onboarding() {
+  local answer script
+
+  if [ ! -f "package.json" ]; then
+    echo "pnpm onboarding: no package.json; skipped."
+    return
+  fi
+
+  if [ "$PNPM_CHOICE" = "false" ]; then
+    echo "pnpm onboarding: skipped by --no-pnpm."
+    return
+  fi
+
+  if [ "$PNPM_CHOICE" != "true" ]; then
+    answer="$(prompt_yes_no "Convert this Node repo to pnpm during onboarding?" "yes")"
+    if [ "$answer" != "yes" ]; then
+      echo "pnpm onboarding: skipped."
+      return
+    fi
+  fi
+
+  script="$AF_HOME/skills/af-pnpm/scripts/convert_to_pnpm.py"
+  if [ ! -f "$script" ]; then
+    script="$SCRIPT_HOME/skills/af-pnpm/scripts/convert_to_pnpm.py"
+  fi
+
+  if [ ! -f "$script" ]; then
+    echo "Warning: af-pnpm conversion helper missing; skipped pnpm onboarding." >&2
+    return
+  fi
+
+  if ! python3 "$script" "$ROOT" --convert --yes --onboarding; then
+    echo "Warning: pnpm onboarding failed. Resolve the error, then run: python3 $script . --convert --yes" >&2
+  fi
+}
+
 if [ -f "$CONFIG_FILE" ] && [ "$FORCE" -ne 1 ]; then
   ensure_repo_helpers
+  if [ "$PNPM_CHOICE" = "true" ]; then
+    run_pnpm_onboarding
+  fi
   echo "Agent-Flow already initialized: $CONFIG_FILE"
   echo "Repo helper scripts checked."
   echo "Use --force to rewrite repo choices and refresh Agent-Flow-owned helpers."
@@ -329,6 +375,8 @@ append_local_choices "CLAUDE.md"
 if [ "$HOOKS_CHOICE" = "true" ]; then
   AF_HOME="$AF_HOME" "$SCRIPT_DIR/install-hooks.sh"
 fi
+
+run_pnpm_onboarding
 
 echo "Agent-Flow initialized at $ROOT"
 echo "Config: $CONFIG_FILE"
