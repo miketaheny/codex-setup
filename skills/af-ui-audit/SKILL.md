@@ -117,7 +117,7 @@ P3 polish, cleanup, or future design-system consolidation
 Fixes should use normal AF session discipline:
 
 ```text
-af-flow -> implementation -> af-devlog -> af-finish
+af-flow -> persistent implementation -> af-devlog -> af-finish
 ```
 
 Within the same audit session, keep batches coherent by route, component family, or breakpoint class. Avoid broad visual rewrites unless the brand guideline supports them and the diff remains reviewable.

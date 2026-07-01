@@ -47,7 +47,7 @@ For a Node sample repo with `package.json`, mention that init offers pnpm onboar
 ### 3. Explain The Lifecycle
 
 ```text
-af-flow -> implementation -> af-devlog -> af-finish
+af-flow -> persistent implementation session -> af-devlog -> af-finish
 ```
 
 Release:
@@ -82,6 +82,8 @@ Make a small docs change and devlog entry, then run:
 ```
 
 Show `ASK_USER_MERGE`.
+
+Emphasize that the session could have continued across multiple related prompts before this finish step.
 
 ### 5. Demonstrate Worktree Readiness
 

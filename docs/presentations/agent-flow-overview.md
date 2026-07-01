@@ -14,7 +14,7 @@ Visual: before/after comparison.
 
 ## Slide 3: The Core Loop
 
-For file-changing chats, use `af-flow`, implement in one AF session worktree, write devlog, use `af-finish`, ask before merge, then check child worktrees before push. Use `af-help` for command help.
+For file-changing work, use `af-flow`, keep related prompts in one AF session worktree, write devlog, use `af-finish` when wrapping up, ask before merge, then check child worktrees before push. Use `af-help` for command help.
 
 Visual: Mermaid loop from `docs/USER-GUIDE.md`.
 

@@ -63,7 +63,7 @@ AI coding agents need operating rules, not just better prompts.
 
 ### Supporting Messages
 
-- One chat, one session worktree.
+- One related working session, one session worktree.
 - Every session leaves a devlog.
 - Docs move with the code.
 - Review happens before merge.
@@ -138,7 +138,7 @@ Avoid:
 Prefer:
 
 ```text
-Agent-Flow maps each file-changing chat to one isolated worktree session.
+Agent-Flow maps each related file-changing working session to one isolated worktree session.
 ```
 
 Avoid:
@@ -306,7 +306,7 @@ Turn file-changing agent chats into isolated worktree sessions with devlogs, doc
 Short version:
 
 ```text
-I built Agent-Flow to make AI coding agent work easier to trust: one chat, one worktree session, one devlog, docs when behavior changes, review before merge, and push checks before release.
+I built Agent-Flow to make AI coding agent work easier to trust: one related working session, one worktree, one devlog, docs when behavior changes, review before merge, and push checks before release.
 ```
 
 Developer version:

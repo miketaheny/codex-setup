@@ -7,7 +7,9 @@ description: Finish an Agent-Flow worktree session after implementation. Use whe
 
 ## Purpose
 
-Use this as the end-of-session workflow for one AF worktree. It coordinates validation, `af-show` when visual or manual proof is relevant, mandatory `af-devlog`, `scripts/finish-session.sh`, and ask-before-merge. Review happens at merge time via `af-full-review` in the release pipeline, not here.
+Use this as the explicit end-of-session workflow for one AF worktree. It coordinates validation, `af-show` when visual or manual proof is relevant, mandatory `af-devlog`, `scripts/finish-session.sh`, and ask-before-merge. Review happens at merge time via `af-full-review` in the release pipeline, not here.
+
+Do not invoke this automatically after every completed prompt. Invoke it when the user asks to finish, wrap up, commit, prepare for merge, review for merge, or switch away from the active session.
 
 ## Workflow
 

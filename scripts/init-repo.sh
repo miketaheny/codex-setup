@@ -315,7 +315,8 @@ worktrees = "required-for-changes"
 session_base = "checked-out"
 session_merge_target = "parent"
 session_branch = "explicit-only"
-session_unit = "chat"
+session_unit = "user-ended"
+session_end_triggers = ["finish", "review", "reconcile", "merge", "switch-direction"]
 devlog_policy = "finish"
 
 merge_prompt = "always"

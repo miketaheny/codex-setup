@@ -20,7 +20,8 @@ Adjust this section to match the repo.
 
 ## Branching
 
-- Use one AF session worktree per file-changing chat.
+- Use one active AF session worktree for a related working session, not one worktree per prompt.
+- Keep related Codex/agent follow-up work in the same session worktree until the user asks to finish, review, reconcile, merge, or switch direction.
 - Use detached session worktrees by default.
 - Create named branches only when explicitly requested.
 - Merge reviewed sessions back to their recorded parent branch after asking the user.
@@ -74,6 +75,8 @@ Before merge:
 - update devlog and impacted docs
 - run `af-review`
 - resolve P1 findings
+
+Do not run `af-finish` automatically after every prompt. Finish is a deliberate wrap-up step.
 
 ## Codex Model And Effort
 

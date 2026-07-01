@@ -46,7 +46,7 @@ For repos with a root `package.json`, init also offers pnpm onboarding. It skips
 Ask the agent:
 
 ```text
-Use af-flow for this file-changing request, keep the work in one AF session, then use af-finish when done.
+Use af-flow for this file-changing request. Keep related work in this AF session worktree until I ask to finish, review, reconcile, merge, or switch direction.
 ```
 
 Direct commands:
@@ -58,6 +58,8 @@ scripts/finish-session.sh --merge
 ```
 
 If the finish command reports `ASK_USER_MERGE`, approve before running `--merge`.
+
+Do not finish after every prompt. A normal Codex flow/vibe session should remain in the same worktree while the work is related. Use `af-finish` only when you want to wrap up the session; use `af-review` or `af-reconcile` when you want a checkpoint without starting a new worktree.
 
 For command help:
 
