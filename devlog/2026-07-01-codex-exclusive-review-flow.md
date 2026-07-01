@@ -25,5 +25,6 @@
   - `git diff --check` - passed.
   - `./scripts/install.sh` - passed; refreshed `~/.agent-flow` and `~/.codex`.
   - Installed artifact verification for `af-claude-review`, `claude-review.sh`, Codex-first instructions, and removal of stale AF/Codex Claude adapter templates - passed.
+  - Legacy `~/.claude` Agent-Flow cleanup via `install.sh` - passed; removed old AF `CLAUDE.md`, `AGENT-FLOW.md`, AF docs, scripts, templates, skills, and installer `CLAUDE.md.backup-*` files while leaving non-AF Claude settings/backups intact.
 - Risks / follow-ups:
   - Claude CLI is not installed on this machine, so runtime review execution can only be validated through the missing-binary preflight unless the CLI is installed later.
