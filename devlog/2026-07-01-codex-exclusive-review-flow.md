@@ -26,5 +26,9 @@
   - `./scripts/install.sh` - passed; refreshed `~/.agent-flow` and `~/.codex`.
   - Installed artifact verification for `af-claude-review`, `claude-review.sh`, Codex-first instructions, and removal of stale AF/Codex Claude adapter templates - passed.
   - Legacy `~/.claude` Agent-Flow cleanup via `install.sh` - passed; removed old AF `CLAUDE.md`, `AGENT-FLOW.md`, AF docs, scripts, templates, skills, and installer `CLAUDE.md.backup-*` files while leaving non-AF Claude settings/backups intact.
+  - Claude Code native CLI install - passed; installed `claude` 2.1.197 at `/Users/taheny/.local/bin/claude`.
+  - `claude auth status` - passed; CLI is installed but not logged in (`loggedIn: false`, `authMethod: none`).
+  - `scripts/claude-review.sh` unauthenticated preflight - passed with exit 126 and clear `claude auth login` guidance.
+  - Reinstalled updated `claude-review.sh` under `~/.agent-flow/scripts` and `~/.codex/scripts` - passed.
 - Risks / follow-ups:
   - Claude CLI is not installed on this machine, so runtime review execution can only be validated through the missing-binary preflight unless the CLI is installed later.

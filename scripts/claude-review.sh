@@ -25,6 +25,17 @@ EOF
   exit 127
 fi
 
+AUTH_STATUS="$(claude auth status 2>/dev/null || true)"
+if ! printf '%s\n' "$AUTH_STATUS" | grep -q '"loggedIn"[[:space:]]*:[[:space:]]*true'; then
+  cat >&2 <<'EOF'
+Error: Claude CLI is installed but not authenticated.
+
+Run this once in a terminal, then rerun the review:
+  claude auth login
+EOF
+  exit 126
+fi
+
 if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
   echo "Error: run inside a Git repository." >&2
   exit 1
