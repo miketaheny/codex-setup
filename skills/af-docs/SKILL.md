@@ -73,7 +73,7 @@ Cover:
 - Jobs: onboard, operate, troubleshoot, sell, train, audit, implement, or review?
 - Existing-doc policy: which docs are authoritative, which are confusing, which must be preserved?
 - Update style: terse reference, tutorial, runbook, conceptual guide, visual guide, stakeholder narrative?
-- Visual expectations: Mermaid, D2, screenshots, generated imagery, demo videos, slide outlines, PPTX, or no visuals?
+- Visual expectations: Mermaid, D2, screenshots, generated imagery, demo videos, slide outlines, PDF presentations, or no visuals?
 - Information architecture: preferred docs map, naming conventions, directories, and files to avoid.
 - Source of truth: code, product notes, devlog, tickets, screenshots, analytics, users, or domain experts?
 - Maintenance rules: what changes require docs, who reviews, and what validation is expected?
@@ -251,7 +251,7 @@ Ask whether the artifact should feel:
 - polished and visual for stakeholder presentations
 - benefit-led and image-rich for marketing
 
-When creating presentations, prefer a crisp outline first unless the user explicitly requests a PPTX. When creating marketing content, separate verified facts from recommended messaging.
+When creating presentations, prefer a crisp outline first, then create a PDF presentation. Do not create PPTX files. When creating marketing content, separate verified facts from recommended messaging.
 
 ## Pre-Release Check
 

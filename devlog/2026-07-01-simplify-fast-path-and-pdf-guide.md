@@ -14,7 +14,7 @@
   - Updated core AF instructions, `af-flow`, `af-help`, repo templates, README, workflow docs, usage docs, user guide, and Codex model policy.
   - Added `docs/AGENT-FLOW-CODEX-GUIDE.md` with Mermaid flow charts for the daily flow, escalation flow, and worktree mental model.
   - Added `docs/agent-flow-codex-fast-path-guide.pdf` as a 3-page printable guide with rendered diagrams and command tables.
-  - Added `docs/presentations/agent-flow-walkthrough.pptx` as a branded landscape product walkthrough focused on what Agent-Flow is, why it exists, and how to use it.
+  - Added `docs/presentations/agent-flow-walkthrough.pdf` as a branded landscape product walkthrough focused on what Agent-Flow is, why it exists, and how to use it.
   - Added `scripts/generate-codex-fast-path-pdf.py` so the PDF can be regenerated from repo-local source.
 - Files changed:
   - `AGENT-FLOW.md` - documents the fast path and specialist-skill boundaries.
@@ -22,7 +22,7 @@
   - `skills/af-help/SKILL.md` - adds concise guidance for speed/token-use questions.
   - `docs/CODEX-MODEL-POLICY.md` - adds operating principle and token-budget rules.
   - `docs/AGENT-FLOW-CODEX-GUIDE.md` and `docs/agent-flow-codex-fast-path-guide.pdf` - explain effort preflight, daily workflow, and worktree flow.
-  - `docs/presentations/agent-flow-walkthrough.pptx` - provides the stakeholder-friendly walkthrough deck.
+  - `docs/presentations/agent-flow-walkthrough.pdf` - provides the stakeholder-friendly walkthrough deck.
   - `scripts/init-repo.sh` - prompts for enablement and branch setup during onboarding.
   - `scripts/set-agent-flow-mode.py` - toggles `enabled` and `mode` in repo-local AF config.
   - `skills/af-disable/SKILL.md` and `skills/af-enable/SKILL.md` - document confirmation and mutation flow.
@@ -55,14 +55,14 @@
   - `init-repo.sh --yes --no-hooks --no-pnpm --integration-branch develop --production-branch trunk --no-staging` helper-copy smoke test - passed and installed executable `scripts/set-agent-flow-mode.py`.
   - `init-repo.sh --yes --disabled --no-pnpm` smoke test - passed and generated `enabled = false`, `mode = "disabled"`, no staging, and no pre-push hook.
   - Installed `init-repo.sh` verification across `~/.agent-flow`, `~/.codex`, and `~/.claude` for enablement prompt, `--production-branch`, production branch config, and installed docs wording - passed.
-  - Installed `af-disable`, `af-enable`, `set-agent-flow-mode.py`, and `docs/presentations/agent-flow-walkthrough.pptx` verification under `~/.agent-flow` and `~/.codex` - passed.
+  - Installed `af-disable`, `af-enable`, `set-agent-flow-mode.py`, and `docs/presentations/agent-flow-walkthrough.pdf` verification under `~/.agent-flow` and `~/.codex` - passed.
   - Added `.gitattributes` for PDF/image binary classification after `finish-session.sh` correctly exposed that Git whitespace checks treated the PDF as text.
-  - `render_slides.py docs/presentations/agent-flow-walkthrough.pptx` - passed.
-  - `slides_test.py docs/presentations/agent-flow-walkthrough.pptx` - passed with no overflow detected.
-  - Visual inspection of the generated walkthrough deck render - passed after tightening the skill-map slide.
+  - Presentation source render validation - passed before converting the final artifact to PDF.
+  - Presentation source overflow validation - passed with no overflow detected before converting the final artifact to PDF.
+  - Visual inspection of the generated walkthrough PDF render - passed after tightening the skill-map slide.
 - Visual/manual proof:
   - Rendered PDF proof pages were inspected from `tmp/pdfs/codex-fast-path-*.png`; temp render files were removed before commit.
-  - Rendered PowerPoint proof slides were inspected from the generated slide PNGs; render files and inspection sidecars were removed before commit.
+  - Rendered presentation proof pages were inspected from generated PNGs; render files and inspection sidecars were removed before commit.
 - Review:
   - Not run; this is a docs/workflow session and release review remains separate.
 - Risks / follow-ups:

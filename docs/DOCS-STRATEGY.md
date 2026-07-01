@@ -69,7 +69,7 @@ Current canonical docs:
 | `docs/plans/` | Optional support | Use for meaningful future work plans. |
 | `docs/diagrams/` | Optional support | Use for diagram source files when diagrams outgrow inline Mermaid. |
 | `docs/assets/` | Optional support | Use for screenshots, generated visuals, or demo media. |
-| `docs/presentations/` | Optional support | Use for slide outlines and deck artifacts such as `agent-flow-walkthrough.pptx`. |
+| `docs/presentations/` | Optional support | Use for slide outlines and PDF presentation artifacts such as `agent-flow-walkthrough.pdf`. |
 
 ## Visual Strategy
 
