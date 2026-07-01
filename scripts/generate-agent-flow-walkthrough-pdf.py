@@ -164,7 +164,7 @@ def slide_3(c: canvas.Canvas) -> None:
     subtitle(c, "It installs shared rules, adapters, skills, scripts, and templates that make agent-assisted work repeatable across repos.", 344, 560)
     x = 58
     for heading, body, accent in [
-        ("Shared instructions", "AGENT-FLOW.md is canonical. AGENTS.md and CLAUDE.md point agents to the same rules.", TEAL),
+        ("Codex instructions", "AGENT-FLOW.md is canonical. AGENTS.md points Codex to the same repo rules.", TEAL),
         ("Session scripts", "Start, finish, reconcile, status, and release helpers manage worktrees with repo-local helpers.", GREEN),
         ("Durable history", "Every file-changing session leaves a devlog entry, decisions, and validation.", VIOLET),
         ("Release discipline", "Review gates and push-readiness checks protect parent branches.", AMBER),
@@ -175,15 +175,15 @@ def slide_3(c: canvas.Canvas) -> None:
 
 def slide_4(c: canvas.Canvas) -> None:
     header(c)
-    title(c, "Install once, then every agent gets the same operating model.", width=520)
-    subtitle(c, "Agent-Flow copies the shared setup into home-directory surfaces that Codex, Claude, and repo init can reuse.", 344, 520)
+    title(c, "Install once, then Codex gets the same operating model in every repo.", width=560)
+    subtitle(c, "Agent-Flow copies the shared setup into home-directory surfaces that Codex and repo init can reuse.", 344, 520)
     command_box(c, 58, 260, 220, "./scripts/install.sh")
     c.setStrokeColor(TEAL)
     c.line(300, 270, 360, 270)
     for i, (path, body) in enumerate([
         ("~/.agent-flow", "Shared rules, skills, scripts, docs, and templates."),
         ("~/.codex", "Codex adapter, AF skills, profiles, and AGENTS.md."),
-        ("~/.claude", "Claude adapter and the same AF workflow context."),
+        ("Claude CLI", "Optional external review through af-claude-review only."),
     ]):
         card(c, 380, 305 - i * 72, 230, 58, path, body, [TEAL, GREEN, VIOLET][i])
 

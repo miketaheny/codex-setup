@@ -5,6 +5,7 @@
 ### Added
 
 - Added `af-disable` and `af-enable` skills for explicit repo-local Agent-Flow opt-out and re-enable workflows.
+- Added `af-claude-review` and `scripts/claude-review.sh` for optional Claude CLI external review from Codex sessions.
 - Added `scripts/set-agent-flow-mode.py` for deterministic `.agent-flow/config.toml` mode updates.
 - Added a Codex fast-path guide in Markdown and PDF form, including workflow, escalation, and worktree diagrams.
 - Added a reproducible PDF generator for the Codex fast-path guide.
@@ -30,6 +31,7 @@
 - Updated Codex model guidance to use an effort preflight, defaulting most development and computer-use work to extra-high reasoning while downgrading cheap read-only or trivial tasks.
 - Updated repo initialization guidance so file-changing work in repos without AF setup must initialize AF or explicitly opt out, and `init-repo.sh` now prompts for integration and production branches.
 - Standardized presentation artifacts on PDF output rather than PPTX files.
+- Optimized Agent-Flow as a Codex-first workflow: install and repo init no longer create Claude adapter surfaces by default.
 - Simplified Agent-Flow around one lifecycle: `af-flow -> af-devlog -> af-finish`.
 - Simplified release readiness to `af-reconcile -> af-full-review -> af-release`.
 - Updated `af-security-review` to prefer Codex Security diff scans for Git-backed release diffs when available, with the manual AF checklist as fallback.

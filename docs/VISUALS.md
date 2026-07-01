@@ -49,7 +49,7 @@ Use screenshots for:
 - terminal install output
 - init output inside a sample repo
 - Codex skill discovery, if relevant
-- Claude adapter behavior, if relevant
+- optional Claude CLI review behavior, if relevant
 
 Use demo video for:
 
@@ -71,7 +71,7 @@ Capture these after the next local install test:
 - `~/.agent-flow` tree view
 - `~/.codex/skills` showing AF skills
 - `~/.agent-flow/scripts/init-repo.sh` output in a sample repo
-- generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, and `devlog/README.md`
+- generated `.agent-flow/config.toml`, `.gitignore` block, `AGENT-FLOW.md`, `AGENTS.md`, and `devlog/README.md`
 - generated `.git/hooks/pre-push`
 - `start-session.sh` output showing detached worktree mode, parent branch, and session metadata
 - `finish-session.sh` output showing `ASK_USER_MERGE`
@@ -111,8 +111,8 @@ Recommended deck style:
 Use `docs/PITCH.md` for launch or stakeholder copy. Keep claims grounded:
 
 - Agent-Flow standardizes branch safety, devlogs, docs, and review.
-- It works across Claude, Codex, and other agents through shared instructions and adapters.
-- Codex skills are included, but the core workflow is agent-agnostic.
+- It is optimized for Codex through shared instructions, skills, scripts, and profiles.
+- Claude CLI review is optional and external; it is not an installed adapter surface.
 - Use `docs/assets/agent-flow-social-card.svg` for social sharing or title cards.
 
 Avoid unsupported claims about speed, reliability, or compatibility until measured.

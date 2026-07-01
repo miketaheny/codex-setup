@@ -2,7 +2,7 @@
 
 ## Positioning
 
-Agent-Flow is a lightweight workflow kit for solo developers using AI coding agents. It standardizes branch safety, worktree isolation, devlog history, documentation maintenance, review, and release readiness across Claude, Codex, and other agents.
+Agent-Flow is a lightweight workflow kit for solo developers using Codex. It standardizes branch safety, worktree isolation, devlog history, documentation maintenance, review, and release readiness.
 
 Public-facing brand guidance lives in `docs/BRAND-GUIDELINES.md`. The brand should feel original, technical, calm, and operational: closer to restrained developer infrastructure than consumer product design.
 
@@ -21,28 +21,29 @@ AI coding agents are useful, but unstructured sessions can drift across branches
 
 Agent-Flow provides:
 
-- shared `AGENT-FLOW.md` rules for all agents
-- `AGENTS.md` and `CLAUDE.md` adapters
-- Codex-compatible AF skills for common workflows
+- shared `AGENT-FLOW.md` rules for Codex sessions
+- `AGENTS.md` as the Codex adapter
+- Codex AF skills for common workflows
+- optional `af-claude-review` for Claude CLI second-model review
 - scripts for install, init, session lifecycle, push readiness, worktrees, and branch safety
 - finish-time session `devlog/` conventions
 - docs and visual asset guidance
 
 ## Proof Points From This Repo
 
-- Agent-neutral canonical instructions exist in `AGENT-FLOW.md`.
-- Codex and Claude adapters point to the same rules.
+- Codex-first canonical instructions exist in `AGENT-FLOW.md`.
+- `AGENTS.md` points Codex to the same rules in initialized repos.
 - Skills cover help, brand guidelines, session start, finish, visual proof, docs, devlogs, review, reconciliation, full release review, release PRs, Codex Security-aware security review, manual feature audits, manual UI audits, and Backlog migration.
 - Bootstrap scripts create consistent repo instruction and documentation scaffolding.
 - Visual docs now include architecture diagrams, a user guide, demo plan, and presentation outline.
 
 ## Short Pitch
 
-Agent-Flow gives AI coding agents a shared operating model for solo development: safe branches, isolated worktree sessions, devlog history, documentation updates, review before merge, optional Codex Security-aware security review for sensitive releases, and push checks before release PRs.
+Agent-Flow gives Codex a reliable operating model for solo development: safe branches, isolated worktree sessions, devlog history, documentation updates, review before merge, optional Codex Security-aware security review for sensitive releases, optional Claude CLI second-model review, and push checks before release PRs.
 
 ## Longer Pitch
 
-Agent-Flow is a portable setup for developers who use multiple AI coding agents across multiple repos. It defines one canonical workflow, installs adapters for agent-specific instruction files, adds reusable AF skills, and provides scripts that make safe branch and worktree habits repeatable. The result is a lower-friction development loop where every session leaves a readable history, every merge gets a review, and releases get a full readiness gate.
+Agent-Flow is a portable setup for developers who use Codex across multiple repos. It defines one canonical workflow, installs Codex instruction files, adds reusable AF skills, and provides scripts that make safe branch and worktree habits repeatable. The result is a lower-friction development loop where every session leaves a readable history, every merge gets a review, and releases get a full readiness gate.
 
 ## Launch Angle
 

@@ -1,6 +1,6 @@
 # Agent-Flow Architecture
 
-Agent-Flow is a portable local setup package. It installs shared workflow rules, agent adapters, Codex-compatible skills, templates, and scripts that keep file-changing agent work isolated and reviewable.
+Agent-Flow is a Codex-focused local setup package. It installs workflow rules, Codex skills, templates, and scripts that keep file-changing Codex work isolated and reviewable.
 
 ## System Map
 
@@ -9,7 +9,6 @@ flowchart TD
     User["Developer"] --> Install["scripts/install.sh"]
     Install --> AFHome["~/.agent-flow"]
     Install --> CodexHome["~/.codex"]
-    Install --> ClaudeHome["~/.claude"]
 
     AFHome --> Rules["AGENT-FLOW.md"]
     AFHome --> Skills["skills/"]
@@ -19,12 +18,13 @@ flowchart TD
     CodexHome --> CodexAdapter["AGENTS.md"]
     CodexHome --> CodexSkills["Codex skills"]
     CodexHome --> CodexProfiles["fast/review/deep config profiles"]
-    ClaudeHome --> ClaudeAdapter["CLAUDE.md"]
+    CodexSkills --> ClaudeReview["optional af-claude-review"]
+    ClaudeReview --> ClaudeCLI["Claude CLI when installed"]
 
     Scripts --> Init["init-repo.sh"]
     Init --> RepoConfig[".agent-flow/config.toml"]
     Init --> RepoRules["repo AGENT-FLOW.md"]
-    Init --> RepoAdapters["repo AGENTS.md + CLAUDE.md"]
+    Init --> RepoAdapters["repo AGENTS.md"]
     Init --> RepoDevlog["repo devlog/"]
     Init --> RepoDocs["repo docs/"]
     Init --> Pnpm["pnpm onboarding for Node repos"]
@@ -35,8 +35,7 @@ flowchart TD
 | Path | Role |
 |---|---|
 | `AGENT-FLOW.md` | Canonical workflow rules. |
-| `AGENTS.md` | Codex-compatible adapter. |
-| `CLAUDE.md` | Claude-compatible adapter. |
+| `AGENTS.md` | Codex adapter. |
 | `skills/` | AF workflows in `SKILL.md` format. |
 | `scripts/` | Install, init, session, readiness, hook, and worktree helpers. |
 | `templates/` | Repo instruction, config, devlog, gitignore, and decision templates. |
@@ -61,7 +60,11 @@ flowchart TD
 
     ReleaseStart["Release prep"] --> Reconcile["af-reconcile"]
     Reconcile --> Full["af-full-review"]
-    Full --> Security{"Sensitive or required?"}
+    Full --> ClaudeReview{"External model check requested?"}
+    ClaudeReview -->|Yes| ClaudeSkill["af-claude-review via Claude CLI"]
+    ClaudeReview -->|No| Security
+    ClaudeSkill --> Security
+    Security{"Sensitive or required?"}
     Security -->|Yes| Sec["af-security-review with Codex Security when available"]
     Security -->|No| Release["af-release"]
     Sec --> Release
@@ -129,7 +132,7 @@ flowchart LR
 
 Agent-Flow has no service runtime. State is local:
 
-- Global files under `~/.agent-flow`, `~/.codex`, and `~/.claude`.
+- Global files under `~/.agent-flow` and `~/.codex`.
 - Repo choices in `.agent-flow/config.toml`.
 - Session metadata in worktree-local Git config.
 - Optional branch parent metadata for explicit branches.

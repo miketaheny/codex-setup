@@ -9,6 +9,8 @@ description: Run an exhaustive Agent-Flow review for release readiness, high-ris
 
 Use this for broad release readiness and high-risk changes. It is the single mandatory review gate before code merges toward `main` — `af-finish` is intentionally fast and does not review, so this is where review work happens. It is deeper than the optional, on-demand `af-review` checklist and broader than `af-security-review`.
 
+This is a Codex-led review. Use `af-claude-review` only when the user requests a Claude CLI second opinion or the diff is high-risk enough that an external model check is worth the extra time and context.
+
 ## Workflow
 
 ### 1. Establish Scope
@@ -48,9 +50,13 @@ Confirm:
 
 ### 6. Review Security-Relevant Areas
 
-Flag security-sensitive changes such as auth, authorization, secrets, input validation, dependency upgrades, infrastructure, logging, privacy, and data access. If the release touches these areas or config requires it, run `af-security-review` as a distinct security-only gate. That skill will use the agent's built-in security review tool for the scan.
+Flag security-sensitive changes such as auth, authorization, secrets, input validation, dependency upgrades, infrastructure, logging, privacy, and data access. If the release touches these areas or config requires it, run `af-security-review` as a distinct security-only gate. Prefer Codex Security when available.
 
-### 7. Findings
+### 7. Optional External Review
+
+Run `af-claude-review` only when requested or when the release/high-risk diff needs a second-model check. Triage Claude output before accepting findings.
+
+### 8. Findings
 
 Use:
 

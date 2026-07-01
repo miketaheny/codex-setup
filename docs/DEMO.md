@@ -28,7 +28,7 @@ Show:
 find ~/.agent-flow -maxdepth 2 -type f | sort
 find ~/.codex/skills -maxdepth 2 -name SKILL.md | sort
 ls ~/.codex/fast.config.toml ~/.codex/review.config.toml ~/.codex/deep.config.toml
-test -f ~/.claude/CLAUDE.md && echo "Claude adapter installed"
+test -f ~/.codex/skills/af-claude-review/SKILL.md && echo "Claude CLI review skill installed"
 ```
 
 ### 2. Initialize A Sample Repo
@@ -40,7 +40,7 @@ git init -b development
 ~/.agent-flow/scripts/init-repo.sh --yes --staging
 ```
 
-Show `AGENT-FLOW.md`, `AGENTS.md`, `CLAUDE.md`, `.agent-flow/config.toml`, `.git/hooks/pre-push`, `devlog/README.md`, and `docs/decisions/000-template.md`.
+Show `AGENT-FLOW.md`, `AGENTS.md`, `.agent-flow/config.toml`, `.git/hooks/pre-push`, `devlog/README.md`, and `docs/decisions/000-template.md`.
 
 For a Node sample repo with `package.json`, mention that init offers pnpm onboarding. Use `--no-pnpm` to skip it or `--pnpm` to rerun the pnpm step later.
 
@@ -56,7 +56,7 @@ Release:
 af-reconcile -> af-full-review -> af-release
 ```
 
-Mention `af-show` for visual/manual proof and `af-security-review` for sensitive or configured security gates, including Codex Security diff scans when available.
+Mention `af-show` for visual/manual proof, `af-security-review` for sensitive or configured security gates, and `af-claude-review` for optional Claude CLI second-model review when requested.
 
 Show `af-help` as the read-only command map. Mention `af-pnpm` for package-manager standardization, `docs/CODEX-MODEL-POLICY.md` for speed/token profile choices, `af-feature-audit` as a manual-only app-wide feature/user-story QA campaign, and `af-brand-guidelines -> af-ui-audit` as the manual brand/UI review campaign.
 

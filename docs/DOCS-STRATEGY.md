@@ -27,8 +27,8 @@ Do not treat archiving as the default cleanup action. Update useful docs in plac
 
 Priority audiences:
 
-1. Solo developers using Agent-Flow across Claude, Codex, and other agents.
-2. AI coding agents that need unambiguous workflow rules and repo-specific context.
+1. Solo developers using Agent-Flow with Codex.
+2. Codex sessions that need unambiguous workflow rules and repo-specific context.
 3. Future maintainers evolving the setup, scripts, skills, and adapters.
 4. Stakeholders evaluating whether Agent-Flow is useful for safer agent-assisted development.
 
@@ -41,7 +41,7 @@ Docs should help readers:
 - choose the correct AF skill for a session
 - understand chat/session classification, branch, worktree, devlog, review, optional security review, merge, push-readiness, and release PR rules
 - migrate legacy Backlog-style stores into `devlog/`
-- understand how the setup stays agent-agnostic
+- understand how the setup stays optimized for Codex while allowing optional Claude CLI review
 - visualize architecture, skill routing, and daily workflows
 - create demos, presentations, user guides, and stakeholder-facing material
 - keep public-facing brand, README, launch copy, and visual recommendations consistent
@@ -93,7 +93,7 @@ Run `af-docs` when changes affect:
 - scripts under `scripts/`
 - skills under `skills/`
 - command help, usage-guide, feature-audit, brand-guideline, or UI-audit behavior
-- agent adapters such as `AGENTS.md`, `CLAUDE.md`, or `AGENT-FLOW.md`
+- Codex adapter files such as `AGENTS.md` or `AGENT-FLOW.md`
 - templates copied into target repos
 - prompt lifecycle, branch, worktree, devlog, review, optional security review, merge, push-readiness, or release workflows
 - backlog migration behavior
@@ -119,5 +119,5 @@ Do not claim screenshots, videos, or rendered diagrams were verified unless they
 ## Current Assumptions
 
 - `devlog/` is the project history system; legacy `Backlog.md`, `triage.md`, `backlog/`, and `.backlog/` stores should be migrated before removal.
-- The repo should remain agent-agnostic, with Codex skills as one supported adapter layer rather than the core product identity.
+- The repo is Codex-first. Claude CLI may be used only as an optional external review tool through `af-claude-review`.
 - The docs folder should stay practical and maintainable; avoid placeholder files that are not grounded in current behavior.
