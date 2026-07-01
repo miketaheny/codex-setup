@@ -1,6 +1,7 @@
 # Agent-Flow Overview Presentation
 
-The current branded landscape deck lives at `docs/presentations/agent-flow-walkthrough.pptx`.
+The current branded landscape PDF presentation lives at `docs/presentations/agent-flow-walkthrough.pdf`.
+Regenerate it with `scripts/generate-agent-flow-walkthrough-pdf.py`.
 
 ## Slide 1: Agent-Flow
 
@@ -59,7 +60,7 @@ Visual: concise outcome list.
 ## Production Notes
 
 - Start with this Markdown outline.
-- Convert to PPTX only after the audience and visual style are confirmed.
+- Create PDF presentations, not PPTX files, after the audience and visual style are confirmed.
 - Use real terminal screenshots for credibility.
 - Add generated imagery only for a marketing version, not for the technical overview.
 - Follow `docs/BRAND-GUIDELINES.md` for tagline, voice, color, and public-facing visual direction.
